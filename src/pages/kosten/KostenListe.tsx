@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { kosten, fahrzeuge, getFahrzeug, formatCurrency, formatDate } from "@/data/mockData";
-import { Plus, CalendarIcon, X } from "lucide-react";
+import { Plus, CalendarIcon, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DateRange } from "react-day-picker";
 
