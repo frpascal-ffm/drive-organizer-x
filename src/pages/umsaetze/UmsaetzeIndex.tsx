@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { fahrten, plattformUmsaetze, getFahrer, getFahrzeug, formatCurrency, formatDate, fahrtTypLabels } from "@/data/mockData";
 import { useNavigate } from "react-router-dom";
 import { StatusBadge } from "@/components/StatusBadge";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
 
 const tabs = ["Übersicht", "Eigene Fahrten", "Plattformen"] as const;
 
