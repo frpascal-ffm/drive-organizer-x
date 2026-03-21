@@ -32,10 +32,6 @@ export default function FahrzeugNeu() {
 
   // TÜV / Prüfungen
   const [tuevBis, setTuevBis] = useState("");
-  const [asuBis, setAsuBis] = useState("");
-  const [eichungBis, setEichungBis] = useState("");
-  const [bofBis, setBofBis] = useState("");
-  const [pBefBis, setPBefBis] = useState("");
 
   // Versicherung / Leasing
   const [versicherung, setVersicherung] = useState("");
