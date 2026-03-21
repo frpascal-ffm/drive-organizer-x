@@ -12,6 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { fahrten, getFahrer, getFahrzeug, fahrtTypLabels, formatCurrency, formatDate } from "@/data/mockData";
 import { Plus, Search, ArrowUpDown, CalendarIcon, X, Settings2, GripVertical } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Fahrt } from "@/data/mockData";
 
@@ -124,13 +125,16 @@ export default function FahrtenListe() {
   }, [columnConfig]);
 
   const toggleColumn = (key: string) => {
-    if (key === "id") return; // fixed
-    const newVisible = columnConfig.visible.includes(key)
+    if (key === "id") return;
+    const isVisible = columnConfig.visible.includes(key);
+    const col = ALL_COLUMNS.find(c => c.key === key);
+    const newVisible = isVisible
       ? columnConfig.visible.filter(k => k !== key)
       : [...columnConfig.visible, key];
     const newConfig = { ...columnConfig, visible: newVisible };
     setColumnConfig(newConfig);
     saveColumnConfig(newVisible, columnConfig.order);
+    toast(isVisible ? `„${col?.label}" ausgeblendet` : `„${col?.label}" eingeblendet`, { duration: 1500 });
   };
 
   const handleDragStart = (idx: number) => {
