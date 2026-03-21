@@ -29,6 +29,7 @@ export default function FahrzeugNeu() {
   // Technische Daten
   const [fin, setFin] = useState("");
   const [erstzulassung, setErstzulassung] = useState<Date | undefined>();
+  const [ezCalMonth, setEzCalMonth] = useState<Date>(new Date());
   const [antrieb, setAntrieb] = useState("");
   const [getriebe, setGetriebe] = useState("");
   const [leistungKw, setLeistungKw] = useState("");
@@ -137,7 +138,58 @@ export default function FahrzeugNeu() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" selected={erstzulassung} onSelect={setErstzulassung} locale={de} initialFocus captionLayout="dropdown-buttons" fromYear={2000} toYear={2026} className={cn("p-3 pointer-events-auto")} />
+                <div className="p-3 pointer-events-auto space-y-3">
+                  <div className="flex gap-2">
+                    <Select
+                      value={erstzulassung ? String(erstzulassung.getMonth()) : String(new Date().getMonth())}
+                      onValueChange={(v) => {
+                        const d = erstzulassung ? new Date(erstzulassung) : new Date();
+                        d.setMonth(parseInt(v));
+                        setErstzulassung(d);
+                        setEzCalMonth(d);
+                      }}
+                    >
+                      <SelectTrigger className="flex-1 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem key={i} value={String(i)}>
+                            {format(new Date(2024, i, 1), "MMMM", { locale: de })}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={erstzulassung ? String(erstzulassung.getFullYear()) : String(new Date().getFullYear())}
+                      onValueChange={(v) => {
+                        const d = erstzulassung ? new Date(erstzulassung) : new Date();
+                        d.setFullYear(parseInt(v));
+                        setErstzulassung(d);
+                        setEzCalMonth(d);
+                      }}
+                    >
+                      <SelectTrigger className="w-[90px] h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 30 }, (_, i) => 2026 - i).map(y => (
+                          <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Calendar
+                    mode="single"
+                    selected={erstzulassung}
+                    onSelect={setErstzulassung}
+                    month={ezCalMonth}
+                    onMonthChange={setEzCalMonth}
+                    locale={de}
+                    initialFocus
+                    className="p-0"
+                  />
+                </div>
               </PopoverContent>
             </Popover>
           </div>
