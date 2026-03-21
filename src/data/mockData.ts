@@ -30,6 +30,17 @@ export interface PlattformUmsatz {
   netto: number; fahrtenAnzahl: number;
 }
 
+export interface AbrechnungPosition {
+  id: string; label: string; betrag: number; vorzeichen: '+' | '-';
+}
+
+export interface Abrechnung {
+  id: string; fahrerId: string; monat: string;
+  positionen: AbrechnungPosition[];
+  status: 'entwurf' | 'abgeschlossen';
+  erstelltAm: string;
+}
+
 export const fahrzeuge: Fahrzeug[] = [
   { id: 'fz1', kennzeichen: 'B-MF 1001', marke: 'Mercedes-Benz', modell: 'V-Klasse', baujahr: 2022, farbe: 'Schwarz', status: 'aktiv' },
   { id: 'fz2', kennzeichen: 'B-MF 1002', marke: 'Volkswagen', modell: 'Touran', baujahr: 2021, farbe: 'Silber', status: 'aktiv' },
