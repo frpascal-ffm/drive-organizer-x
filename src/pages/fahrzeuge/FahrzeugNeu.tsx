@@ -97,6 +97,10 @@ export default function FahrzeugNeu() {
             <Label>Konzessionsnummer</Label>
             <Input placeholder="K-12345" value={konzessionsnummer} onChange={e => setKonzessionsnummer(e.target.value)} className="font-mono text-sm" />
           </div>
+          <div className="space-y-2">
+            <Label>HU/TÜV gültig bis</Label>
+            <Input type="month" value={tuevBis} onChange={e => setTuevBis(e.target.value)} />
+          </div>
         </div>
       </div>
 
@@ -167,16 +171,6 @@ export default function FahrzeugNeu() {
         </div>
       </div>
 
-      {/* TÜV */}
-      <div className="bg-card rounded-xl border p-6 shadow-sm space-y-4">
-        <h3 className="text-sm font-semibold">TÜV / Hauptuntersuchung</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>HU/TÜV gültig bis</Label>
-            <Input type="month" value={tuevBis} onChange={e => setTuevBis(e.target.value)} />
-          </div>
-        </div>
-      </div>
 
       {/* Versicherung / Leasing */}
       <div className="bg-card rounded-xl border p-6 shadow-sm space-y-4">
