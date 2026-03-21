@@ -28,7 +28,7 @@ export default function FahrzeugNeu() {
 
   // Technische Daten
   const [fin, setFin] = useState("");
-  const [erstzulassung, setErstzulassung] = useState("");
+  const [erstzulassung, setErstzulassung] = useState<Date | undefined>();
   const [antrieb, setAntrieb] = useState("");
   const [getriebe, setGetriebe] = useState("");
   const [leistungKw, setLeistungKw] = useState("");
