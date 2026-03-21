@@ -119,7 +119,7 @@ export default function KostenListe() {
               mode="range"
               selected={dateRange}
               onSelect={setDateRange}
-              numberOfMonths={2}
+              numberOfMonths={1}
               locale={de}
               initialFocus
               className={cn("p-3 pointer-events-auto")}
