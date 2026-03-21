@@ -60,7 +60,31 @@ export default function KostenNeu() {
           <div className="space-y-2"><Label>Kategorie *</Label>
             <Select value={kategorie} onValueChange={setKategorie}><SelectTrigger><SelectValue placeholder="Kategorie wählen" /></SelectTrigger>
               <SelectContent>{kats.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent></Select></div>
-          <div className="space-y-2"><Label>Betrag (€) *</Label><Input type="number" placeholder="0,00" value={betrag} onChange={e => setBetrag(e.target.value)} /></div>
+          <div className="space-y-2">
+            <Label>Betrag (€) *</Label>
+            <div className="flex gap-2">
+              <Input type="number" placeholder="0,00" value={betrag} onChange={e => setBetrag(e.target.value)} className="flex-1" />
+              <div className="flex rounded-lg border overflow-hidden shrink-0">
+                {(["brutto", "netto", "steuerneutral"] as Betragsart[]).map(art => (
+                  <button
+                    key={art}
+                    type="button"
+                    onClick={() => setBetragsart(art)}
+                    className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${betragsart === art ? "bg-primary text-primary-foreground" : "hover:bg-muted"} ${art !== "steuerneutral" ? "border-r" : ""}`}
+                  >
+                    {art === "brutto" ? "Brutto" : art === "netto" ? "Netto" : "Steuern."}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {betragNum > 0 && betragsart !== "steuerneutral" && (
+              <div className="flex gap-3 text-[11px] text-muted-foreground pt-0.5">
+                <span>Netto: {nettoWert.toFixed(2)} €</span>
+                <span>MwSt ({MWST_SATZ}%): {mwstWert.toFixed(2)} €</span>
+                <span>Brutto: {bruttoWert.toFixed(2)} €</span>
+              </div>
+            )}
+          </div>
           <div className="space-y-2"><Label>Datum *</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
           {typ === "fix" && <div className="space-y-2"><Label>Intervall</Label>
             <Select value={intervall} onValueChange={setIntervall}><SelectTrigger><SelectValue placeholder="Intervall wählen" /></SelectTrigger>
