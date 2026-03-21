@@ -4,16 +4,41 @@ import { AppSidebar } from "./AppSidebar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Search, Plus, Menu } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function Layout() {
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleToggle = () => {
+    if (isMobile) {
+      setMobileOpen(prev => !prev);
+    } else {
+      setCollapsed(prev => !prev);
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full">
-      <AppSidebar collapsed={collapsed} />
+      {/* Mobile backdrop */}
+      {isMobile && mobileOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 transition-opacity"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <AppSidebar
+        collapsed={!isMobile && collapsed}
+        open={isMobile ? mobileOpen : true}
+        isMobile={isMobile}
+        onClose={() => setMobileOpen(false)}
+      />
+
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-14 border-b bg-card/80 backdrop-blur-sm flex items-center px-4 gap-4 sticky top-0 z-20">
-          <Button variant="ghost" size="icon" onClick={() => setCollapsed(!collapsed)} className="shrink-0">
+          <Button variant="ghost" size="icon" onClick={handleToggle} className="shrink-0">
             <Menu className="h-4 w-4" />
           </Button>
           <span className="font-semibold text-sm hidden sm:block">MietFleet GmbH</span>
