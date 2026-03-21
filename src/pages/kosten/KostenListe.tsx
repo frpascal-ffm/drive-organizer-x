@@ -139,5 +139,3 @@ export default function KostenListe() {
     </div>
   );
 }
-
-import { Fragment } from "react";
