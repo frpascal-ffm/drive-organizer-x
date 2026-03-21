@@ -40,6 +40,7 @@ export default function FahrzeugNeu() {
 
   // TÜV
   const [tuevBis, setTuevBis] = useState<Date | undefined>();
+  const [tuevCalMonth, setTuevCalMonth] = useState<Date>(new Date());
 
   // Versicherung / Leasing
   const [versicherung, setVersicherung] = useState("");
