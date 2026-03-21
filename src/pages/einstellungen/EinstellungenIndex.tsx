@@ -8,9 +8,16 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Save, Moon, Plus, X } from "lucide-react";
 
-const DEFAULT_TYPEN = ["Krankenfahrt", "Flughafentransfer", "Privatfahrt", "Firmenfahrt"];
+interface FahrttypEntry { name: string; enabled: boolean; }
 
-function loadFahrttypen(): string[] {
+const DEFAULT_TYPEN: FahrttypEntry[] = [
+  { name: "Krankenfahrt", enabled: true },
+  { name: "Flughafentransfer", enabled: true },
+  { name: "Privatfahrt", enabled: true },
+  { name: "Firmenfahrt", enabled: true },
+];
+
+function loadFahrttypen(): FahrttypEntry[] {
   try {
     const saved = localStorage.getItem("fahrttypen");
     if (saved) return JSON.parse(saved);
@@ -18,7 +25,7 @@ function loadFahrttypen(): string[] {
   return [...DEFAULT_TYPEN];
 }
 
-function saveFahrttypen(typen: string[]) {
+function saveFahrttypen(typen: FahrttypEntry[]) {
   localStorage.setItem("fahrttypen", JSON.stringify(typen));
 }
 
@@ -30,28 +37,34 @@ export default function EinstellungenIndex() {
   const [email, setEmail] = useState("info@mietfleet.de");
   const [mwst, setMwst] = useState("19");
 
-  const [fahrttypen, setFahrttypen] = useState<string[]>(loadFahrttypen);
+  const [fahrttypen, setFahrttypen] = useState<FahrttypEntry[]>(loadFahrttypen);
   const [neuerTyp, setNeuerTyp] = useState("");
 
   const addTyp = () => {
     const name = neuerTyp.trim();
     if (!name) return;
-    if (fahrttypen.some(t => t.toLowerCase() === name.toLowerCase())) {
+    if (fahrttypen.some(t => t.name.toLowerCase() === name.toLowerCase())) {
       toast.error("Dieser Fahrttyp existiert bereits.");
       return;
     }
-    const updated = [...fahrttypen, name];
+    const updated = [...fahrttypen, { name, enabled: true }];
     setFahrttypen(updated);
     saveFahrttypen(updated);
     setNeuerTyp("");
     toast.success(`„${name}" hinzugefügt.`);
   };
 
-  const removeTyp = (typ: string) => {
-    const updated = fahrttypen.filter(t => t !== typ);
+  const removeTyp = (name: string) => {
+    const updated = fahrttypen.filter(t => t.name !== name);
     setFahrttypen(updated);
     saveFahrttypen(updated);
-    toast(`„${typ}" entfernt.`, { duration: 2000 });
+    toast(`„${name}" entfernt.`, { duration: 2000 });
+  };
+
+  const toggleTyp = (name: string) => {
+    const updated = fahrttypen.map(t => t.name === name ? { ...t, enabled: !t.enabled } : t);
+    setFahrttypen(updated);
+    saveFahrttypen(updated);
   };
 
   return (
@@ -72,23 +85,26 @@ export default function EinstellungenIndex() {
       <div className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Fahrttypen</h3>
         <p className="text-sm text-muted-foreground">Fahrttypen für Ihren Betrieb verwalten. Typen können hinzugefügt und entfernt werden.</p>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {fahrttypen.map(typ => (
-            <div key={typ} className="flex items-center justify-between px-3 py-2.5 rounded-lg border bg-muted/20 group">
-              <span className="text-sm font-medium">{typ}</span>
-              <button
-                onClick={() => removeTyp(typ)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+            <div key={typ.name} className="flex items-center justify-between group">
+              <Label className={typ.enabled ? "" : "text-muted-foreground"}>{typ.name}</Label>
+              <div className="flex items-center gap-2">
+                <Switch checked={typ.enabled} onCheckedChange={() => toggleTyp(typ.name)} />
+                <button
+                  onClick={() => removeTyp(typ.name)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           ))}
           {fahrttypen.length === 0 && (
             <p className="text-sm text-muted-foreground py-2">Keine Fahrttypen definiert.</p>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-1">
           <Input
             placeholder="Neuer Fahrttyp…"
             value={neuerTyp}
