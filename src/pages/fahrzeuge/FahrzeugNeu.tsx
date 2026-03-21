@@ -129,7 +129,17 @@ export default function FahrzeugNeu() {
           </div>
           <div className="space-y-2">
             <Label>Erstzulassung</Label>
-            <Input type="date" value={erstzulassung} onChange={e => setErstzulassung(e.target.value)} />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !erstzulassung && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {erstzulassung ? format(erstzulassung, "dd. MMMM yyyy", { locale: de }) : "Datum wählen"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={erstzulassung} onSelect={setErstzulassung} locale={de} initialFocus captionLayout="dropdown-buttons" fromYear={2000} toYear={2026} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="space-y-2">
             <Label>Antrieb</Label>
