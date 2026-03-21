@@ -101,6 +101,45 @@ export const plattformUmsaetze: PlattformUmsatz[] = [
   { id: 'pu4', plattform: 'Bolt', zeitraumVon: '2026-02-16', zeitraumBis: '2026-02-28', fahrzeugId: 'fz5', fahrerId: 'fa4', betrag: 1680, provision: 420, netto: 1260, fahrtenAnzahl: 33 },
 ];
 
+export const abrechnungen: Abrechnung[] = [
+  {
+    id: 'abr1', fahrerId: 'fa1', monat: '2026-03', status: 'abgeschlossen', erstelltAm: '2026-03-20',
+    positionen: [
+      { id: 'p1', label: 'Eigene Fahrten (5)', betrag: 328, vorzeichen: '+' },
+      { id: 'p2', label: '19% Umsatzsteuer', betrag: 62.32, vorzeichen: '-' },
+      { id: 'p3', label: 'Bruttolohn', betrag: 180, vorzeichen: '-' },
+      { id: 'p4', label: 'Trinkgeld', betrag: 45, vorzeichen: '+' },
+    ],
+  },
+  {
+    id: 'abr2', fahrerId: 'fa2', monat: '2026-03', status: 'abgeschlossen', erstelltAm: '2026-03-20',
+    positionen: [
+      { id: 'p5', label: 'Eigene Fahrten (4)', betrag: 349, vorzeichen: '+' },
+      { id: 'p6', label: '19% Umsatzsteuer', betrag: 66.31, vorzeichen: '-' },
+      { id: 'p7', label: 'Bruttolohn', betrag: 195, vorzeichen: '-' },
+      { id: 'p8', label: 'Blitzer', betrag: 28.50, vorzeichen: '-' },
+    ],
+  },
+  {
+    id: 'abr3', fahrerId: 'fa3', monat: '2026-03', status: 'entwurf', erstelltAm: '2026-03-21',
+    positionen: [
+      { id: 'p9', label: 'Plattformumsätze (netto)', betrag: 3300, vorzeichen: '+' },
+      { id: 'p10', label: '19% Umsatzsteuer', betrag: 627, vorzeichen: '-' },
+      { id: 'p11', label: 'Bruttolohn', betrag: 1800, vorzeichen: '-' },
+    ],
+  },
+  {
+    id: 'abr4', fahrerId: 'fa1', monat: '2026-02', status: 'abgeschlossen', erstelltAm: '2026-02-28',
+    positionen: [
+      { id: 'p12', label: 'Eigene Fahrten (8)', betrag: 510, vorzeichen: '+' },
+      { id: 'p13', label: '19% Umsatzsteuer', betrag: 96.90, vorzeichen: '-' },
+      { id: 'p14', label: 'Bruttolohn', betrag: 220, vorzeichen: '-' },
+    ],
+  },
+];
+
+export const getAbrechnungenByFahrer = (fahrerId: string) => abrechnungen.filter(a => a.fahrerId === fahrerId);
+
 export const getFahrzeug = (id: string) => fahrzeuge.find(f => f.id === id);
 export const getFahrer = (id: string) => fahrerList.find(f => f.id === id);
 export const getFahrt = (id: string) => fahrten.find(f => f.id === id);
