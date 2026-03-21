@@ -25,6 +25,7 @@ interface DisplayRow {
 
 export default function KostenListe() {
   const [fzFilter, setFzFilter] = useState<string[]>([]);
+  const [fzSearch, setFzSearch] = useState("");
   const [fzDropdownOpen, setFzDropdownOpen] = useState(false);
   const [typFilter, setTypFilter] = useState("alle");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
