@@ -13,7 +13,7 @@ export interface Fahrer {
 }
 export interface Kommentar { id: string; text: string; datum: string; autor: string; }
 export interface Fahrt {
-  id: string; typ: FahrtTyp; datum: string; uhrzeit: string;
+  id: string; fahrtNummer: string; typ: FahrtTyp; datum: string; uhrzeit: string;
   von: string; nach: string; fahrerId: string; fahrzeugId: string;
   status: FahrtStatus; preis?: number; mwst?: number;
   kunde?: string; notiz?: string; kommentare: Kommentar[];
