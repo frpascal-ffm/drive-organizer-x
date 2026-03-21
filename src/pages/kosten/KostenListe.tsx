@@ -136,12 +136,16 @@ export default function KostenListe() {
           </PopoverContent>
         </Popover>
 
-        {/* Fahrzeugsuche */}
+        {/* Fahrzeugsuche (Multi-Select) */}
         <Popover open={fzDropdownOpen} onOpenChange={setFzDropdownOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal min-w-[180px] justify-start", fzFilter === "alle" && "text-muted-foreground")}>
+            <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal min-w-[180px] justify-start", fzFilter.length === 0 && "text-muted-foreground")}>
               <Search className="h-3.5 w-3.5 shrink-0" />
-              {fzFilter !== "alle" ? getFahrzeug(fzFilter)?.kennzeichen : "Alle Fahrzeuge"}
+              {fzFilter.length === 0
+                ? "Alle Fahrzeuge"
+                : fzFilter.length === 1
+                  ? getFahrzeug(fzFilter[0])?.kennzeichen
+                  : `${fzFilter.length} Fahrzeuge`}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-56 p-0" align="start">
@@ -155,28 +159,28 @@ export default function KostenListe() {
               />
             </div>
             <div className="max-h-48 overflow-y-auto p-1">
-              <button
-                onClick={() => { setFzFilter("alle"); setFzSearch(""); setFzDropdownOpen(false); }}
-                className={cn("w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted", fzFilter === "alle" && "bg-accent text-accent-foreground")}
-              >
-                Alle Fahrzeuge
-              </button>
               {fahrzeuge
                 .filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase()))
-                .map(f => (
-                  <button
-                    key={f.id}
-                    onClick={() => { setFzFilter(f.id); setFzSearch(""); setFzDropdownOpen(false); }}
-                    className={cn("w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted", fzFilter === f.id && "bg-accent text-accent-foreground")}
-                  >
-                    <span className="font-mono font-medium">{f.kennzeichen}</span>
-                    <span className="text-muted-foreground ml-1.5 text-xs">{f.marke} {f.modell}</span>
-                  </button>
-                ))}
+                .map(f => {
+                  const selected = fzFilter.includes(f.id);
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => setFzFilter(prev => selected ? prev.filter(id => id !== f.id) : [...prev, f.id])}
+                      className={cn("w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted flex items-center gap-2", selected && "bg-accent text-accent-foreground")}
+                    >
+                      <div className={cn("h-3.5 w-3.5 rounded border flex items-center justify-center shrink-0", selected ? "bg-primary border-primary" : "border-input")}>
+                        {selected && <X className="h-2.5 w-2.5 text-primary-foreground" />}
+                      </div>
+                      <span className="font-mono font-medium">{f.kennzeichen}</span>
+                      <span className="text-muted-foreground text-xs">{f.marke} {f.modell}</span>
+                    </button>
+                  );
+                })}
             </div>
-            {fzFilter !== "alle" && (
+            {fzFilter.length > 0 && (
               <div className="border-t px-3 py-2 flex justify-end">
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFzFilter("alle"); setFzSearch(""); }}>
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setFzFilter([])}>
                   <X className="h-3 w-3 mr-1" /> Zurücksetzen
                 </Button>
               </div>
