@@ -19,8 +19,9 @@ export default function FahrzeugNeu() {
   const [baujahr, setBaujahr] = useState("");
   const [farbe, setFarbe] = useState("");
   const [status, setStatus] = useState("aktiv");
+  const [konzessionsnummer, setKonzessionsnummer] = useState("");
 
-  // Fahrzeugdetails
+  // Technische Daten
   const [fin, setFin] = useState("");
   const [erstzulassung, setErstzulassung] = useState("");
   const [antrieb, setAntrieb] = useState("");
@@ -29,8 +30,9 @@ export default function FahrzeugNeu() {
   const [hubraum, setHubraum] = useState("");
   const [sitzplaetze, setSitzplaetze] = useState("");
   const [fahrzeugklasse, setFahrzeugklasse] = useState("");
+  const [kmStand, setKmStand] = useState("");
 
-  // TÜV / Prüfungen
+  // TÜV
   const [tuevBis, setTuevBis] = useState("");
 
   // Versicherung / Leasing
@@ -40,9 +42,7 @@ export default function FahrzeugNeu() {
   const [leasingEnde, setLeasingEnde] = useState("");
   const [vertragsnummer, setVertragsnummer] = useState("");
 
-  // Sonstiges
-  const [kmStand, setKmStand] = useState("");
-  const [konzessionsnummer, setKonzessionsnummer] = useState("");
+  // Notizen
   const [notiz, setNotiz] = useState("");
 
   const handleSave = () => {
@@ -92,6 +92,10 @@ export default function FahrzeugNeu() {
           <div className="space-y-2">
             <Label>Farbe</Label>
             <Input placeholder="Schwarz" value={farbe} onChange={e => setFarbe(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Konzessionsnummer</Label>
+            <Input placeholder="K-12345" value={konzessionsnummer} onChange={e => setKonzessionsnummer(e.target.value)} className="font-mono text-sm" />
           </div>
         </div>
       </div>
@@ -156,39 +160,27 @@ export default function FahrzeugNeu() {
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-2">
+            <Label>Aktueller km-Stand</Label>
+            <Input type="number" placeholder="45000" value={kmStand} onChange={e => setKmStand(e.target.value)} />
+          </div>
         </div>
       </div>
 
-      {/* TÜV / Prüfungen */}
+      {/* TÜV */}
       <div className="bg-card rounded-xl border p-6 shadow-sm space-y-4">
-        <h3 className="text-sm font-semibold">TÜV / Prüfungen & Fristen</h3>
+        <h3 className="text-sm font-semibold">TÜV / Hauptuntersuchung</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>HU/TÜV gültig bis</Label>
             <Input type="month" value={tuevBis} onChange={e => setTuevBis(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>AU/ASU gültig bis</Label>
-            <Input type="month" value={asuBis} onChange={e => setAsuBis(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>Eichung Taxameter bis</Label>
-            <Input type="month" value={eichungBis} onChange={e => setEichungBis(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>BOF-Prüfung bis</Label>
-            <Input type="month" value={bofBis} onChange={e => setBofBis(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>P-Schein / Beförderungsschein bis</Label>
-            <Input type="month" value={pBefBis} onChange={e => setPBefBis(e.target.value)} />
           </div>
         </div>
       </div>
 
       {/* Versicherung / Leasing */}
       <div className="bg-card rounded-xl border p-6 shadow-sm space-y-4">
-        <h3 className="text-sm font-semibold">Versicherung & Leasing</h3>
+        <h3 className="text-sm font-semibold">Versicherung & Leasing/Finanzierung</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Versicherungsgesellschaft</Label>
@@ -199,7 +191,7 @@ export default function FahrzeugNeu() {
             <Input placeholder="VN-123456789" value={versicherungsnummer} onChange={e => setVersicherungsnummer(e.target.value)} className="font-mono text-sm" />
           </div>
           <div className="space-y-2">
-            <Label>Leasinggeber</Label>
+            <Label>Leasing/Finanzierung</Label>
             <Input placeholder="Mercedes-Benz Leasing" value={leasinggeber} onChange={e => setLeasinggeber(e.target.value)} />
           </div>
           <div className="space-y-2">
@@ -213,23 +205,10 @@ export default function FahrzeugNeu() {
         </div>
       </div>
 
-      {/* Sonstiges */}
+      {/* Notizen */}
       <div className="bg-card rounded-xl border p-6 shadow-sm space-y-4">
-        <h3 className="text-sm font-semibold">Sonstiges</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Aktueller km-Stand</Label>
-            <Input type="number" placeholder="45000" value={kmStand} onChange={e => setKmStand(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>Konzessionsnummer</Label>
-            <Input placeholder="K-12345" value={konzessionsnummer} onChange={e => setKonzessionsnummer(e.target.value)} className="font-mono text-sm" />
-          </div>
-          <div className="space-y-2 sm:col-span-2">
-            <Label>Notizen</Label>
-            <Textarea placeholder="Besonderheiten, Ausstattung, Anmerkungen…" value={notiz} onChange={e => setNotiz(e.target.value)} rows={3} />
-          </div>
-        </div>
+        <h3 className="text-sm font-semibold">Notizen</h3>
+        <Textarea placeholder="Besonderheiten, Ausstattung, Anmerkungen…" value={notiz} onChange={e => setNotiz(e.target.value)} rows={3} />
       </div>
 
       {/* Actions */}
