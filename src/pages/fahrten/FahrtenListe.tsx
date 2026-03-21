@@ -199,11 +199,67 @@ export default function FahrtenListe() {
       <PageHeader title="Fahrten" description={`${filtered.length} von ${fahrten.length} Fahrten`}
         action={<Button asChild><Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />Neue Fahrt</Link></Button>} />
 
+      {/* Row 1: Search + Date Range */}
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input placeholder="ID, Route, Fahrer, Kunde…" value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-sm" />
         </div>
+
+        {/* Combined Date Range Picker */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal min-w-[220px] justify-start", !hasDateFilter && "text-muted-foreground")}>
+              <CalendarIcon className="h-3.5 w-3.5 shrink-0" />
+              {dateFrom && dateTo
+                ? `${format(dateFrom, "dd.MM.yy", { locale: de })} – ${format(dateTo, "dd.MM.yy", { locale: de })}`
+                : dateFrom
+                  ? `Ab ${format(dateFrom, "dd.MM.yy", { locale: de })}`
+                  : dateTo
+                    ? `Bis ${format(dateTo, "dd.MM.yy", { locale: de })}`
+                    : "Zeitraum wählen"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <div className="flex">
+              <div className="border-r">
+                <div className="px-3 py-2 border-b">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Von</p>
+                </div>
+                <Calendar
+                  mode="single"
+                  selected={dateFrom}
+                  onSelect={setDateFrom}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </div>
+              <div>
+                <div className="px-3 py-2 border-b">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Bis</p>
+                </div>
+                <Calendar
+                  mode="single"
+                  selected={dateTo}
+                  onSelect={setDateTo}
+                  disabled={(date) => dateFrom ? date < dateFrom : false}
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </div>
+            </div>
+            {hasDateFilter && (
+              <div className="border-t px-3 py-2 flex justify-end">
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={clearDates}>
+                  <X className="h-3 w-3 mr-1" /> Zurücksetzen
+                </Button>
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      {/* Row 2: Filters + Column Settings */}
+      <div className="flex flex-wrap gap-3 items-center">
         <Select value={typFilter} onValueChange={setTypFilter}>
           <SelectTrigger className="w-[170px] h-9 text-sm"><SelectValue placeholder="Fahrttyp" /></SelectTrigger>
           <SelectContent>
@@ -220,38 +276,6 @@ export default function FahrtenListe() {
             <SelectItem value="storniert">Storniert</SelectItem>
           </SelectContent>
         </Select>
-
-        {/* Date Range */}
-        <div className="flex items-center gap-1.5">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal", !dateFrom && "text-muted-foreground")}>
-                <CalendarIcon className="h-3.5 w-3.5" />
-                {dateFrom ? format(dateFrom, "dd.MM.yy", { locale: de }) : "Von"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus className={cn("p-3 pointer-events-auto")} />
-            </PopoverContent>
-          </Popover>
-          <span className="text-xs text-muted-foreground">–</span>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal", !dateTo && "text-muted-foreground")}>
-                <CalendarIcon className="h-3.5 w-3.5" />
-                {dateTo ? format(dateTo, "dd.MM.yy", { locale: de }) : "Bis"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={dateTo} onSelect={setDateTo} disabled={(date) => dateFrom ? date < dateFrom : false} initialFocus className={cn("p-3 pointer-events-auto")} />
-            </PopoverContent>
-          </Popover>
-          {hasDateFilter && (
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={clearDates}>
-              <X className="h-3.5 w-3.5" />
-            </Button>
-          )}
-        </div>
 
         {/* Column Settings Toggle */}
         <Popover open={showColumnSettings} onOpenChange={setShowColumnSettings}>
