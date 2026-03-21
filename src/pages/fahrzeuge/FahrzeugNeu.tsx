@@ -104,7 +104,17 @@ export default function FahrzeugNeu() {
           </div>
           <div className="space-y-2">
             <Label>HU/TÜV gültig bis</Label>
-            <Input type="month" value={tuevBis} onChange={e => setTuevBis(e.target.value)} />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !tuevBis && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {tuevBis ? format(tuevBis, "MMMM yyyy", { locale: de }) : "Monat wählen"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={tuevBis} onSelect={setTuevBis} locale={de} initialFocus className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
