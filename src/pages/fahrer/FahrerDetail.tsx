@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
-import { getFahrer, fahrten, getFahrzeug, formatCurrency, formatDate, fahrtTypLabels } from "@/data/mockData";
+import { getFahrer, fahrten, getFahrzeug, formatCurrency, formatDate, fahrtTypLabels, getAbrechnungenByFahrer } from "@/data/mockData";
 
 export default function FahrerDetail() {
   const { id } = useParams();
