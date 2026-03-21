@@ -6,7 +6,21 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
-import { Save, Moon } from "lucide-react";
+import { Save, Moon, Plus, X } from "lucide-react";
+
+const DEFAULT_TYPEN = ["Krankenfahrt", "Flughafentransfer", "Privatfahrt", "Firmenfahrt"];
+
+function loadFahrttypen(): string[] {
+  try {
+    const saved = localStorage.getItem("fahrttypen");
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return [...DEFAULT_TYPEN];
+}
+
+function saveFahrttypen(typen: string[]) {
+  localStorage.setItem("fahrttypen", JSON.stringify(typen));
+}
 
 export default function EinstellungenIndex() {
   const { theme, setTheme } = useTheme();
@@ -16,10 +30,29 @@ export default function EinstellungenIndex() {
   const [email, setEmail] = useState("info@mietfleet.de");
   const [mwst, setMwst] = useState("19");
 
-  const [krankenfahrt, setKrankenfahrt] = useState(true);
-  const [flughafentransfer, setFlughafentransfer] = useState(true);
-  const [privatfahrt, setPrivatfahrt] = useState(true);
-  const [firmenfahrt, setFirmenfahrt] = useState(true);
+  const [fahrttypen, setFahrttypen] = useState<string[]>(loadFahrttypen);
+  const [neuerTyp, setNeuerTyp] = useState("");
+
+  const addTyp = () => {
+    const name = neuerTyp.trim();
+    if (!name) return;
+    if (fahrttypen.some(t => t.toLowerCase() === name.toLowerCase())) {
+      toast.error("Dieser Fahrttyp existiert bereits.");
+      return;
+    }
+    const updated = [...fahrttypen, name];
+    setFahrttypen(updated);
+    saveFahrttypen(updated);
+    setNeuerTyp("");
+    toast.success(`„${name}" hinzugefügt.`);
+  };
+
+  const removeTyp = (typ: string) => {
+    const updated = fahrttypen.filter(t => t !== typ);
+    setFahrttypen(updated);
+    saveFahrttypen(updated);
+    toast(`„${typ}" entfernt.`, { duration: 2000 });
+  };
 
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
@@ -38,12 +71,34 @@ export default function EinstellungenIndex() {
 
       <div className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Fahrttypen</h3>
-        <p className="text-sm text-muted-foreground">Aktivieren oder deaktivieren Sie Fahrttypen für Ihren Betrieb.</p>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between"><Label>Krankenfahrt</Label><Switch checked={krankenfahrt} onCheckedChange={setKrankenfahrt} /></div>
-          <div className="flex items-center justify-between"><Label>Flughafentransfer</Label><Switch checked={flughafentransfer} onCheckedChange={setFlughafentransfer} /></div>
-          <div className="flex items-center justify-between"><Label>Privatfahrt</Label><Switch checked={privatfahrt} onCheckedChange={setPrivatfahrt} /></div>
-          <div className="flex items-center justify-between"><Label>Firmenfahrt</Label><Switch checked={firmenfahrt} onCheckedChange={setFirmenfahrt} /></div>
+        <p className="text-sm text-muted-foreground">Fahrttypen für Ihren Betrieb verwalten. Typen können hinzugefügt und entfernt werden.</p>
+        <div className="space-y-2">
+          {fahrttypen.map(typ => (
+            <div key={typ} className="flex items-center justify-between px-3 py-2.5 rounded-lg border bg-muted/20 group">
+              <span className="text-sm font-medium">{typ}</span>
+              <button
+                onClick={() => removeTyp(typ)}
+                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+          {fahrttypen.length === 0 && (
+            <p className="text-sm text-muted-foreground py-2">Keine Fahrttypen definiert.</p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Input
+            placeholder="Neuer Fahrttyp…"
+            value={neuerTyp}
+            onChange={e => setNeuerTyp(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && addTyp()}
+            className="h-9 text-sm"
+          />
+          <Button size="sm" className="h-9 shrink-0" onClick={addTyp} disabled={!neuerTyp.trim()}>
+            <Plus className="h-3.5 w-3.5 mr-1" />Hinzufügen
+          </Button>
         </div>
       </div>
 
