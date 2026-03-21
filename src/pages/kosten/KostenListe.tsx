@@ -81,7 +81,7 @@ export default function KostenListe() {
 
   const filtered = useMemo(() => {
     let r = [...rows];
-    if (fzFilter !== "alle") r = r.filter(k => k.fahrzeugId === fzFilter);
+    if (fzFilter.length > 0) r = r.filter(k => fzFilter.includes(k.fahrzeugId));
     if (typFilter !== "alle") r = r.filter(k => k.typ === typFilter);
     if (dateFrom) {
       const fromStr = format(dateFrom, "yyyy-MM-dd");
