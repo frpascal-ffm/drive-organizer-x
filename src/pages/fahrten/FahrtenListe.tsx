@@ -111,8 +111,10 @@ export default function FahrtenListe() {
   const [statusFilter, setStatusFilter] = useState("alle");
   const [sortBy, setSortBy] = useState<"datum" | "preis">("datum");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [dateFrom, setDateFrom] = useState<Date | undefined>();
-  const [dateTo, setDateTo] = useState<Date | undefined>();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  const dateFrom = dateRange?.from;
+  const dateTo = dateRange?.to;
 
   const [columnConfig, setColumnConfig] = useState(loadColumnConfig);
   const [showColumnSettings, setShowColumnSettings] = useState(false);
