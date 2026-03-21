@@ -35,8 +35,6 @@ export default function FahrzeugNeu() {
   const [leistungKw, setLeistungKw] = useState("");
   const [hubraum, setHubraum] = useState("");
   const [sitzplaetze, setSitzplaetze] = useState("");
-  const [fahrzeugklasse, setFahrzeugklasse] = useState("");
-  const [kmStand, setKmStand] = useState("");
 
   // TÜV
   const [tuevBis, setTuevBis] = useState<Date | undefined>();
