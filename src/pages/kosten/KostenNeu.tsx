@@ -62,21 +62,19 @@ export default function KostenNeu() {
               <SelectContent>{kats.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent></Select></div>
           <div className="space-y-2">
             <Label>Betrag (€) *</Label>
-            <div className="flex gap-2">
-              <Input type="number" placeholder="0,00" value={betrag} onChange={e => setBetrag(e.target.value)} className="flex-1" />
-              <div className="flex rounded-lg border overflow-hidden shrink-0">
-                {(["brutto", "netto", "steuerneutral"] as Betragsart[]).map(art => (
-                  <button
-                    key={art}
-                    type="button"
-                    onClick={() => setBetragsart(art)}
-                    className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${betragsart === art ? "bg-primary text-primary-foreground" : "hover:bg-muted"} ${art !== "steuerneutral" ? "border-r" : ""}`}
-                  >
-                    {art === "brutto" ? "Brutto" : art === "netto" ? "Netto" : "Steuern."}
-                  </button>
-                ))}
-              </div>
+            <div className="flex rounded-lg border overflow-hidden w-fit">
+              {(["brutto", "netto", "steuerneutral"] as Betragsart[]).map(art => (
+                <button
+                  key={art}
+                  type="button"
+                  onClick={() => setBetragsart(art)}
+                  className={`px-3 py-2 text-xs font-medium transition-colors ${betragsart === art ? "bg-primary text-primary-foreground" : "hover:bg-muted"} ${art !== "steuerneutral" ? "border-r" : ""}`}
+                >
+                  {art === "brutto" ? "Brutto" : art === "netto" ? "Netto" : "Steuerneutral"}
+                </button>
+              ))}
             </div>
+            <Input type="number" placeholder="0,00" value={betrag} onChange={e => setBetrag(e.target.value)} />
             {betragNum > 0 && betragsart !== "steuerneutral" && (
               <div className="flex gap-3 text-[11px] text-muted-foreground pt-0.5">
                 <span>Netto: {nettoWert.toFixed(2)} €</span>
