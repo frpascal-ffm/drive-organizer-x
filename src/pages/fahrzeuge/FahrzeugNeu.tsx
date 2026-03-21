@@ -35,8 +35,6 @@ export default function FahrzeugNeu() {
   const [leistungKw, setLeistungKw] = useState("");
   const [hubraum, setHubraum] = useState("");
   const [sitzplaetze, setSitzplaetze] = useState("");
-  const [fahrzeugklasse, setFahrzeugklasse] = useState("");
-  const [kmStand, setKmStand] = useState("");
 
   // TÜV
   const [tuevBis, setTuevBis] = useState<Date | undefined>();
@@ -280,22 +278,6 @@ export default function FahrzeugNeu() {
           <div className="space-y-2">
             <Label>Sitzplätze</Label>
             <Input type="number" placeholder="5" value={sitzplaetze} onChange={e => setSitzplaetze(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>Fahrzeugklasse</Label>
-            <Select value={fahrzeugklasse} onValueChange={setFahrzeugklasse}>
-              <SelectTrigger><SelectValue placeholder="Auswählen" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pkw">PKW</SelectItem>
-                <SelectItem value="van">Van / Kleinbus</SelectItem>
-                <SelectItem value="transporter">Transporter</SelectItem>
-                <SelectItem value="kombi">Kombi</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Aktueller km-Stand</Label>
-            <Input type="number" placeholder="45000" value={kmStand} onChange={e => setKmStand(e.target.value)} />
           </div>
         </div>
       </div>
