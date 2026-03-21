@@ -15,6 +15,7 @@ import { Plus, Search, ArrowUpDown, CalendarIcon, X, Settings2, GripVertical } f
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Fahrt } from "@/data/mockData";
+import type { DateRange } from "react-day-picker";
 
 interface ColumnDef {
   key: string;
