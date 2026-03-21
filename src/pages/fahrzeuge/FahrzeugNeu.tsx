@@ -97,6 +97,10 @@ export default function FahrzeugNeu() {
             <Label>Konzessionsnummer</Label>
             <Input placeholder="K-12345" value={konzessionsnummer} onChange={e => setKonzessionsnummer(e.target.value)} className="font-mono text-sm" />
           </div>
+          <div className="space-y-2">
+            <Label>HU/TÜV gültig bis</Label>
+            <Input type="month" value={tuevBis} onChange={e => setTuevBis(e.target.value)} />
+          </div>
         </div>
       </div>
 
