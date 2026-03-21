@@ -40,7 +40,10 @@ export default function FahrerDetail() {
           <div><p className="text-muted-foreground text-xs">Adresse</p><p className="font-medium">{f.adresse}</p></div>
           <div><p className="text-muted-foreground text-xs">Telefon</p><p className="font-medium">{f.telefon}</p></div>
           {f.email && <div><p className="text-muted-foreground text-xs">E-Mail</p><p className="font-medium">{f.email}</p></div>}
-          {f.notiz && <div><p className="text-muted-foreground text-xs">Notiz</p><p className="font-medium">{f.notiz}</p></div>}
+          <div className="sm:col-span-2">
+            <p className="text-muted-foreground text-xs">Notiz</p>
+            <p className="font-medium">{f.notiz || "–"}</p>
+          </div>
         </div>
       </div>
 
