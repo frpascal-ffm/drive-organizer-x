@@ -10,6 +10,7 @@ import FahrtenListe from "./pages/fahrten/FahrtenListe";
 import FahrtNeu from "./pages/fahrten/FahrtNeu";
 import FahrtDetail from "./pages/fahrten/FahrtDetail";
 import UmsaetzeIndex from "./pages/umsaetze/UmsaetzeIndex";
+import PlattformImport from "./pages/umsaetze/PlattformImport";
 import FahrzeugeListe from "./pages/fahrzeuge/FahrzeugeListe";
 import FahrzeugDetail from "./pages/fahrzeuge/FahrzeugDetail";
 import FahrzeugNeu from "./pages/fahrzeuge/FahrzeugNeu";
