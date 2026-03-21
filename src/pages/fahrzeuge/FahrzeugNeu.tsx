@@ -40,6 +40,7 @@ export default function FahrzeugNeu() {
 
   // TÜV
   const [tuevBis, setTuevBis] = useState<Date | undefined>();
+  const [tuevCalMonth, setTuevCalMonth] = useState<Date>(new Date());
 
   // Versicherung / Leasing
   const [versicherung, setVersicherung] = useState("");
@@ -109,11 +110,62 @@ export default function FahrzeugNeu() {
               <PopoverTrigger asChild>
                 <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !tuevBis && "text-muted-foreground")}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {tuevBis ? format(tuevBis, "MMMM yyyy", { locale: de }) : "Monat wählen"}
+                  {tuevBis ? format(tuevBis, "dd. MMMM yyyy", { locale: de }) : "Datum wählen"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" selected={tuevBis} onSelect={setTuevBis} locale={de} initialFocus className={cn("p-3 pointer-events-auto")} />
+                <div className="p-3 pointer-events-auto space-y-3">
+                  <div className="flex gap-2">
+                    <Select
+                      value={tuevBis ? String(tuevBis.getMonth()) : String(new Date().getMonth())}
+                      onValueChange={(v) => {
+                        const d = tuevBis ? new Date(tuevBis) : new Date();
+                        d.setMonth(parseInt(v));
+                        setTuevBis(d);
+                        setTuevCalMonth(d);
+                      }}
+                    >
+                      <SelectTrigger className="flex-1 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem key={i} value={String(i)}>
+                            {format(new Date(2024, i, 1), "MMMM", { locale: de })}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={tuevBis ? String(tuevBis.getFullYear()) : String(new Date().getFullYear())}
+                      onValueChange={(v) => {
+                        const d = tuevBis ? new Date(tuevBis) : new Date();
+                        d.setFullYear(parseInt(v));
+                        setTuevBis(d);
+                        setTuevCalMonth(d);
+                      }}
+                    >
+                      <SelectTrigger className="w-[90px] h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 10 }, (_, i) => 2030 - i).map(y => (
+                          <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Calendar
+                    mode="single"
+                    selected={tuevBis}
+                    onSelect={setTuevBis}
+                    month={tuevCalMonth}
+                    onMonthChange={setTuevCalMonth}
+                    locale={de}
+                    initialFocus
+                    className="p-0"
+                  />
+                </div>
               </PopoverContent>
             </Popover>
           </div>
