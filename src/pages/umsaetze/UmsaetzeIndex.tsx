@@ -17,7 +17,13 @@ export default function UmsaetzeIndex() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Umsätze" description="Einnahmen aus eigenen Fahrten und Plattformen" />
+      <div className="flex items-center justify-between">
+        <PageHeader title="Umsätze" description="Einnahmen aus eigenen Fahrten und Plattformen" />
+        <Button onClick={() => navigate("/umsaetze/import")} size="sm">
+          <Upload className="h-4 w-4 mr-1.5" />
+          Plattform-Import
+        </Button>
+      </div>
       <div className="flex gap-1 bg-muted/50 p-1 rounded-lg w-fit">
         {tabs.map(t => (
           <button key={t} onClick={() => setTab(t)}
