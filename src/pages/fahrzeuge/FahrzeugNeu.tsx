@@ -38,7 +38,7 @@ export default function FahrzeugNeu() {
   const [kmStand, setKmStand] = useState("");
 
   // TÜV
-  const [tuevBis, setTuevBis] = useState("");
+  const [tuevBis, setTuevBis] = useState<Date | undefined>();
 
   // Versicherung / Leasing
   const [versicherung, setVersicherung] = useState("");
