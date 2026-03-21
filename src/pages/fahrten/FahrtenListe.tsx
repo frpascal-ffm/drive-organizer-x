@@ -228,32 +228,14 @@ export default function FahrtenListe() {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <div className="flex">
-              <div className="border-r">
-                <div className="px-3 py-2 border-b">
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Von</p>
-                </div>
-                <Calendar
-                  mode="single"
-                  selected={dateFrom}
-                  onSelect={setDateFrom}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                />
-              </div>
-              <div>
-                <div className="px-3 py-2 border-b">
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Bis</p>
-                </div>
-                <Calendar
-                  mode="single"
-                  selected={dateTo}
-                  onSelect={setDateTo}
-                  disabled={(date) => dateFrom ? date < dateFrom : false}
-                  className={cn("p-3 pointer-events-auto")}
-                />
-              </div>
-            </div>
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={setDateRange}
+              numberOfMonths={2}
+              initialFocus
+              className={cn("p-3 pointer-events-auto")}
+            />
             {hasDateFilter && (
               <div className="border-t px-3 py-2 flex justify-end">
                 <Button variant="ghost" size="sm" className="text-xs h-7" onClick={clearDates}>
