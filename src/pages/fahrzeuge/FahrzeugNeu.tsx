@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
-import { Save } from "lucide-react";
+import { Save, CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function FahrzeugNeu() {
   const navigate = useNavigate();
@@ -23,7 +28,7 @@ export default function FahrzeugNeu() {
 
   // Technische Daten
   const [fin, setFin] = useState("");
-  const [erstzulassung, setErstzulassung] = useState("");
+  const [erstzulassung, setErstzulassung] = useState<Date | undefined>();
   const [antrieb, setAntrieb] = useState("");
   const [getriebe, setGetriebe] = useState("");
   const [leistungKw, setLeistungKw] = useState("");
@@ -33,7 +38,7 @@ export default function FahrzeugNeu() {
   const [kmStand, setKmStand] = useState("");
 
   // TÜV
-  const [tuevBis, setTuevBis] = useState("");
+  const [tuevBis, setTuevBis] = useState<Date | undefined>();
 
   // Versicherung / Leasing
   const [versicherung, setVersicherung] = useState("");
@@ -99,7 +104,17 @@ export default function FahrzeugNeu() {
           </div>
           <div className="space-y-2">
             <Label>HU/TÜV gültig bis</Label>
-            <Input type="month" value={tuevBis} onChange={e => setTuevBis(e.target.value)} />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !tuevBis && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {tuevBis ? format(tuevBis, "MMMM yyyy", { locale: de }) : "Monat wählen"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={tuevBis} onSelect={setTuevBis} locale={de} initialFocus className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
@@ -114,7 +129,17 @@ export default function FahrzeugNeu() {
           </div>
           <div className="space-y-2">
             <Label>Erstzulassung</Label>
-            <Input type="date" value={erstzulassung} onChange={e => setErstzulassung(e.target.value)} />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !erstzulassung && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {erstzulassung ? format(erstzulassung, "dd. MMMM yyyy", { locale: de }) : "Datum wählen"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={erstzulassung} onSelect={setErstzulassung} locale={de} initialFocus captionLayout="dropdown-buttons" fromYear={2000} toYear={2026} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="space-y-2">
             <Label>Antrieb</Label>
