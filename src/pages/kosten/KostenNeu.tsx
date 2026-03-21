@@ -62,6 +62,7 @@ export default function KostenNeu() {
               <SelectContent>{kats.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent></Select></div>
           <div className="space-y-2">
             <Label>Betrag (€) *</Label>
+            <Input type="number" placeholder="0,00" value={betrag} onChange={e => setBetrag(e.target.value)} />
             <div className="flex rounded-lg border overflow-hidden w-fit">
               {(["brutto", "netto", "steuerneutral"] as Betragsart[]).map(art => (
                 <button
@@ -74,7 +75,6 @@ export default function KostenNeu() {
                 </button>
               ))}
             </div>
-            <Input type="number" placeholder="0,00" value={betrag} onChange={e => setBetrag(e.target.value)} />
             {betragNum > 0 && betragsart !== "steuerneutral" && (
               <div className="flex gap-3 text-[11px] text-muted-foreground pt-0.5">
                 <span>Netto: {nettoWert.toFixed(2)} €</span>
