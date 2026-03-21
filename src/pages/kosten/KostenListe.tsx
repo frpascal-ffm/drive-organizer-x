@@ -5,10 +5,11 @@ import { de } from "date-fns/locale";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { kosten, fahrzeuge, getFahrzeug, formatCurrency, formatDate } from "@/data/mockData";
-import { Plus, CalendarIcon, X } from "lucide-react";
+import { Plus, CalendarIcon, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DateRange } from "react-day-picker";
 
@@ -24,6 +25,8 @@ interface DisplayRow {
 
 export default function KostenListe() {
   const [fzFilter, setFzFilter] = useState("alle");
+  const [fzSearch, setFzSearch] = useState("");
+  const [fzDropdownOpen, setFzDropdownOpen] = useState(false);
   const [typFilter, setTypFilter] = useState("alle");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
@@ -134,12 +137,53 @@ export default function KostenListe() {
           </PopoverContent>
         </Popover>
 
-        <Select value={fzFilter} onValueChange={setFzFilter}>
-          <SelectTrigger className="w-[180px] h-9 text-sm"><SelectValue placeholder="Fahrzeug" /></SelectTrigger>
-          <SelectContent><SelectItem value="alle">Alle Fahrzeuge</SelectItem>
-            {fahrzeuge.map(f => <SelectItem key={f.id} value={f.id}>{f.kennzeichen}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        {/* Fahrzeugsuche */}
+        <Popover open={fzDropdownOpen} onOpenChange={setFzDropdownOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal min-w-[180px] justify-start", fzFilter === "alle" && "text-muted-foreground")}>
+              <Search className="h-3.5 w-3.5 shrink-0" />
+              {fzFilter !== "alle" ? getFahrzeug(fzFilter)?.kennzeichen : "Alle Fahrzeuge"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-0" align="start">
+            <div className="p-2 border-b">
+              <Input
+                placeholder="Kennzeichen suchen…"
+                value={fzSearch}
+                onChange={e => setFzSearch(e.target.value)}
+                className="h-8 text-sm"
+                autoFocus
+              />
+            </div>
+            <div className="max-h-48 overflow-y-auto p-1">
+              <button
+                onClick={() => { setFzFilter("alle"); setFzSearch(""); setFzDropdownOpen(false); }}
+                className={cn("w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted", fzFilter === "alle" && "bg-accent text-accent-foreground")}
+              >
+                Alle Fahrzeuge
+              </button>
+              {fahrzeuge
+                .filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase()))
+                .map(f => (
+                  <button
+                    key={f.id}
+                    onClick={() => { setFzFilter(f.id); setFzSearch(""); setFzDropdownOpen(false); }}
+                    className={cn("w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted", fzFilter === f.id && "bg-accent text-accent-foreground")}
+                  >
+                    <span className="font-mono font-medium">{f.kennzeichen}</span>
+                    <span className="text-muted-foreground ml-1.5 text-xs">{f.marke} {f.modell}</span>
+                  </button>
+                ))}
+            </div>
+            {fzFilter !== "alle" && (
+              <div className="border-t px-3 py-2 flex justify-end">
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFzFilter("alle"); setFzSearch(""); }}>
+                  <X className="h-3 w-3 mr-1" /> Zurücksetzen
+                </Button>
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
         <Select value={typFilter} onValueChange={setTypFilter}>
           <SelectTrigger className="w-[140px] h-9 text-sm"><SelectValue placeholder="Typ" /></SelectTrigger>
           <SelectContent><SelectItem value="alle">Alle Typen</SelectItem>
