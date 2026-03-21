@@ -10,6 +10,7 @@ import FahrtenListe from "./pages/fahrten/FahrtenListe";
 import FahrtNeu from "./pages/fahrten/FahrtNeu";
 import FahrtDetail from "./pages/fahrten/FahrtDetail";
 import UmsaetzeIndex from "./pages/umsaetze/UmsaetzeIndex";
+import PlattformImport from "./pages/umsaetze/PlattformImport";
 import FahrzeugeListe from "./pages/fahrzeuge/FahrzeugeListe";
 import FahrzeugDetail from "./pages/fahrzeuge/FahrzeugDetail";
 import FahrzeugNeu from "./pages/fahrzeuge/FahrzeugNeu";
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/fahrten/neu" element={<FahrtNeu />} />
               <Route path="/fahrten/:id" element={<FahrtDetail />} />
               <Route path="/umsaetze" element={<UmsaetzeIndex />} />
+              <Route path="/umsaetze/import" element={<PlattformImport />} />
               <Route path="/fahrzeuge" element={<FahrzeugeListe />} />
               <Route path="/fahrzeuge/neu" element={<FahrzeugNeu />} />
               <Route path="/fahrzeuge/:id" element={<FahrzeugDetail />} />
