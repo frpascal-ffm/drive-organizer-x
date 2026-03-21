@@ -198,7 +198,7 @@ export default function FahrtenListe() {
     else { setSortBy(col); setSortDir("desc"); }
   };
 
-  const clearDates = () => { setDateFrom(undefined); setDateTo(undefined); };
+  const clearDates = () => setDateRange(undefined);
   const hasDateFilter = dateFrom || dateTo;
 
   return (
