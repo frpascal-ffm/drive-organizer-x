@@ -13,6 +13,7 @@ export default function FahrerDetail() {
   const erledigte = fFahrten.filter(ft => ft.status === "erledigt" && ft.preis);
   const einnahmen = erledigte.reduce((s, ft) => s + (ft.preis || 0), 0);
   const fzIds = [...new Set(fFahrten.map(ft => ft.fahrzeugId))];
+  const fahrerAbrechnungen = getAbrechnungenByFahrer(f.id);
 
   return (
     <div className="space-y-6 animate-fade-in">
