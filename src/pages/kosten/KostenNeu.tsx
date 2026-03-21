@@ -13,16 +13,27 @@ import { Save } from "lucide-react";
 const fixKategorien = ["Leasing", "Versicherung", "Steuer", "Sonstiges"];
 const varKategorien = ["Sprit", "Werkstatt", "Reinigung", "Material", "Sonstiges"];
 
+type Betragsart = "brutto" | "netto" | "steuerneutral";
+const MWST_SATZ = 19;
+
 export default function KostenNeu() {
   const navigate = useNavigate();
   const [typ, setTyp] = useState<"fix" | "variabel">("variabel");
   const [kategorie, setKategorie] = useState("");
   const [betrag, setBetrag] = useState("");
+  const [betragsart, setBetragsart] = useState<Betragsart>("brutto");
   const [fahrzeugId, setFahrzeugId] = useState("");
   const [datum, setDatum] = useState("");
   const [intervall, setIntervall] = useState("");
   const [notiz, setNotiz] = useState("");
   const [fzSearch, setFzSearch] = useState("");
+
+  const betragNum = parseFloat(betrag) || 0;
+  const nettoWert = betragsart === "brutto" ? betragNum / (1 + MWST_SATZ / 100)
+    : betragsart === "netto" ? betragNum : betragNum;
+  const bruttoWert = betragsart === "netto" ? betragNum * (1 + MWST_SATZ / 100)
+    : betragsart === "brutto" ? betragNum : betragNum;
+  const mwstWert = betragsart === "steuerneutral" ? 0 : bruttoWert - nettoWert;
 
   const filteredFz = fahrzeuge.filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase()));
 
