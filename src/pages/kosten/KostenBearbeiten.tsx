@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner";
-import { Save } from "lucide-react";
+import { Save, RefreshCw } from "lucide-react";
 
 const fixKategorien = ["Leasing", "Versicherung", "Steuer", "Sonstiges"];
 const varKategorien = ["Sprit", "Werkstatt", "Reinigung", "Material", "Sonstiges"];
@@ -61,9 +61,14 @@ export default function KostenBearbeiten() {
         <div className="space-y-2">
           <Label>Kostenart</Label>
           <div className="flex gap-2">
-            <button onClick={() => { setTyp("variabel"); setKategorie(""); }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "variabel" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Variable Kosten</button>
-            <button onClick={() => { setTyp("fix"); setKategorie(""); }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "fix" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Fixkosten</button>
+            <button onClick={() => { setTyp("variabel"); setKategorie(""); setIntervall(""); }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "variabel" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Variable Kosten</button>
+            <button onClick={() => { setTyp("fix"); setKategorie(""); setDatum(""); }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "fix" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Fixkosten</button>
           </div>
+          {typ === "fix" && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-1">
+              <RefreshCw className="h-3 w-3" /> Fixkosten sind wiederkehrende Kosten, die regelmäßig anfallen.
+            </p>
+          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2"><Label>Kategorie *</Label>
@@ -77,10 +82,20 @@ export default function KostenBearbeiten() {
             <>
               <div className="space-y-2">
                 <Label>Intervall *</Label>
-                <Select value={intervall} onValueChange={setIntervall}><SelectTrigger><SelectValue placeholder="Intervall wählen" /></SelectTrigger>
-                  <SelectContent><SelectItem value="monatlich">Monatlich</SelectItem><SelectItem value="quartalsweise">Quartalsweise</SelectItem><SelectItem value="halbjaehrlich">Halbjährlich</SelectItem><SelectItem value="jaehrlich">Jährlich</SelectItem></SelectContent></Select>
+                <Select value={intervall} onValueChange={setIntervall}><SelectTrigger><SelectValue placeholder="Wie oft?" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="monatlich">Monatlich</SelectItem>
+                    <SelectItem value="quartalsweise">Alle 3 Monate</SelectItem>
+                    <SelectItem value="halbjaehrlich">Alle 6 Monate</SelectItem>
+                    <SelectItem value="jaehrlich">Jährlich</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground">Wie oft fallen diese Kosten an?</p>
               </div>
-              <div className="space-y-2"><Label>Startdatum (optional)</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
+              <div className="space-y-2">
+                <Label>Startdatum (optional)</Label>
+                <Input type="date" value={datum} onChange={e => setDatum(e.target.value)} />
+              </div>
             </>
           )}
           <div className="sm:col-span-2 space-y-2">

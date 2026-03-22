@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAppContext } from "@/context/AppContext";
-import { formatCurrency, formatDate } from "@/data/mockData";
-import { ArrowLeft, ArrowRight, Upload, Clipboard, X, Check, FileText, CalendarIcon } from "lucide-react";
+import { formatCurrency } from "@/data/mockData";
+import { checkPlattformDuplicate } from "@/lib/calculations";
+import { ArrowLeft, ArrowRight, Upload, Clipboard, X, Check, FileText, CalendarIcon, AlertTriangle } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,7 @@ type Step = 0 | 1 | 2 | 3 | 4;
 
 export default function PlattformImport() {
   const navigate = useNavigate();
-  const { addPlattformUmsatz, fahrer, fahrzeuge } = useAppContext();
+  const { addPlattformUmsatz, plattformUmsaetze, fahrer, fahrzeuge } = useAppContext();
   const [step, setStep] = useState<Step>(0);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -33,6 +34,11 @@ export default function PlattformImport() {
   const [fahrtenAnzahl, setFahrtenAnzahl] = useState("");
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Duplicate check
+  const duplicate = plattform && vonDatum && bisDatum && fahrzeugId
+    ? checkPlattformDuplicate(plattformUmsaetze, plattform, format(vonDatum, "yyyy-MM-dd"), format(bisDatum, "yyyy-MM-dd"), fahrzeugId)
+    : undefined;
 
   const handlePaste = useCallback((e: ClipboardEvent) => {
     if (step !== 0) return;
@@ -196,6 +202,18 @@ export default function PlattformImport() {
 
       {step === 3 && (
         <div className="space-y-4">
+          {/* Duplicate warning */}
+          {duplicate && (
+            <div className="flex items-start gap-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+              <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-200">Möglicher Doppelimport erkannt</p>
+                <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+                  Es existiert bereits ein {duplicate.plattform}-Umsatz für diesen Zeitraum und dieses Fahrzeug ({formatCurrency(duplicate.netto)} netto). Möchtest du trotzdem importieren?
+                </p>
+              </div>
+            </div>
+          )}
           {preview && <div className="bg-card rounded-xl border p-4"><p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-3">Hochgeladene Datei</p><img src={preview} alt="Screenshot" className="max-h-40 rounded-lg shadow-sm" /></div>}
           <div className="bg-card rounded-xl border divide-y">
             {[["Plattform", plattform], ["Zeitraum", `${vonDatum ? format(vonDatum, "dd.MM.yyyy") : "–"} – ${bisDatum ? format(bisDatum, "dd.MM.yyyy") : "–"}`],
@@ -212,7 +230,7 @@ export default function PlattformImport() {
         <div className="bg-card rounded-xl border p-12 text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto"><Check className="h-8 w-8 text-primary" /></div>
           <h2 className="text-xl font-semibold">Import abgeschlossen</h2>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">Der Plattformumsatz von <span className="font-medium text-foreground">{formatCurrency(netto)}</span> ({plattform}) wurde erfolgreich erfasst.</p>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">Der Plattformumsatz von <span className="font-medium text-foreground">{formatCurrency(netto)}</span> ({plattform}) wurde erfolgreich erfasst und fließt in das Fahrzeugergebnis ein.</p>
           <div className="flex gap-3 justify-center pt-2">
             <Button variant="outline" onClick={() => navigate("/umsaetze")}>Zurück zu Umsätze</Button>
             <Button onClick={() => { setStep(0); setFile(null); setPreview(null); setPlattform(""); setVonDatum(undefined); setBisDatum(undefined); setFahrerId(""); setFahrzeugId(""); setBetrag(""); setProvision(""); setFahrtenAnzahl(""); }}>Weiteren Import starten</Button>
