@@ -138,7 +138,7 @@ export default function FahrtenListe() {
         <EmptyState
           icon={Route}
           title="Noch keine Fahrten erfasst"
-          description="Erfassen Sie Ihre erste Fahrt, um Umsätze und Ergebnisse sichtbar zu machen. Fahrten mit Status „erledigt" und einem Preis fließen automatisch in die Einnahmen ein."
+          description='Erfassen Sie Ihre erste Fahrt, um Umsätze und Ergebnisse sichtbar zu machen. Fahrten mit Status "erledigt" und einem Preis fließen automatisch in die Einnahmen ein.'
           actionLabel="Erste Fahrt erfassen"
           actionTo="/fahrten/neu"
         />
