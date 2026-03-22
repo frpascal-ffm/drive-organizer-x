@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppContext } from "@/context/AppContext";
 import { formatCurrency, formatDate } from "@/data/mockData";
-import { MessageSquare, Send, Pencil } from "lucide-react";
+import { MessageSquare, Send, Pencil, Copy, CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +14,7 @@ export default function FahrtDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { getFahrt, getFahrer, getFahrzeug, addKommentar } = useAppContext();
+  const { getFahrt, getFahrer, getFahrzeug, addKommentar, updateFahrt, addFahrt } = useAppContext();
   const fahrt = getFahrt(id || "");
   const [comment, setComment] = useState("");
 
@@ -28,6 +28,27 @@ export default function FahrtDetail() {
     addKommentar(fahrt.id, comment, "Sie");
     setComment("");
     toast.success(t("fahrtDetail.kommentarHinzugefuegt"));
+  };
+
+  const handleMarkErledigt = () => {
+    updateFahrt(fahrt.id, { status: "erledigt" });
+    toast.success("Fahrt als erledigt markiert.");
+  };
+
+  const handleStornieren = () => {
+    updateFahrt(fahrt.id, { status: "storniert" });
+    toast.success("Fahrt wurde storniert.");
+  };
+
+  const handleDuplizieren = () => {
+    const newId = addFahrt({
+      typ: fahrt.typ, datum: fahrt.datum, uhrzeit: fahrt.uhrzeit,
+      von: fahrt.von, nach: fahrt.nach, fahrerId: fahrt.fahrerId,
+      fahrzeugId: fahrt.fahrzeugId, status: "geplant",
+      preis: fahrt.preis, mwst: fahrt.mwst, kunde: fahrt.kunde, notiz: fahrt.notiz,
+    });
+    toast.success("Fahrt wurde dupliziert.");
+    navigate(`/fahrten/${newId}`);
   };
 
   const info = [
@@ -48,12 +69,30 @@ export default function FahrtDetail() {
         action={
           <div className="flex items-center gap-2">
             <StatusBadge status={fahrt.status} />
-            <Button size="sm" variant="outline" onClick={() => navigate(`/fahrten/${fahrt.id}/bearbeiten`)}>
-              <Pencil className="h-3.5 w-3.5 mr-1.5" />Bearbeiten
-            </Button>
           </div>
         }
       />
+
+      {/* Action buttons */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <Button size="sm" variant="outline" onClick={() => navigate(`/fahrten/${fahrt.id}/bearbeiten`)}>
+          <Pencil className="h-3.5 w-3.5 mr-1.5" />Bearbeiten
+        </Button>
+        <Button size="sm" variant="outline" onClick={handleDuplizieren}>
+          <Copy className="h-3.5 w-3.5 mr-1.5" />Duplizieren
+        </Button>
+        {fahrt.status === "geplant" && (
+          <Button size="sm" variant="outline" onClick={handleMarkErledigt} className="text-primary hover:bg-primary/10">
+            <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />Als erledigt markieren
+          </Button>
+        )}
+        {fahrt.status !== "storniert" && (
+          <Button size="sm" variant="outline" onClick={handleStornieren} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+            <XCircle className="h-3.5 w-3.5 mr-1.5" />Stornieren
+          </Button>
+        )}
+      </div>
+
       <div className="space-y-6">
         <div className="bg-card rounded-xl border p-6 shadow-sm">
           <div className="space-y-3">

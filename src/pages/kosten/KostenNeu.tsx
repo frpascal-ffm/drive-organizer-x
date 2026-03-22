@@ -37,10 +37,22 @@ export default function KostenNeu() {
   const filteredFz = fahrzeuge.filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase()));
 
   const handleSave = () => {
-    if (!kategorie || !betrag || !fahrzeugId || !datum) { toast.error("Bitte Pflichtfelder ausfüllen."); return; }
+    if (!kategorie || !betrag || !fahrzeugId) {
+      toast.error("Bitte Pflichtfelder ausfüllen.");
+      return;
+    }
+    if (typ === "fix" && !intervall) {
+      toast.error("Bei Fixkosten ist ein Intervall erforderlich.");
+      return;
+    }
+    if (typ === "variabel" && !datum) {
+      toast.error("Bei variablen Kosten ist ein Datum erforderlich.");
+      return;
+    }
     addKosten({
-      typ, kategorie, betrag: parseFloat(betrag), fahrzeugId, datum,
-      intervall: typ === "fix" && intervall ? intervall as any : undefined,
+      typ, kategorie, betrag: parseFloat(betrag), fahrzeugId,
+      datum: datum || new Date().toISOString().slice(0, 10),
+      intervall: typ === "fix" ? intervall as any : undefined,
       notiz: notiz || undefined,
     });
     toast.success("Kosten wurden erfasst.");
@@ -56,8 +68,8 @@ export default function KostenNeu() {
         <div className="space-y-2">
           <Label>Kostenart *</Label>
           <div className="flex gap-2">
-            <button onClick={() => setTyp("variabel")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "variabel" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Variable Kosten</button>
-            <button onClick={() => setTyp("fix")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "fix" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Fixkosten</button>
+            <button onClick={() => { setTyp("variabel"); setKategorie(""); }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "variabel" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Variable Kosten</button>
+            <button onClick={() => { setTyp("fix"); setKategorie(""); }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-colors ${typ === "fix" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>Fixkosten</button>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -83,10 +95,19 @@ export default function KostenNeu() {
               </div>
             )}
           </div>
-          <div className="space-y-2"><Label>Datum *</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
-          {typ === "fix" && <div className="space-y-2"><Label>Intervall</Label>
-            <Select value={intervall} onValueChange={setIntervall}><SelectTrigger><SelectValue placeholder="Intervall wählen" /></SelectTrigger>
-              <SelectContent><SelectItem value="monatlich">Monatlich</SelectItem><SelectItem value="quartalsweise">Quartalsweise</SelectItem><SelectItem value="halbjaehrlich">Halbjährlich</SelectItem><SelectItem value="jaehrlich">Jährlich</SelectItem></SelectContent></Select></div>}
+          {typ === "variabel" && (
+            <div className="space-y-2"><Label>Datum *</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
+          )}
+          {typ === "fix" && (
+            <>
+              <div className="space-y-2">
+                <Label>Intervall *</Label>
+                <Select value={intervall} onValueChange={setIntervall}><SelectTrigger><SelectValue placeholder="Intervall wählen" /></SelectTrigger>
+                  <SelectContent><SelectItem value="monatlich">Monatlich</SelectItem><SelectItem value="quartalsweise">Quartalsweise</SelectItem><SelectItem value="halbjaehrlich">Halbjährlich</SelectItem><SelectItem value="jaehrlich">Jährlich</SelectItem></SelectContent></Select>
+              </div>
+              <div className="space-y-2"><Label>Startdatum (optional)</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
+            </>
+          )}
         </div>
         <div className="space-y-2">
           <Label>Fahrzeug *</Label>
