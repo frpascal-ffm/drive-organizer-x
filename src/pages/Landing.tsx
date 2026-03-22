@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import { languages } from "@/i18n/config";
 import {
   Car,
   BarChart3,
@@ -16,6 +18,7 @@ import {
   TrendingUp,
   Clock,
   Star,
+  Globe,
 } from "lucide-react";
 
 /* ───────── scroll-reveal hook ───────── */
