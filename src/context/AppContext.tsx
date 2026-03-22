@@ -18,6 +18,18 @@ import {
   type FahrerStatus,
 } from "@/data/mockData";
 
+interface FahrttypConfig {
+  key: FahrtTyp;
+  enabled: boolean;
+}
+
+const DEFAULT_FAHRTTYPEN: FahrttypConfig[] = [
+  { key: "krankenfahrt", enabled: true },
+  { key: "flughafentransfer", enabled: true },
+  { key: "privatfahrt", enabled: true },
+  { key: "firmenfahrt", enabled: true },
+];
+
 interface AppState {
   fahrzeuge: Fahrzeug[];
   fahrer: Fahrer[];
@@ -25,6 +37,7 @@ interface AppState {
   kosten: KostenEintrag[];
   plattformUmsaetze: PlattformUmsatz[];
   abrechnungen: Abrechnung[];
+  fahrttypen: FahrttypConfig[];
 }
 
 interface AppContextType extends AppState {
@@ -55,6 +68,9 @@ interface AppContextType extends AppState {
   // Abrechnungen
   addAbrechnung: (a: Omit<Abrechnung, "id">) => string;
   updateAbrechnung: (id: string, a: Partial<Abrechnung>) => void;
+  // Fahrttypen
+  aktiveFahrttypen: FahrtTyp[];
+  toggleFahrttyp: (key: FahrtTyp) => void;
 }
 
 const STORAGE_KEY = "mietwagen-app-state";
@@ -62,7 +78,12 @@ const STORAGE_KEY = "mietwagen-app-state";
 function loadState(): AppState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Migrate: add fahrttypen if missing
+      if (!parsed.fahrttypen) parsed.fahrttypen = DEFAULT_FAHRTTYPEN;
+      return parsed;
+    }
   } catch {}
   return null;
 }
@@ -98,6 +119,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       kosten: initialKosten,
       plattformUmsaetze: initialPlattformUmsaetze,
       abrechnungen: initialAbrechnungen,
+      fahrttypen: DEFAULT_FAHRTTYPEN,
     };
   });
 
@@ -196,6 +218,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(s => ({ ...s, abrechnungen: s.abrechnungen.map(x => x.id === id ? { ...x, ...a } : x) }));
   }, []);
 
+  // Fahrttypen
+  const aktiveFahrttypen = state.fahrttypen.filter(t => t.enabled).map(t => t.key);
+  const toggleFahrttyp = useCallback((key: FahrtTyp) => {
+    setState(s => ({
+      ...s,
+      fahrttypen: s.fahrttypen.map(t => t.key === key ? { ...t, enabled: !t.enabled } : t),
+    }));
+  }, []);
+
   const value: AppContextType = {
     ...state,
     addFahrzeug, updateFahrzeug, deleteFahrzeug, getFahrzeug,
@@ -204,6 +235,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addKosten, updateKosten, deleteKosten,
     addPlattformUmsatz, updatePlattformUmsatz, deletePlattformUmsatz,
     addAbrechnung, updateAbrechnung,
+    aktiveFahrttypen, toggleFahrttyp,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

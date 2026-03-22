@@ -15,7 +15,7 @@ export default function FahrtBearbeiten() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { getFahrt, updateFahrt, fahrer, fahrzeuge } = useAppContext();
+  const { getFahrt, updateFahrt, fahrer, fahrzeuge, aktiveFahrttypen } = useAppContext();
   const fahrt = getFahrt(id || "");
 
   const [typ, setTyp] = useState(fahrt?.typ || "");
@@ -33,9 +33,12 @@ export default function FahrtBearbeiten() {
 
   if (!fahrt) return <div className="p-12 text-center text-muted-foreground">Fahrt nicht gefunden.</div>;
 
+  // Include current type even if disabled
+  const typOptions = [...new Set([...aktiveFahrttypen, fahrt.typ])];
+
   const handleSave = () => {
-    if (!typ || !datum || !von || !nach) {
-      toast.error(t("fahrtNeu.pflichtfelder"));
+    if (!typ || !datum || !uhrzeit || !von || !nach || !fahrerId || !fahrzeugId) {
+      toast.error("Bitte alle Pflichtfelder ausfüllen.");
       return;
     }
     updateFahrt(fahrt.id, {
@@ -63,7 +66,7 @@ export default function FahrtBearbeiten() {
               <Select value={typ} onValueChange={setTyp}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {["krankenfahrt", "flughafentransfer", "privatfahrt", "firmenfahrt"].map(k => (
+                  {typOptions.map(k => (
                     <SelectItem key={k} value={k}>{t(`fahrtTyp.${k}`)}</SelectItem>
                   ))}
                 </SelectContent>
@@ -81,7 +84,7 @@ export default function FahrtBearbeiten() {
               </Select>
             </div>
             <div className="space-y-2"><Label>Datum *</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
-            <div className="space-y-2"><Label>Uhrzeit</Label><Input type="time" value={uhrzeit} onChange={e => setUhrzeit(e.target.value)} /></div>
+            <div className="space-y-2"><Label>Uhrzeit *</Label><Input type="time" value={uhrzeit} onChange={e => setUhrzeit(e.target.value)} /></div>
           </div>
         </section>
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
@@ -95,7 +98,7 @@ export default function FahrtBearbeiten() {
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Zuordnung</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Fahrer</Label>
+              <Label>Fahrer *</Label>
               <Select value={fahrerId} onValueChange={setFahrerId}>
                 <SelectTrigger><SelectValue placeholder="Fahrer wählen" /></SelectTrigger>
                 <SelectContent>
@@ -106,7 +109,7 @@ export default function FahrtBearbeiten() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Fahrzeug</Label>
+              <Label>Fahrzeug *</Label>
               <Select value={fahrzeugId} onValueChange={setFahrzeugId}>
                 <SelectTrigger><SelectValue placeholder="Fahrzeug wählen" /></SelectTrigger>
                 <SelectContent>
