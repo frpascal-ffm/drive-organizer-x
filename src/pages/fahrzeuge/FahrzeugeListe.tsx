@@ -2,43 +2,37 @@ import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
+import { ZeitraumFilter } from "@/components/ZeitraumFilter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppContext } from "@/context/AppContext";
 import { formatCurrency } from "@/data/mockData";
-import { Plus, Search, Settings2, GripVertical, ArrowUpDown } from "lucide-react";
+import { berechneAlleFahrzeugErgebnisse, type Zeitraum, type FahrzeugErgebnis } from "@/lib/calculations";
+import { Plus, Search, Settings2, GripVertical, ArrowUpDown, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-interface FzRow {
-  id: string; kennzeichen: string; marke: string; modell: string;
-  baujahr: number; farbe: string; status: string;
-  fahrtenCount: number; einnahmen: number; kosten: number; ergebnis: number; marge: number;
-}
-
 interface ColumnDef {
   key: string; label: string; fixed?: boolean;
-  render: (d: FzRow) => React.ReactNode;
+  render: (d: FahrzeugErgebnis) => React.ReactNode;
   className?: string; headerClassName?: string; sortKey?: string;
 }
 
 const ALL_COLUMNS: ColumnDef[] = [
-  { key: "kennzeichen", label: "Kennzeichen", fixed: true, render: (d) => <span className="font-mono text-sm font-medium">{d.kennzeichen}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
-  { key: "modell", label: "Fahrzeugmodell", render: (d) => <span className="text-sm">{d.marke} {d.modell}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
-  { key: "status", label: "Status", render: (d) => <StatusBadge status={d.status} />, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
+  { key: "kennzeichen", label: "Kennzeichen", fixed: true, render: (d) => <span className="font-mono text-sm font-medium">{d.fahrzeug.kennzeichen}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
+  { key: "modell", label: "Fahrzeugmodell", render: (d) => <span className="text-sm">{d.fahrzeug.marke} {d.fahrzeug.modell}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
+  { key: "status", label: "Status", render: (d) => <StatusBadge status={d.fahrzeug.status} />, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
   { key: "fahrten", label: "Fahrten", render: (d) => <span className="text-sm tabular-nums">{d.fahrtenCount}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3" },
-  { key: "einnahmen", label: "Einnahmen", sortKey: "einnahmen", render: (d) => <span className="text-sm tabular-nums">{formatCurrency(d.einnahmen)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
-  { key: "kosten", label: "Kosten", sortKey: "kosten", render: (d) => <span className="text-sm tabular-nums">{formatCurrency(d.kosten)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
+  { key: "einnahmen", label: "Einnahmen", sortKey: "einnahmenGesamt", render: (d) => <span className="text-sm tabular-nums">{formatCurrency(d.einnahmenGesamt)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
+  { key: "kosten", label: "Kosten", sortKey: "kostenGesamt", render: (d) => <span className="text-sm tabular-nums">{formatCurrency(d.kostenGesamt)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
   { key: "ergebnis", label: "Ergebnis", sortKey: "ergebnis", render: (d) => <span className={cn("text-sm font-medium tabular-nums", d.ergebnis >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-destructive")}>{formatCurrency(d.ergebnis)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
-  { key: "marge", label: "Marge", sortKey: "marge", render: (d) => <span className="text-sm tabular-nums">{d.marge.toFixed(1)} %</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
-  { key: "baujahr", label: "Baujahr", render: (d) => <span className="text-sm tabular-nums">{d.baujahr}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
-  { key: "farbe", label: "Farbe", render: (d) => <span className="text-sm">{d.farbe}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
+  { key: "baujahr", label: "Baujahr", render: (d) => <span className="text-sm tabular-nums">{d.fahrzeug.baujahr}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
 ];
 
-const DEFAULT_VISIBLE = ["kennzeichen", "modell", "status", "fahrten", "einnahmen", "kosten", "ergebnis", "marge"];
-const DEFAULT_ORDER = [...DEFAULT_VISIBLE, "baujahr", "farbe"];
+const DEFAULT_VISIBLE = ["kennzeichen", "modell", "status", "fahrten", "einnahmen", "kosten", "ergebnis"];
+const DEFAULT_ORDER = [...DEFAULT_VISIBLE, "baujahr"];
 
 function loadConfig() {
   try {
@@ -59,27 +53,23 @@ export default function FahrzeugeListe() {
   const navigate = useNavigate();
   const { fahrzeuge, fahrten, kosten, plattformUmsaetze } = useAppContext();
   const [search, setSearch] = useState("");
+  const [zeitraum, setZeitraum] = useState<Zeitraum | undefined>(undefined);
   const [columnConfig, setColumnConfig] = useState(loadConfig);
   const [showSettings, setShowSettings] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
-  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<string | null>("ergebnis");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
-  const allData: FzRow[] = useMemo(() => fahrzeuge.map(fz => {
-    const fzFahrten = fahrten.filter(f => f.fahrzeugId === fz.id && f.status === "erledigt" && f.preis);
-    const eigen = fzFahrten.reduce((s, f) => s + (f.preis || 0), 0);
-    const plat = plattformUmsaetze.filter(p => p.fahrzeugId === fz.id).reduce((s, p) => s + p.netto, 0);
-    const kost = kosten.filter(k => k.fahrzeugId === fz.id).reduce((s, k) => s + k.betrag, 0);
-    const einnahmen = eigen + plat;
-    const ergebnis = einnahmen - kost;
-    return { ...fz, fahrtenCount: fzFahrten.length, einnahmen, kosten: kost, ergebnis, marge: einnahmen > 0 ? (ergebnis / einnahmen * 100) : 0 };
-  }), [fahrzeuge, fahrten, kosten, plattformUmsaetze]);
+  const allData = useMemo(() =>
+    berechneAlleFahrzeugErgebnisse(fahrzeuge, fahrten, plattformUmsaetze, kosten, zeitraum),
+    [fahrzeuge, fahrten, plattformUmsaetze, kosten, zeitraum]
+  );
 
   const filtered = useMemo(() => {
     let r = [...allData];
     if (search) {
       const s = search.toLowerCase();
-      r = r.filter(d => d.kennzeichen.toLowerCase().includes(s) || d.marke.toLowerCase().includes(s) || d.modell.toLowerCase().includes(s) || d.farbe.toLowerCase().includes(s));
+      r = r.filter(d => d.fahrzeug.kennzeichen.toLowerCase().includes(s) || d.fahrzeug.marke.toLowerCase().includes(s) || d.fahrzeug.modell.toLowerCase().includes(s));
     }
     if (sortKey) {
       r.sort((a, b) => { const av = (a as any)[sortKey] ?? 0; const bv = (b as any)[sortKey] ?? 0; return sortDir === "desc" ? bv - av : av - bv; });
@@ -123,6 +113,8 @@ export default function FahrzeugeListe() {
       <PageHeader title="Fahrzeuge" description={`${filtered.length} von ${fahrzeuge.length} Fahrzeuge`}
         action={<Button asChild><Link to="/fahrzeuge/neu"><Plus className="h-4 w-4 mr-1.5" />Neues Fahrzeug</Link></Button>} />
 
+      <ZeitraumFilter value={zeitraum} onChange={setZeitraum} />
+
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -153,6 +145,12 @@ export default function FahrzeugeListe() {
         </Popover>
       </div>
 
+      {/* Ergebnis-Erklärung */}
+      <div className="flex items-start gap-2 bg-muted/30 rounded-lg px-4 py-2.5 border">
+        <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
+        <p className="text-[11px] text-muted-foreground">Ergebnis = Einnahmen minus erfasste Fahrzeugkosten</p>
+      </div>
+
       <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -168,7 +166,7 @@ export default function FahrzeugeListe() {
             </thead>
             <tbody>
               {filtered.map(d => (
-                <tr key={d.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/fahrzeuge/${d.id}`)}>
+                <tr key={d.fahrzeug.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/fahrzeuge/${d.fahrzeug.id}`)}>
                   {visibleColumns.map(col => <td key={col.key} className={col.className}>{col.render(d)}</td>)}
                 </tr>
               ))}
