@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,55 +10,58 @@ import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { FahrtTyp, FahrtStatus } from "@/data/mockData";
 
-export default function FahrtNeu() {
+export default function FahrtBearbeiten() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { addFahrt, fahrer, fahrzeuge } = useAppContext();
-  const [typ, setTyp] = useState("");
-  const [datum, setDatum] = useState("");
-  const [uhrzeit, setUhrzeit] = useState("");
-  const [von, setVon] = useState("");
-  const [nach, setNach] = useState("");
-  const [fahrerId, setFahrerId] = useState("");
-  const [fahrzeugId, setFahrzeugId] = useState("");
-  const [status, setStatus] = useState("geplant");
-  const [preis, setPreis] = useState("");
-  const [mwst, setMwst] = useState("19");
-  const [kunde, setKunde] = useState("");
-  const [notiz, setNotiz] = useState("");
+  const { getFahrt, updateFahrt, fahrer, fahrzeuge } = useAppContext();
+  const fahrt = getFahrt(id || "");
+
+  const [typ, setTyp] = useState(fahrt?.typ || "");
+  const [datum, setDatum] = useState(fahrt?.datum || "");
+  const [uhrzeit, setUhrzeit] = useState(fahrt?.uhrzeit || "");
+  const [von, setVon] = useState(fahrt?.von || "");
+  const [nach, setNach] = useState(fahrt?.nach || "");
+  const [fahrerId, setFahrerId] = useState(fahrt?.fahrerId || "");
+  const [fahrzeugId, setFahrzeugId] = useState(fahrt?.fahrzeugId || "");
+  const [status, setStatus] = useState<string>(fahrt?.status || "geplant");
+  const [preis, setPreis] = useState(fahrt?.preis?.toString() || "");
+  const [mwst, setMwst] = useState(fahrt?.mwst?.toString() || "19");
+  const [kunde, setKunde] = useState(fahrt?.kunde || "");
+  const [notiz, setNotiz] = useState(fahrt?.notiz || "");
+
+  if (!fahrt) return <div className="p-12 text-center text-muted-foreground">Fahrt nicht gefunden.</div>;
 
   const handleSave = () => {
     if (!typ || !datum || !von || !nach) {
       toast.error(t("fahrtNeu.pflichtfelder"));
       return;
     }
-    const id = addFahrt({
-      typ: typ as FahrtTyp,
-      datum, uhrzeit, von, nach,
-      fahrerId, fahrzeugId,
-      status: status as FahrtStatus,
+    updateFahrt(fahrt.id, {
+      typ: typ as any,
+      datum, uhrzeit, von, nach, fahrerId, fahrzeugId,
+      status: status as any,
       preis: preis ? parseFloat(preis) : undefined,
       mwst: mwst ? parseInt(mwst) : undefined,
       kunde: kunde || undefined,
       notiz: notiz || undefined,
     });
-    toast.success(t("fahrtNeu.erfolg"));
-    navigate(`/fahrten/${id}`);
+    toast.success("Fahrt wurde aktualisiert.");
+    navigate(`/fahrten/${fahrt.id}`);
   };
 
   return (
     <div className="max-w-2xl animate-fade-in">
-      <PageHeader title={t("fahrtNeu.title")} description={t("fahrtNeu.description")} back />
+      <PageHeader title={`Fahrt ${fahrt.fahrtNummer} bearbeiten`} back />
       <div className="space-y-8">
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t("fahrtNeu.fahrtdetails")}</h3>
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Fahrtdetails</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{t("fahrtNeu.fahrttyp")}</Label>
+              <Label>Fahrttyp *</Label>
               <Select value={typ} onValueChange={setTyp}>
-                <SelectTrigger><SelectValue placeholder={t("fahrtNeu.typWaehlen")} /></SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {["krankenfahrt", "flughafentransfer", "privatfahrt", "firmenfahrt"].map(k => (
                     <SelectItem key={k} value={k}>{t(`fahrtTyp.${k}`)}</SelectItem>
@@ -67,7 +70,7 @@ export default function FahrtNeu() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>{t("fahrtNeu.status")}</Label>
+              <Label>Status</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -77,24 +80,24 @@ export default function FahrtNeu() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2"><Label>{t("fahrtNeu.datum")}</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
-            <div className="space-y-2"><Label>{t("fahrtNeu.uhrzeit")}</Label><Input type="time" value={uhrzeit} onChange={e => setUhrzeit(e.target.value)} /></div>
+            <div className="space-y-2"><Label>Datum *</Label><Input type="date" value={datum} onChange={e => setDatum(e.target.value)} /></div>
+            <div className="space-y-2"><Label>Uhrzeit</Label><Input type="time" value={uhrzeit} onChange={e => setUhrzeit(e.target.value)} /></div>
           </div>
         </section>
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t("fahrtNeu.route")}</h3>
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Route</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2"><Label>{t("fahrtNeu.von")}</Label><Input placeholder={t("fahrtNeu.abholadresse")} value={von} onChange={e => setVon(e.target.value)} /></div>
-            <div className="space-y-2"><Label>{t("fahrtNeu.nach")}</Label><Input placeholder={t("fahrtNeu.zieladresse")} value={nach} onChange={e => setNach(e.target.value)} /></div>
+            <div className="space-y-2"><Label>Von *</Label><Input value={von} onChange={e => setVon(e.target.value)} /></div>
+            <div className="space-y-2"><Label>Nach *</Label><Input value={nach} onChange={e => setNach(e.target.value)} /></div>
           </div>
         </section>
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t("fahrtNeu.zuordnung")}</h3>
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Zuordnung</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{t("fahrten.fahrer")}</Label>
+              <Label>Fahrer</Label>
               <Select value={fahrerId} onValueChange={setFahrerId}>
-                <SelectTrigger><SelectValue placeholder={t("fahrtNeu.fahrerWaehlen")} /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Fahrer wählen" /></SelectTrigger>
                 <SelectContent>
                   {fahrer.filter(f => f.status === "aktiv").map(f => (
                     <SelectItem key={f.id} value={f.id}>{f.vorname} {f.nachname}</SelectItem>
@@ -103,9 +106,9 @@ export default function FahrtNeu() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>{t("fahrten.fahrzeug")}</Label>
+              <Label>Fahrzeug</Label>
               <Select value={fahrzeugId} onValueChange={setFahrzeugId}>
-                <SelectTrigger><SelectValue placeholder={t("fahrtNeu.fahrzeugWaehlen")} /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Fahrzeug wählen" /></SelectTrigger>
                 <SelectContent>
                   {fahrzeuge.filter(f => f.status === "aktiv").map(f => (
                     <SelectItem key={f.id} value={f.id}>{f.kennzeichen} – {f.marke} {f.modell}</SelectItem>
@@ -116,23 +119,23 @@ export default function FahrtNeu() {
           </div>
         </section>
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t("fahrtNeu.preisUndKunde")}</h3>
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Preis & Kunde</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-2"><Label>{t("fahrtNeu.preis")}</Label><Input type="number" placeholder="0,00" value={preis} onChange={e => setPreis(e.target.value)} /></div>
+            <div className="space-y-2"><Label>Preis (€)</Label><Input type="number" value={preis} onChange={e => setPreis(e.target.value)} /></div>
             <div className="space-y-2">
-              <Label>{t("fahrtNeu.mwst")}</Label>
+              <Label>MwSt.</Label>
               <Select value={mwst} onValueChange={setMwst}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="7">7 %</SelectItem><SelectItem value="19">19 %</SelectItem></SelectContent>
               </Select>
             </div>
-            <div className="space-y-2"><Label>{t("fahrtNeu.kundeFirma")}</Label><Input placeholder={t("fahrtNeu.optional")} value={kunde} onChange={e => setKunde(e.target.value)} /></div>
+            <div className="space-y-2"><Label>Kunde / Firma</Label><Input value={kunde} onChange={e => setKunde(e.target.value)} /></div>
           </div>
-          <div className="space-y-2"><Label>{t("fahrtNeu.notiz")}</Label><Textarea placeholder={t("fahrtNeu.notizPlaceholder")} value={notiz} onChange={e => setNotiz(e.target.value)} rows={3} /></div>
+          <div className="space-y-2"><Label>Notiz</Label><Textarea value={notiz} onChange={e => setNotiz(e.target.value)} rows={3} /></div>
         </section>
         <div className="flex gap-3">
-          <Button onClick={handleSave}><Save className="h-4 w-4 mr-1.5" />{t("fahrtNeu.speichern")}</Button>
-          <Button variant="outline" onClick={() => navigate("/fahrten")}>{t("common.cancel")}</Button>
+          <Button onClick={handleSave}><Save className="h-4 w-4 mr-1.5" />Speichern</Button>
+          <Button variant="outline" onClick={() => navigate(`/fahrten/${fahrt.id}`)}>Abbrechen</Button>
         </div>
       </div>
     </div>

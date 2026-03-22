@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { fahrten, plattformUmsaetze, getFahrer, getFahrzeug, formatCurrency, formatDate } from "@/data/mockData";
+import { useAppContext } from "@/context/AppContext";
+import { formatCurrency, formatDate } from "@/data/mockData";
 import { useNavigate } from "react-router-dom";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ export default function UmsaetzeIndex() {
   const tabs = [t("umsaetze.uebersicht"), t("umsaetze.eigeneFahrten"), t("umsaetze.plattformen")] as const;
   const [tab, setTab] = useState(0);
   const navigate = useNavigate();
+  const { fahrten, plattformUmsaetze, getFahrer, getFahrzeug } = useAppContext();
   const erledigte = fahrten.filter(f => f.status === "erledigt" && f.preis);
   const eigenSum = erledigte.reduce((s, f) => s + (f.preis || 0), 0);
   const platNetto = plattformUmsaetze.reduce((s, p) => s + p.netto, 0);
@@ -64,7 +66,7 @@ export default function UmsaetzeIndex() {
             </tr></thead>
             <tbody>
               {erledigte.map(f => (
-                <tr key={f.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/fahrten/${f.id}`)}>
+                <tr key={f.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/umsaetze/fahrt/${f.id}`)}>
                   <td className="px-4 py-3 text-sm">{formatDate(f.datum)}</td>
                   <td className="px-4 py-3 text-sm">{t(`fahrtTyp.${f.typ}`)}</td>
                   <td className="px-4 py-3 text-sm">{f.von} → {f.nach}</td>
@@ -92,7 +94,7 @@ export default function UmsaetzeIndex() {
                 const fz = getFahrzeug(p.fahrzeugId);
                 const fa = getFahrer(p.fahrerId);
                 return (
-                  <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/umsaetze/plattform/${p.id}`)}>
                     <td className="px-4 py-3 text-sm font-medium">{p.plattform}</td>
                     <td className="px-4 py-3 text-sm">{formatDate(p.zeitraumVon)} – {formatDate(p.zeitraumBis)}</td>
                     <td className="px-4 py-3 text-xs font-mono">{fz?.kennzeichen}</td>

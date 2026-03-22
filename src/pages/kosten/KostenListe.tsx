@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { PageHeader } from "@/components/PageHeader";
@@ -8,90 +8,56 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { kosten, fahrzeuge, getFahrzeug, formatCurrency, formatDate } from "@/data/mockData";
+import { useAppContext } from "@/context/AppContext";
+import { formatCurrency, formatDate } from "@/data/mockData";
 import { Plus, CalendarIcon, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DateRange } from "react-day-picker";
 
 interface DisplayRow {
-  id: string;
-  datum: string;
-  label: string;
-  typ: "fix" | "variabel";
-  fahrzeugId: string;
-  betrag: number;
-  notiz?: string;
+  id: string; datum: string; label: string; typ: "fix" | "variabel"; fahrzeugId: string; betrag: number; notiz?: string;
 }
 
 export default function KostenListe() {
+  const { kosten, fahrzeuge, getFahrzeug } = useAppContext();
+  const navigate = useNavigate();
   const [fzFilter, setFzFilter] = useState<string[]>([]);
   const [fzSearch, setFzSearch] = useState("");
   const [fzDropdownOpen, setFzDropdownOpen] = useState(false);
   const [typFilter, setTypFilter] = useState("alle");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
-
   const dateFrom = dateRange?.from;
   const dateTo = dateRange?.to;
   const hasDateFilter = dateFrom || dateTo;
   const clearDates = () => setDateRange(undefined);
 
   const rows = useMemo(() => {
-    // Group monthly fix costs by (yearMonth + fahrzeugId), keep variable costs as-is
     const fixByGroup = new Map<string, { ids: string[]; betrag: number; fahrzeugId: string; datum: string }>();
     const result: DisplayRow[] = [];
-
     for (const k of kosten) {
       if (k.typ === "fix" && k.intervall === "monatlich") {
-        const ym = k.datum.slice(0, 7); // "2026-03"
+        const ym = k.datum.slice(0, 7);
         const key = `${ym}_${k.fahrzeugId}`;
         const existing = fixByGroup.get(key);
-        if (existing) {
-          existing.betrag += k.betrag;
-          existing.ids.push(k.id);
-        } else {
-          fixByGroup.set(key, { ids: [k.id], betrag: k.betrag, fahrzeugId: k.fahrzeugId, datum: k.datum });
-        }
+        if (existing) { existing.betrag += k.betrag; existing.ids.push(k.id); }
+        else fixByGroup.set(key, { ids: [k.id], betrag: k.betrag, fahrzeugId: k.fahrzeugId, datum: k.datum });
       } else {
-        result.push({
-          id: k.id,
-          datum: k.datum,
-          label: k.kategorie,
-          typ: k.typ,
-          fahrzeugId: k.fahrzeugId,
-          betrag: k.betrag,
-          notiz: k.notiz,
-        });
+        result.push({ id: k.id, datum: k.datum, label: k.kategorie, typ: k.typ, fahrzeugId: k.fahrzeugId, betrag: k.betrag, notiz: k.notiz });
       }
     }
-
-    // Add grouped fix cost rows
     for (const [key, group] of fixByGroup) {
       const fz = getFahrzeug(group.fahrzeugId);
-      result.push({
-        id: `fix_${key}`,
-        datum: group.datum,
-        label: `Fixkosten ${fz?.kennzeichen || ""}`.trim(),
-        typ: "fix",
-        fahrzeugId: group.fahrzeugId,
-        betrag: group.betrag,
-      });
+      result.push({ id: `fix_${key}`, datum: group.datum, label: `Fixkosten ${fz?.kennzeichen || ""}`.trim(), typ: "fix", fahrzeugId: group.fahrzeugId, betrag: group.betrag });
     }
-
     return result;
-  }, []);
+  }, [kosten, getFahrzeug]);
 
   const filtered = useMemo(() => {
     let r = [...rows];
     if (fzFilter.length > 0) r = r.filter(k => fzFilter.includes(k.fahrzeugId));
     if (typFilter !== "alle") r = r.filter(k => k.typ === typFilter);
-    if (dateFrom) {
-      const fromStr = format(dateFrom, "yyyy-MM-dd");
-      r = r.filter(k => k.datum >= fromStr);
-    }
-    if (dateTo) {
-      const toStr = format(dateTo, "yyyy-MM-dd");
-      r = r.filter(k => k.datum <= toStr);
-    }
+    if (dateFrom) { const fromStr = format(dateFrom, "yyyy-MM-dd"); r = r.filter(k => k.datum >= fromStr); }
+    if (dateTo) { const toStr = format(dateTo, "yyyy-MM-dd"); r = r.filter(k => k.datum <= toStr); }
     return r.sort((a, b) => b.datum.localeCompare(a.datum));
   }, [rows, fzFilter, typFilter, dateFrom, dateTo]);
 
@@ -103,96 +69,47 @@ export default function KostenListe() {
         action={<Button asChild><Link to="/kosten/neu"><Plus className="h-4 w-4 mr-1.5" />Kosten erfassen</Link></Button>} />
 
       <div className="flex flex-wrap gap-3 items-center">
-        {/* Date Range Picker */}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal min-w-[220px] justify-start", !hasDateFilter && "text-muted-foreground")}>
               <CalendarIcon className="h-3.5 w-3.5 shrink-0" />
-              {dateFrom && dateTo
-                ? `${format(dateFrom, "dd.MM.yy", { locale: de })} – ${format(dateTo, "dd.MM.yy", { locale: de })}`
-                : dateFrom
-                  ? `Ab ${format(dateFrom, "dd.MM.yy", { locale: de })}`
-                  : dateTo
-                    ? `Bis ${format(dateTo, "dd.MM.yy", { locale: de })}`
-                    : "Zeitraum wählen"}
+              {dateFrom && dateTo ? `${format(dateFrom, "dd.MM.yy", { locale: de })} – ${format(dateTo, "dd.MM.yy", { locale: de })}` : dateFrom ? `Ab ${format(dateFrom, "dd.MM.yy", { locale: de })}` : dateTo ? `Bis ${format(dateTo, "dd.MM.yy", { locale: de })}` : "Zeitraum wählen"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="range"
-              selected={dateRange}
-              onSelect={setDateRange}
-              numberOfMonths={1}
-              locale={de}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
-            />
-            {hasDateFilter && (
-              <div className="border-t px-3 py-2 flex justify-end">
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={clearDates}>
-                  <X className="h-3 w-3 mr-1" /> Zurücksetzen
-                </Button>
-              </div>
-            )}
+            <Calendar mode="range" selected={dateRange} onSelect={setDateRange} numberOfMonths={1} locale={de} initialFocus className={cn("p-3 pointer-events-auto")} />
+            {hasDateFilter && <div className="border-t px-3 py-2 flex justify-end"><Button variant="ghost" size="sm" className="text-xs h-7" onClick={clearDates}><X className="h-3 w-3 mr-1" /> Zurücksetzen</Button></div>}
           </PopoverContent>
         </Popover>
 
-        {/* Fahrzeugsuche (Multi-Select) */}
         <Popover open={fzDropdownOpen} onOpenChange={setFzDropdownOpen}>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal min-w-[180px] justify-start", fzFilter.length === 0 && "text-muted-foreground")}>
               <Search className="h-3.5 w-3.5 shrink-0" />
-              {fzFilter.length === 0
-                ? "Alle Fahrzeuge"
-                : fzFilter.length === 1
-                  ? getFahrzeug(fzFilter[0])?.kennzeichen
-                  : `${fzFilter.length} Fahrzeuge`}
+              {fzFilter.length === 0 ? "Alle Fahrzeuge" : fzFilter.length === 1 ? getFahrzeug(fzFilter[0])?.kennzeichen : `${fzFilter.length} Fahrzeuge`}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-56 p-0" align="start">
-            <div className="p-2 border-b">
-              <Input
-                placeholder="Kennzeichen suchen…"
-                value={fzSearch}
-                onChange={e => setFzSearch(e.target.value)}
-                className="h-8 text-sm"
-                autoFocus
-              />
-            </div>
+            <div className="p-2 border-b"><Input placeholder="Kennzeichen suchen…" value={fzSearch} onChange={e => setFzSearch(e.target.value)} className="h-8 text-sm" autoFocus /></div>
             <div className="max-h-48 overflow-y-auto p-1">
-              {fahrzeuge
-                .filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase()))
-                .map(f => {
-                  const selected = fzFilter.includes(f.id);
-                  return (
-                    <button
-                      key={f.id}
-                      onClick={() => setFzFilter(prev => selected ? prev.filter(id => id !== f.id) : [...prev, f.id])}
-                      className={cn("w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted flex items-center gap-2", selected && "bg-accent text-accent-foreground")}
-                    >
-                      <div className={cn("h-3.5 w-3.5 rounded border flex items-center justify-center shrink-0", selected ? "bg-primary border-primary" : "border-input")}>
-                        {selected && <X className="h-2.5 w-2.5 text-primary-foreground" />}
-                      </div>
-                      <span className="font-mono font-medium">{f.kennzeichen}</span>
-                      <span className="text-muted-foreground text-xs">{f.marke} {f.modell}</span>
-                    </button>
-                  );
-                })}
+              {fahrzeuge.filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase())).map(f => {
+                const selected = fzFilter.includes(f.id);
+                return (
+                  <button key={f.id} onClick={() => setFzFilter(prev => selected ? prev.filter(id => id !== f.id) : [...prev, f.id])}
+                    className={cn("w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted flex items-center gap-2", selected && "bg-accent text-accent-foreground")}>
+                    <div className={cn("h-3.5 w-3.5 rounded border flex items-center justify-center shrink-0", selected ? "bg-primary border-primary" : "border-input")}>{selected && <X className="h-2.5 w-2.5 text-primary-foreground" />}</div>
+                    <span className="font-mono font-medium">{f.kennzeichen}</span>
+                    <span className="text-muted-foreground text-xs">{f.marke} {f.modell}</span>
+                  </button>
+                );
+              })}
             </div>
-            {fzFilter.length > 0 && (
-              <div className="border-t px-3 py-2 flex justify-end">
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setFzFilter([])}>
-                  <X className="h-3 w-3 mr-1" /> Zurücksetzen
-                </Button>
-              </div>
-            )}
+            {fzFilter.length > 0 && <div className="border-t px-3 py-2 flex justify-end"><Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setFzFilter([])}><X className="h-3 w-3 mr-1" /> Zurücksetzen</Button></div>}
           </PopoverContent>
         </Popover>
         <Select value={typFilter} onValueChange={setTypFilter}>
           <SelectTrigger className="w-[140px] h-9 text-sm"><SelectValue placeholder="Typ" /></SelectTrigger>
-          <SelectContent><SelectItem value="alle">Alle Typen</SelectItem>
-            <SelectItem value="fix">Fixkosten</SelectItem><SelectItem value="variabel">Variable Kosten</SelectItem>
-          </SelectContent>
+          <SelectContent><SelectItem value="alle">Alle Typen</SelectItem><SelectItem value="fix">Fixkosten</SelectItem><SelectItem value="variabel">Variable Kosten</SelectItem></SelectContent>
         </Select>
       </div>
 
@@ -208,8 +125,10 @@ export default function KostenListe() {
           <tbody>
             {filtered.map(k => {
               const fz = getFahrzeug(k.fahrzeugId);
+              const isEditable = !k.id.startsWith("fix_");
               return (
-                <tr key={k.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                <tr key={k.id} className={cn("border-b last:border-0 hover:bg-muted/30 transition-colors", isEditable && "cursor-pointer")}
+                  onClick={() => isEditable && navigate(`/kosten/${k.id}/bearbeiten`)}>
                   <td className="px-4 py-3 text-sm">{formatDate(k.datum)}</td>
                   <td className="px-4 py-3 text-sm">{k.label}</td>
                   <td className="px-4 py-3 text-sm capitalize">{k.typ === "fix" ? "Fixkosten" : "Variabel"}</td>

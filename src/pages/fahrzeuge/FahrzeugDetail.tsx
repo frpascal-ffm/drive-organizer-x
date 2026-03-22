@@ -2,12 +2,14 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
-import { getFahrzeug, fahrten, kosten, plattformUmsaetze, getFahrer, formatCurrency, formatDate, fahrtTypLabels } from "@/data/mockData";
-import { Plus, Receipt } from "lucide-react";
+import { useAppContext } from "@/context/AppContext";
+import { formatCurrency, formatDate, fahrtTypLabels } from "@/data/mockData";
+import { Plus, Receipt, Pencil } from "lucide-react";
 
 export default function FahrzeugDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getFahrzeug, getFahrer, fahrten, kosten, plattformUmsaetze } = useAppContext();
   const fz = getFahrzeug(id || "");
   if (!fz) return <div className="p-12 text-center text-muted-foreground">Fahrzeug nicht gefunden.</div>;
 
@@ -23,7 +25,15 @@ export default function FahrzeugDetail() {
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader title={fz.kennzeichen} description={`${fz.marke} ${fz.modell} · ${fz.baujahr}`} back
-        action={<StatusBadge status={fz.status} />} />
+        action={
+          <div className="flex items-center gap-2">
+            <StatusBadge status={fz.status} />
+            <Button size="sm" variant="outline" onClick={() => navigate(`/fahrzeuge/${fz.id}/bearbeiten`)}>
+              <Pencil className="h-3.5 w-3.5 mr-1.5" />Bearbeiten
+            </Button>
+          </div>
+        }
+      />
 
       <div className="flex gap-3">
         <Button asChild><Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />Fahrt erfassen</Link></Button>
@@ -81,11 +91,28 @@ export default function FahrzeugDetail() {
           <table className="w-full">
             <tbody>
               {fzKosten.map(k => (
-                <tr key={k.id} className="border-b last:border-0">
+                <tr key={k.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/kosten/${k.id}/bearbeiten`)}>
                   <td className="px-5 py-3 text-sm">{formatDate(k.datum)}</td>
                   <td className="px-5 py-3 text-sm">{k.kategorie}</td>
                   <td className="px-5 py-3"><StatusBadge status={k.typ === "fix" ? "geplant" : "erledigt"} /></td>
                   <td className="px-5 py-3 text-sm text-right font-medium tabular-nums">{formatCurrency(k.betrag)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {fzPlat.length > 0 && (
+        <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b"><h3 className="text-sm font-semibold">Plattformumsätze ({fzPlat.length})</h3></div>
+          <table className="w-full">
+            <tbody>
+              {fzPlat.map(p => (
+                <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/umsaetze/plattform/${p.id}`)}>
+                  <td className="px-5 py-3 text-sm font-medium">{p.plattform}</td>
+                  <td className="px-5 py-3 text-sm">{formatDate(p.zeitraumVon)} – {formatDate(p.zeitraumBis)}</td>
+                  <td className="px-5 py-3 text-sm text-right font-medium tabular-nums">{formatCurrency(p.netto)}</td>
                 </tr>
               ))}
             </tbody>
