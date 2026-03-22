@@ -166,6 +166,35 @@ export default function Landing() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <div className="relative">
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2 py-1.5 rounded-md hover:bg-muted"
+              >
+                <Globe className="h-4 w-4" />
+                <span>{currentLang.flag}</span>
+              </button>
+              {langOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />
+                  <div className="absolute right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg py-1.5 min-w-[160px]">
+                    {languages.map(lang => (
+                      <button
+                        key={lang.code}
+                        onClick={() => changeLanguage(lang.code)}
+                        className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-sm hover:bg-muted transition-colors ${
+                          lang.code === i18n.language ? "font-semibold text-primary" : "text-foreground"
+                        }`}
+                      >
+                        <span>{lang.flag}</span>
+                        <span>{lang.label}</span>
+                        {lang.code === i18n.language && <Check className="h-3.5 w-3.5 ml-auto text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
             <Link to="/dashboard">
               <Button variant="ghost" size="sm">Einloggen</Button>
             </Link>
