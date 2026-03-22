@@ -82,7 +82,7 @@ export default function FahrtDetail() {
           <Copy className="h-3.5 w-3.5 mr-1.5" />Duplizieren
         </Button>
         {fahrt.status === "geplant" && (
-          <Button size="sm" variant="outline" onClick={handleMarkErledigt} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/20">
+          <Button size="sm" variant="outline" onClick={handleMarkErledigt} className="text-primary hover:bg-primary/10">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />Als erledigt markieren
           </Button>
         )}
