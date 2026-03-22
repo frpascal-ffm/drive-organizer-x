@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
+import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,7 +13,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppContext } from "@/context/AppContext";
 import { formatCurrency, formatDate } from "@/data/mockData";
-import { Plus, Search, ArrowUpDown, CalendarIcon, X, Settings2, GripVertical } from "lucide-react";
+import { Plus, Search, ArrowUpDown, CalendarIcon, X, Settings2, GripVertical, Route } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Fahrt } from "@/data/mockData";
@@ -20,13 +21,9 @@ import type { DateRange } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
 interface ColumnDef {
-  key: string;
-  labelKey: string;
-  fixed?: boolean;
+  key: string; labelKey: string; fixed?: boolean;
   render: (f: Fahrt, fa: any, fz: any, t: any) => React.ReactNode;
-  className?: string;
-  headerClassName?: string;
-  sortable?: "datum" | "preis";
+  className?: string; headerClassName?: string; sortable?: "datum" | "preis";
 }
 
 const ALL_COLUMNS: ColumnDef[] = [
@@ -49,8 +46,7 @@ function loadColumnConfig() {
     const saved = localStorage.getItem("fahrten-columns");
     if (saved) {
       const { visible, order } = JSON.parse(saved);
-      const safeOrder = ["id", ...order.filter((k: string) => k !== "id")];
-      return { visible: [...new Set(["id", ...visible])] as string[], order: safeOrder as string[] };
+      return { visible: [...new Set(["id", ...visible])] as string[], order: ["id", ...order.filter((k: string) => k !== "id")] as string[] };
     }
   } catch {}
   return { visible: DEFAULT_VISIBLE, order: DEFAULT_ORDER };
@@ -76,17 +72,17 @@ export default function FahrtenListe() {
   const [showColumnSettings, setShowColumnSettings] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
 
-  const visibleColumns = useMemo(() => {
-    return columnConfig.order.filter(key => columnConfig.visible.includes(key)).map(key => ALL_COLUMNS.find(c => c.key === key)!).filter(Boolean);
-  }, [columnConfig]);
+  const visibleColumns = useMemo(() =>
+    columnConfig.order.filter(key => columnConfig.visible.includes(key)).map(key => ALL_COLUMNS.find(c => c.key === key)!).filter(Boolean),
+    [columnConfig]
+  );
 
   const toggleColumn = (key: string) => {
     if (key === "id") return;
     const isVisible = columnConfig.visible.includes(key);
     const col = ALL_COLUMNS.find(c => c.key === key);
     const newVisible = isVisible ? columnConfig.visible.filter(k => k !== key) : [...columnConfig.visible, key];
-    const newConfig = { ...columnConfig, visible: newVisible };
-    setColumnConfig(newConfig);
+    setColumnConfig(prev => ({ ...prev, visible: newVisible }));
     saveColumnConfig(newVisible, columnConfig.order);
     toast(isVisible ? t("fahrten.ausgeblendet", { name: t(col?.labelKey || "") }) : t("fahrten.eingeblendet", { name: t(col?.labelKey || "") }), { duration: 1500 });
   };
@@ -97,14 +93,10 @@ export default function FahrtenListe() {
     if (idx === 0 || dragIdx === null || dragIdx === idx) return;
     const newOrder = [...columnConfig.order];
     const visOrder = newOrder.filter(k => columnConfig.visible.includes(k));
-    const dragKey = visOrder[dragIdx];
-    const targetKey = visOrder[idx];
-    const dragI = newOrder.indexOf(dragKey);
-    const targetI = newOrder.indexOf(targetKey);
-    newOrder.splice(dragI, 1);
-    newOrder.splice(targetI, 0, dragKey);
-    const newConfig = { ...columnConfig, order: newOrder };
-    setColumnConfig(newConfig);
+    const dragKey = visOrder[dragIdx]; const targetKey = visOrder[idx];
+    const dragI = newOrder.indexOf(dragKey); const targetI = newOrder.indexOf(targetKey);
+    newOrder.splice(dragI, 1); newOrder.splice(targetI, 0, dragKey);
+    setColumnConfig(prev => ({ ...prev, order: newOrder }));
     saveColumnConfig(columnConfig.visible, newOrder);
     setDragIdx(idx);
   };
@@ -137,6 +129,22 @@ export default function FahrtenListe() {
 
   const clearDates = () => setDateRange(undefined);
   const hasDateFilter = dateFrom || dateTo;
+
+  if (fahrten.length === 0) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <PageHeader title={t("fahrten.title")} description={t("fahrten.description", { filtered: 0, total: 0 })}
+          action={<Button asChild><Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />{t("fahrten.neu")}</Link></Button>} />
+        <EmptyState
+          icon={Route}
+          title="Noch keine Fahrten erfasst"
+          description="Erfassen Sie Ihre erste Fahrt, um Umsätze und Ergebnisse sichtbar zu machen. Fahrten mit Status „erledigt" und einem Preis fließen automatisch in die Einnahmen ein."
+          actionLabel="Erste Fahrt erfassen"
+          actionTo="/fahrten/neu"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -196,10 +204,8 @@ export default function FahrtenListe() {
             </div>
             <div className="p-1.5 space-y-0.5 max-h-80 overflow-y-auto">
               {columnConfig.order.map((key, idx) => {
-                const col = ALL_COLUMNS.find(c => c.key === key);
-                if (!col) return null;
-                const isVisible = columnConfig.visible.includes(key);
-                const isFixed = col.fixed;
+                const col = ALL_COLUMNS.find(c => c.key === key); if (!col) return null;
+                const isVisible = columnConfig.visible.includes(key); const isFixed = col.fixed;
                 return (
                   <div key={key} draggable={!isFixed} onDragStart={() => handleDragStart(idx)} onDragOver={(e) => handleDragOver(e, idx)} onDragEnd={() => setDragIdx(null)}
                     className={cn("flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors", dragIdx === idx && "bg-primary/10", !isFixed && "cursor-grab active:cursor-grabbing hover:bg-muted/50")}>

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { ZeitraumFilter } from "@/components/ZeitraumFilter";
+import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -9,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useAppContext } from "@/context/AppContext";
 import { formatCurrency, formatDate } from "@/data/mockData";
 import { intervallLabels, isInZeitraum, type Zeitraum } from "@/lib/calculations";
-import { Plus, Search, X } from "lucide-react";
+import { Plus, Search, X, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DisplayRow {
@@ -55,6 +56,22 @@ export default function KostenListe() {
   }, [rows, fzFilter, typFilter, zeitraum]);
 
   const summe = filtered.reduce((s, k) => s + k.betrag, 0);
+
+  if (kosten.length === 0) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <PageHeader title="Kosten" description="0 Einträge"
+          action={<Button asChild><Link to="/kosten/neu"><Plus className="h-4 w-4 mr-1.5" />Kosten erfassen</Link></Button>} />
+        <EmptyState
+          icon={Receipt}
+          title="Noch keine Kosten erfasst"
+          description="Erfassen Sie Fixkosten oder variable Kosten, damit das Ergebnis pro Fahrzeug berechnet werden kann. Ohne Kosten zeigt das Dashboard nur Einnahmen."
+          actionLabel="Erste Kosten erfassen"
+          actionTo="/kosten/neu"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
