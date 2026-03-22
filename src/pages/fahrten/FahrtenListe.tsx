@@ -10,18 +10,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { fahrten, getFahrer, getFahrzeug, fahrtTypLabels, formatCurrency, formatDate } from "@/data/mockData";
+import { fahrten, getFahrer, getFahrzeug, formatCurrency, formatDate } from "@/data/mockData";
 import { Plus, Search, ArrowUpDown, CalendarIcon, X, Settings2, GripVertical } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Fahrt } from "@/data/mockData";
 import type { DateRange } from "react-day-picker";
+import { useTranslation } from "react-i18next";
 
 interface ColumnDef {
   key: string;
-  label: string;
+  labelKey: string;
   fixed?: boolean;
-  render: (f: Fahrt, fa: ReturnType<typeof getFahrer>, fz: ReturnType<typeof getFahrzeug>) => React.ReactNode;
+  render: (f: Fahrt, fa: ReturnType<typeof getFahrer>, fz: ReturnType<typeof getFahrzeug>, t: any) => React.ReactNode;
   className?: string;
   headerClassName?: string;
   sortable?: "datum" | "preis";
@@ -29,58 +30,49 @@ interface ColumnDef {
 
 const ALL_COLUMNS: ColumnDef[] = [
   {
-    key: "id", label: "ID", fixed: true,
+    key: "id", labelKey: "fahrten.id", fixed: true,
     render: (f) => <span className="text-xs font-mono text-muted-foreground">{f.fahrtNummer}</span>,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3",
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3",
   },
   {
-    key: "datum", label: "Datum", sortable: "datum",
+    key: "datum", labelKey: "fahrten.datum", sortable: "datum",
     render: (f) => <span className="text-sm whitespace-nowrap">{formatDate(f.datum)} · {f.uhrzeit}</span>,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3 cursor-pointer",
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3 cursor-pointer",
   },
   {
-    key: "typ", label: "Typ",
-    render: (f) => <span className="text-sm">{fahrtTypLabels[f.typ]}</span>,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3",
+    key: "typ", labelKey: "fahrten.typ",
+    render: (f, _, __, t) => <span className="text-sm">{t(`fahrtTyp.${f.typ}`)}</span>,
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3",
   },
   {
-    key: "route", label: "Route",
+    key: "route", labelKey: "fahrten.route",
     render: (f) => <span className="text-sm"><span className="text-muted-foreground">{f.von}</span> → {f.nach}</span>,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3",
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3",
   },
   {
-    key: "fahrer", label: "Fahrer",
+    key: "fahrer", labelKey: "fahrten.fahrer",
     render: (_, fa) => <span className="text-sm">{fa ? `${fa.vorname} ${fa.nachname}` : "–"}</span>,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3",
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3",
   },
   {
-    key: "fahrzeug", label: "Fahrzeug",
+    key: "fahrzeug", labelKey: "fahrten.fahrzeug",
     render: (_, __, fz) => <span className="text-xs font-mono">{fz?.kennzeichen || "–"}</span>,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3",
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3",
   },
   {
-    key: "kunde", label: "Kunde",
+    key: "kunde", labelKey: "fahrten.kunde",
     render: (f) => <span className="text-sm">{f.kunde || "–"}</span>,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3",
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3",
   },
   {
-    key: "status", label: "Status",
+    key: "status", labelKey: "fahrten.status",
     render: (f) => <StatusBadge status={f.status} />,
-    className: "px-4 py-3",
-    headerClassName: "text-left px-4 py-3",
+    className: "px-4 py-3", headerClassName: "text-left px-4 py-3",
   },
   {
-    key: "preis", label: "Preis", sortable: "preis",
+    key: "preis", labelKey: "fahrten.preis", sortable: "preis",
     render: (f) => <span className="text-sm text-right font-medium tabular-nums">{f.preis ? formatCurrency(f.preis) : "–"}</span>,
-    className: "px-4 py-3 text-right",
-    headerClassName: "text-right px-4 py-3 cursor-pointer",
+    className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer",
   },
 ];
 
@@ -92,7 +84,6 @@ function loadColumnConfig() {
     const saved = localStorage.getItem("fahrten-columns");
     if (saved) {
       const { visible, order } = JSON.parse(saved);
-      // Ensure 'id' is always first
       const safeOrder = ["id", ...order.filter((k: string) => k !== "id")];
       return { visible: [...new Set(["id", ...visible])] as string[], order: safeOrder as string[] };
     }
@@ -106,6 +97,7 @@ function saveColumnConfig(visible: string[], order: string[]) {
 
 export default function FahrtenListe() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [typFilter, setTypFilter] = useState("alle");
   const [statusFilter, setStatusFilter] = useState("alle");
@@ -137,11 +129,11 @@ export default function FahrtenListe() {
     const newConfig = { ...columnConfig, visible: newVisible };
     setColumnConfig(newConfig);
     saveColumnConfig(newVisible, columnConfig.order);
-    toast(isVisible ? `„${col?.label}" ausgeblendet` : `„${col?.label}" eingeblendet`, { duration: 1500 });
+    toast(isVisible ? t("fahrten.ausgeblendet", { name: t(col?.labelKey || "") }) : t("fahrten.eingeblendet", { name: t(col?.labelKey || "") }), { duration: 1500 });
   };
 
   const handleDragStart = (idx: number) => {
-    if (idx === 0) return; // can't drag ID
+    if (idx === 0) return;
     setDragIdx(idx);
   };
 
@@ -203,17 +195,15 @@ export default function FahrtenListe() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Fahrten" description={`${filtered.length} von ${fahrten.length} Fahrten`}
-        action={<Button asChild><Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />Neue Fahrt</Link></Button>} />
+      <PageHeader title={t("fahrten.title")} description={t("fahrten.description", { filtered: filtered.length, total: fahrten.length })}
+        action={<Button asChild><Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />{t("fahrten.neu")}</Link></Button>} />
 
-      {/* Row 1: Search + Date Range */}
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <Input placeholder="ID, Route, Fahrer, Kunde…" value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-sm" />
+          <Input placeholder={t("fahrten.searchPlaceholder")} value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-sm" />
         </div>
 
-        {/* Combined Date Range Picker */}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className={cn("h-9 text-sm gap-1.5 font-normal min-w-[220px] justify-start", !hasDateFilter && "text-muted-foreground")}>
@@ -224,23 +214,15 @@ export default function FahrtenListe() {
                   ? `Ab ${format(dateFrom, "dd.MM.yy", { locale: de })}`
                   : dateTo
                     ? `Bis ${format(dateTo, "dd.MM.yy", { locale: de })}`
-                    : "Zeitraum wählen"}
+                    : t("common.periodSelect")}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="range"
-              selected={dateRange}
-              onSelect={setDateRange}
-              numberOfMonths={2}
-              locale={de}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
-            />
+            <Calendar mode="range" selected={dateRange} onSelect={setDateRange} numberOfMonths={2} locale={de} initialFocus className={cn("p-3 pointer-events-auto")} />
             {hasDateFilter && (
               <div className="border-t px-3 py-2 flex justify-end">
                 <Button variant="ghost" size="sm" className="text-xs h-7" onClick={clearDates}>
-                  <X className="h-3 w-3 mr-1" /> Zurücksetzen
+                  <X className="h-3 w-3 mr-1" /> {t("common.reset")}
                 </Button>
               </div>
             )}
@@ -248,26 +230,26 @@ export default function FahrtenListe() {
         </Popover>
       </div>
 
-      {/* Row 2: Filters + Column Settings */}
       <div className="flex flex-wrap gap-3 items-center">
         <Select value={typFilter} onValueChange={setTypFilter}>
-          <SelectTrigger className="w-[170px] h-9 text-sm"><SelectValue placeholder="Fahrttyp" /></SelectTrigger>
+          <SelectTrigger className="w-[170px] h-9 text-sm"><SelectValue placeholder={t("fahrten.typ")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="alle">Alle Typen</SelectItem>
-            {Object.entries(fahrtTypLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+            <SelectItem value="alle">{t("fahrten.alleTypen")}</SelectItem>
+            {(Object.keys(import("@/data/mockData").then ? {} : {}) as string[]).length === 0 && ["krankenfahrt", "flughafentransfer", "privatfahrt", "firmenfahrt"].map(k => (
+              <SelectItem key={k} value={k}>{t(`fahrtTyp.${k}`)}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[150px] h-9 text-sm"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-[150px] h-9 text-sm"><SelectValue placeholder={t("fahrten.status")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="alle">Alle Status</SelectItem>
-            <SelectItem value="geplant">Geplant</SelectItem>
-            <SelectItem value="erledigt">Erledigt</SelectItem>
-            <SelectItem value="storniert">Storniert</SelectItem>
+            <SelectItem value="alle">{t("fahrten.alleStatus")}</SelectItem>
+            <SelectItem value="geplant">{t("status.geplant")}</SelectItem>
+            <SelectItem value="erledigt">{t("status.erledigt")}</SelectItem>
+            <SelectItem value="storniert">{t("status.storniert")}</SelectItem>
           </SelectContent>
         </Select>
 
-        {/* Column Settings Toggle */}
         <Popover open={showColumnSettings} onOpenChange={setShowColumnSettings}>
           <PopoverTrigger asChild>
             <Button variant="outline" size="icon" className="h-9 w-9 shrink-0">
@@ -276,8 +258,8 @@ export default function FahrtenListe() {
           </PopoverTrigger>
           <PopoverContent className="w-56 p-0" align="end">
             <div className="px-3 py-2.5 border-b">
-              <p className="text-xs font-semibold">Spalten anpassen</p>
-              <p className="text-[10px] text-muted-foreground">Ziehen zum Sortieren, klicken zum Ein-/Ausblenden</p>
+              <p className="text-xs font-semibold">{t("fahrten.spaltenAnpassen")}</p>
+              <p className="text-[10px] text-muted-foreground">{t("fahrten.spaltenInfo")}</p>
             </div>
             <div className="p-1.5 space-y-0.5 max-h-80 overflow-y-auto">
               {columnConfig.order.map((key, idx) => {
@@ -286,30 +268,11 @@ export default function FahrtenListe() {
                 const isVisible = columnConfig.visible.includes(key);
                 const isFixed = col.fixed;
                 return (
-                  <div
-                    key={key}
-                    draggable={!isFixed}
-                    onDragStart={() => handleDragStart(idx)}
-                    onDragOver={(e) => handleDragOver(e, idx)}
-                    onDragEnd={() => setDragIdx(null)}
-                    className={cn(
-                      "flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors",
-                      dragIdx === idx && "bg-primary/10",
-                      !isFixed && "cursor-grab active:cursor-grabbing hover:bg-muted/50"
-                    )}
-                  >
-                    {!isFixed ? (
-                      <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" />
-                    ) : (
-                      <div className="w-3.5 shrink-0" />
-                    )}
-                    <Checkbox
-                      checked={isVisible}
-                      disabled={isFixed}
-                      onCheckedChange={() => toggleColumn(key)}
-                      className="shrink-0"
-                    />
-                    <span className={cn("text-xs", isFixed && "text-muted-foreground")}>{col.label}{isFixed ? " (fix)" : ""}</span>
+                  <div key={key} draggable={!isFixed} onDragStart={() => handleDragStart(idx)} onDragOver={(e) => handleDragOver(e, idx)} onDragEnd={() => setDragIdx(null)}
+                    className={cn("flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors", dragIdx === idx && "bg-primary/10", !isFixed && "cursor-grab active:cursor-grabbing hover:bg-muted/50")}>
+                    {!isFixed ? <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" /> : <div className="w-3.5 shrink-0" />}
+                    <Checkbox checked={isVisible} disabled={isFixed} onCheckedChange={() => toggleColumn(key)} className="shrink-0" />
+                    <span className={cn("text-xs", isFixed && "text-muted-foreground")}>{t(col.labelKey)}{isFixed ? ` ${t("fahrten.fix")}` : ""}</span>
                   </div>
                 );
               })}
@@ -324,14 +287,11 @@ export default function FahrtenListe() {
             <thead>
               <tr className="border-b bg-muted/30">
                 {visibleColumns.map(col => (
-                  <th
-                    key={col.key}
-                    className={cn("text-[11px] font-medium text-muted-foreground uppercase tracking-wider", col.headerClassName)}
-                    onClick={col.sortable ? () => toggleSort(col.sortable!) : undefined}
-                  >
+                  <th key={col.key} className={cn("text-[11px] font-medium text-muted-foreground uppercase tracking-wider", col.headerClassName)}
+                    onClick={col.sortable ? () => toggleSort(col.sortable!) : undefined}>
                     {col.sortable ? (
-                      <span className="flex items-center gap-1">{col.label} <ArrowUpDown className="h-3 w-3" /></span>
-                    ) : col.label}
+                      <span className="flex items-center gap-1">{t(col.labelKey)} <ArrowUpDown className="h-3 w-3" /></span>
+                    ) : t(col.labelKey)}
                   </th>
                 ))}
               </tr>
@@ -341,12 +301,9 @@ export default function FahrtenListe() {
                 const fa = getFahrer(f.fahrerId);
                 const fz = getFahrzeug(f.fahrzeugId);
                 return (
-                  <tr key={f.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/fahrten/${f.id}`)}>
+                  <tr key={f.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/fahrten/${f.id}`)}>
                     {visibleColumns.map(col => (
-                      <td key={col.key} className={col.className}>
-                        {col.render(f, fa, fz)}
-                      </td>
+                      <td key={col.key} className={col.className}>{col.render(f, fa, fz, t)}</td>
                     ))}
                   </tr>
                 );
@@ -355,7 +312,7 @@ export default function FahrtenListe() {
           </table>
         </div>
         {filtered.length === 0 && (
-          <div className="p-12 text-center text-muted-foreground text-sm">Keine Fahrten gefunden.</div>
+          <div className="p-12 text-center text-muted-foreground text-sm">{t("fahrten.keineGefunden")}</div>
         )}
       </div>
     </div>

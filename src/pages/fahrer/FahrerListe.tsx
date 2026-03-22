@@ -10,23 +10,21 @@ import { fahrerList, fahrten, formatCurrency } from "@/data/mockData";
 import { Plus, Search, MoreVertical, Pencil, Trash2, UserX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export default function FahrerListe() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("aktiv");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const data = fahrerList
     .filter(f => {
-      // Status filter
       if (statusFilter !== "alle" && f.status !== statusFilter) return false;
-      // Search across all fields
       if (search) {
         const s = search.toLowerCase();
-        const searchable = [
-          f.vorname, f.nachname, f.adresse, f.telefon, f.email || "", f.notiz || "", f.status
-        ].join(" ").toLowerCase();
+        const searchable = [f.vorname, f.nachname, f.adresse, f.telefon, f.email || "", f.notiz || "", f.status].join(" ").toLowerCase();
         if (!searchable.includes(s)) return false;
       }
       return true;
@@ -42,20 +40,20 @@ export default function FahrerListe() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Fahrer" description={`${data.length} von ${fahrerList.length} Fahrer`}
-        action={<Button asChild><Link to="/fahrer/neu"><Plus className="h-4 w-4 mr-1.5" />Neuer Fahrer</Link></Button>} />
+      <PageHeader title={t("fahrerSeite.title")} description={t("fahrerSeite.description", { filtered: data.length, total: fahrerList.length })}
+        action={<Button asChild><Link to="/fahrer/neu"><Plus className="h-4 w-4 mr-1.5" />{t("fahrerSeite.neu")}</Link></Button>} />
 
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <Input placeholder="Name, Adresse, Notiz…" value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-sm" />
+          <Input placeholder={t("fahrerSeite.searchPlaceholder")} value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-sm" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[140px] h-9 text-sm"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="alle">Alle Status</SelectItem>
-            <SelectItem value="aktiv">Aktiv</SelectItem>
-            <SelectItem value="inaktiv">Inaktiv</SelectItem>
+            <SelectItem value="alle">{t("fahrerSeite.alleStatus")}</SelectItem>
+            <SelectItem value="aktiv">{t("status.aktiv")}</SelectItem>
+            <SelectItem value="inaktiv">{t("status.inaktiv")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -63,11 +61,11 @@ export default function FahrerListe() {
       <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
         <table className="w-full">
           <thead><tr className="border-b bg-muted/30">
-            <th className="text-left px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Name</th>
-            <th className="text-left px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Status</th>
-            <th className="text-right px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Fahrten</th>
-            <th className="text-right px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Einnahmen</th>
-            <th className="text-right px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Fahrzeuge</th>
+            <th className="text-left px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{t("fahrerSeite.name")}</th>
+            <th className="text-left px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{t("fahrerSeite.status")}</th>
+            <th className="text-right px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{t("fahrerSeite.fahrten")}</th>
+            <th className="text-right px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{t("fahrerSeite.einnahmen")}</th>
+            <th className="text-right px-4 py-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{t("fahrerSeite.fahrzeuge")}</th>
             <th className="w-10 px-2 py-3"></th>
           </tr></thead>
           <tbody>
@@ -87,15 +85,15 @@ export default function FahrerListe() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-44">
                       <DropdownMenuItem onClick={() => navigate(`/fahrer/${d.id}`)}>
-                        <Pencil className="h-3.5 w-3.5 mr-2" />Bearbeiten
+                        <Pencil className="h-3.5 w-3.5 mr-2" />{t("fahrerSeite.bearbeiten")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
-                        toast.success(`${d.vorname} ${d.nachname} wurde ${d.status === "aktiv" ? "deaktiviert" : "aktiviert"}.`);
+                        toast.success(d.status === "aktiv" ? t("fahrerSeite.wurdeDeaktiviert", { name: `${d.vorname} ${d.nachname}` }) : t("fahrerSeite.wurdeAktiviert", { name: `${d.vorname} ${d.nachname}` }));
                       }}>
-                        <UserX className="h-3.5 w-3.5 mr-2" />{d.status === "aktiv" ? "Deaktivieren" : "Aktivieren"}
+                        <UserX className="h-3.5 w-3.5 mr-2" />{d.status === "aktiv" ? t("fahrerSeite.deaktivieren") : t("fahrerSeite.aktivieren")}
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteTarget(d.id)}>
-                        <Trash2 className="h-3.5 w-3.5 mr-2" />Löschen
+                        <Trash2 className="h-3.5 w-3.5 mr-2" />{t("fahrerSeite.loeschen")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -104,25 +102,24 @@ export default function FahrerListe() {
             ))}
           </tbody>
         </table>
-        {data.length === 0 && <div className="p-12 text-center text-muted-foreground text-sm">Keine Fahrer gefunden.</div>}
+        {data.length === 0 && <div className="p-12 text-center text-muted-foreground text-sm">{t("fahrerSeite.keineGefunden")}</div>}
       </div>
 
-      {/* Delete Confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={open => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Fahrer löschen?</AlertDialogTitle>
+            <AlertDialogTitle>{t("fahrerSeite.loeschenTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Möchten Sie <span className="font-semibold">{deleteTargetFahrer ? `${deleteTargetFahrer.vorname} ${deleteTargetFahrer.nachname}` : ""}</span> wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+              {t("fahrerSeite.loeschenDesc", { name: deleteTargetFahrer ? `${deleteTargetFahrer.vorname} ${deleteTargetFahrer.nachname}` : "" }).replace(/<\/?strong>/g, '')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-              toast.success(`${deleteTargetFahrer?.vorname} ${deleteTargetFahrer?.nachname} wurde gelöscht.`);
+              toast.success(t("fahrerSeite.wurdeGeloescht", { name: `${deleteTargetFahrer?.vorname} ${deleteTargetFahrer?.nachname}` }));
               setDeleteTarget(null);
             }}>
-              Löschen
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
