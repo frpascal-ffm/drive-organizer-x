@@ -440,9 +440,10 @@ export default function Landing() {
           {/* Free tier banner */}
           <Reveal delay={160}>
             <div className="mt-12 mb-10 max-w-md mx-auto text-center border border-primary/30 bg-primary/5 rounded-2xl p-6">
-              <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-1">Immer kostenlos</p>
+              <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-1">Dauerhaft kostenlos</p>
               <p className="text-4xl font-extrabold tabular-nums">€0</p>
-              <p className="text-muted-foreground text-sm mt-1 mb-4">1 Fahrzeug · Unbegrenzte Fahrten · Alle Kernfunktionen</p>
+              <p className="text-muted-foreground text-sm mt-1 mb-1">1 Fahrzeug</p>
+              <p className="text-muted-foreground text-xs mb-4">Fahrten erfassen · Kosten zuordnen · Ergebnis sehen</p>
               <Link to="/dashboard">
                 <Button variant="outline" className="active:scale-[0.97] transition-transform">
                   Kostenlos starten <ChevronRight className="ml-1 h-4 w-4" />
@@ -457,9 +458,9 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-3 gap-5">
             {[
-              { name: "Starter", sub: "Für kleine Betriebe", price: "9", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Basis-Dashboard", "Kostenerfassung", "E-Mail-Support"] },
-              { name: "Professional", sub: "Für wachsende Betriebe", price: "29", vehicles: "6–15 Fahrzeuge", cta: "Demo anfragen", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Plattform-Import", "Erweitertes Dashboard", "Fahrerabrechnung", "Prioritäts-Support"] },
-              { name: "Business", sub: "Für etablierte Unternehmen", price: "59", vehicles: "16–30 Fahrzeuge", cta: "Demo anfragen", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alle Professional-Features", "Statistik & Vergleiche", "Multi-User (bald)", "Telefon-Support"] },
+              { name: "Starter", sub: "Für kleine Betriebe", price: "19", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Dashboard & Ergebnis pro Fahrzeug", "Kostenerfassung (fix & variabel)", "E-Mail-Support"] },
+              { name: "Professional", sub: "Für wachsende Betriebe", price: "39", vehicles: "6–15 Fahrzeuge", cta: "Demo anfragen", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Alles aus Starter", "Plattform-Import (Uber, Bolt …)", "Fahrerabrechnung", "Statistik & Vergleiche"] },
+              { name: "Business", sub: "Für etablierte Unternehmen", price: "69", vehicles: "16–30 Fahrzeuge", cta: "Demo anfragen", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alles aus Professional", "Detaillierte Auswertungen", "Prioritäts-Support", "Telefon-Support"] },
             ].map((plan, i) => (
               <Reveal key={plan.name} delay={220 + i * 80}>
                 <div className={`relative flex flex-col bg-card border rounded-2xl p-6 h-full transition-shadow duration-300 hover:shadow-lg ${
