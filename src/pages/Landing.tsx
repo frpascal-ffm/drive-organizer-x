@@ -126,6 +126,17 @@ export default function Landing() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const { i18n } = useTranslation();
+  const [langOpen, setLangOpen] = useState(false);
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("app-language", lng);
+    setLangOpen(false);
+  };
+
+  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
+
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 24);
     window.addEventListener("scroll", h, { passive: true });
