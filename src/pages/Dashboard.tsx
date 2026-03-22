@@ -5,6 +5,7 @@ import { fahrten, fahrzeuge, fahrerList, kosten, plattformUmsaetze, getFahrzeug,
 import { Link } from "react-router-dom";
 import { TrendingUp, TrendingDown, DollarSign, Car, AlertTriangle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useTranslation } from "react-i18next";
 
 const erledigte = fahrten.filter(f => f.status === "erledigt" && f.preis);
 const eigenUmsatz = erledigte.reduce((s, f) => s + (f.preis || 0), 0);
@@ -24,26 +25,29 @@ const fahrtenOhnePreis = fahrten.filter(f => f.status === "erledigt" && !f.preis
 const fzOhneKosten = fahrzeuge.filter(fz => fz.status === "aktiv" && !kosten.some(k => k.fahrzeugId === fz.id));
 
 const chartData = vehicleResults.map(v => ({ name: v.kennzeichen, Ergebnis: v.ergebnis }));
-const typData = (Object.entries(fahrtTypLabels) as [string, string][]).map(([key, label]) => ({
-  name: label, value: erledigte.filter(f => f.typ === key).reduce((s, f) => s + (f.preis || 0), 0),
-})).filter(d => d.value > 0);
 const COLORS = ["hsl(158,40%,36%)", "hsl(200,50%,45%)", "hsl(38,85%,52%)", "hsl(280,40%,50%)"];
 
 export default function Dashboard() {
+  const { t } = useTranslation();
+
+  const typData = (Object.keys(fahrtTypLabels) as Array<keyof typeof fahrtTypLabels>).map(key => ({
+    name: t(`fahrtTyp.${key}`), value: erledigte.filter(f => f.typ === key).reduce((s, f) => s + (f.preis || 0), 0),
+  })).filter(d => d.value > 0);
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Dashboard" description="Betriebsübersicht – März 2026" />
+      <PageHeader title={t("dashboard.title")} description={t("dashboard.description")} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label="Einnahmen" value={formatCurrency(gesamtEinnahmen)} trend={{ value: "+8,2 % vs. Vormonat", positive: true }} icon={TrendingUp} />
-        <KPICard label="Kosten" value={formatCurrency(gesamtKosten)} trend={{ value: "+3,1 % vs. Vormonat", positive: false }} icon={TrendingDown} />
-        <KPICard label="Ergebnis" value={formatCurrency(ergebnis)} trend={{ value: "+14,5 % vs. Vormonat", positive: true }} icon={DollarSign} />
-        <KPICard label="Fahrten (erledigt)" value={String(erledigte.length)} trend={{ value: `${fahrten.filter(f => f.status === "geplant").length} geplant`, positive: true }} icon={Car} />
+        <KPICard label={t("dashboard.einnahmen")} value={formatCurrency(gesamtEinnahmen)} trend={{ value: `+8,2 % ${t("dashboard.vsVormonat")}`, positive: true }} icon={TrendingUp} />
+        <KPICard label={t("dashboard.kosten")} value={formatCurrency(gesamtKosten)} trend={{ value: `+3,1 % ${t("dashboard.vsVormonat")}`, positive: false }} icon={TrendingDown} />
+        <KPICard label={t("dashboard.ergebnis")} value={formatCurrency(ergebnis)} trend={{ value: `+14,5 % ${t("dashboard.vsVormonat")}`, positive: true }} icon={DollarSign} />
+        <KPICard label={t("dashboard.fahrtenErledigt")} value={String(erledigte.length)} trend={{ value: `${fahrten.filter(f => f.status === "geplant").length} ${t("dashboard.geplant")}`, positive: true }} icon={Car} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 bg-card rounded-xl border p-5 shadow-sm">
-          <h2 className="text-sm font-semibold mb-4">Ergebnis pro Fahrzeug</h2>
+          <h2 className="text-sm font-semibold mb-4">{t("dashboard.ergebnisProFahrzeug")}</h2>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={chartData}>
               <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
@@ -56,21 +60,21 @@ export default function Dashboard() {
 
         <div className="bg-card rounded-xl border p-5 shadow-sm">
           <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-warning" /> Hinweise
+            <AlertTriangle className="h-4 w-4 text-warning" /> {t("dashboard.hinweise")}
           </h2>
           <div className="space-y-2.5">
             {fahrtenOhnePreis.length > 0 && (
               <div className="p-3 bg-amber-50 dark:bg-amber-950/30 rounded-lg text-xs font-medium text-amber-700 dark:text-amber-300">
-                {fahrtenOhnePreis.length} Fahrt(en) ohne Preis
+                {t("dashboard.fahrtenOhnePreis", { count: fahrtenOhnePreis.length })}
               </div>
             )}
             {fzOhneKosten.length > 0 && (
               <div className="p-3 bg-amber-50 dark:bg-amber-950/30 rounded-lg text-xs font-medium text-amber-700 dark:text-amber-300">
-                {fzOhneKosten.length} Fahrzeug(e) ohne erfasste Kosten
+                {t("dashboard.fahrzeugeOhneKosten", { count: fzOhneKosten.length })}
               </div>
             )}
             {fahrtenOhnePreis.length === 0 && fzOhneKosten.length === 0 && (
-              <p className="text-muted-foreground text-sm">Alles im grünen Bereich ✓</p>
+              <p className="text-muted-foreground text-sm">{t("dashboard.allesOk")}</p>
             )}
           </div>
         </div>
@@ -78,7 +82,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-card rounded-xl border p-5 shadow-sm">
-          <h2 className="text-sm font-semibold mb-4">Top Fahrer</h2>
+          <h2 className="text-sm font-semibold mb-4">{t("dashboard.topFahrer")}</h2>
           <div className="space-y-1">
             {fahrerList.filter(f => f.status === "aktiv").map((f, i) => {
               const e = erledigte.filter(ft => ft.fahrerId === f.id).reduce((s, ft) => s + (ft.preis || 0), 0);
@@ -96,7 +100,7 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-card rounded-xl border p-5 shadow-sm">
-          <h2 className="text-sm font-semibold mb-4">Einnahmen nach Fahrttyp</h2>
+          <h2 className="text-sm font-semibold mb-4">{t("dashboard.einnahmenNachTyp")}</h2>
           <ResponsiveContainer width="100%" height={180}>
             <PieChart>
               <Pie data={typData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value">
