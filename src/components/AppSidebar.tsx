@@ -1,16 +1,17 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { LayoutDashboard, Route, TrendingUp, Car, Users, Receipt, FileText, BarChart3, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/fahrten", icon: Route, label: "Fahrten" },
-  { to: "/umsaetze", icon: TrendingUp, label: "Umsätze" },
-  { to: "/fahrzeuge", icon: Car, label: "Fahrzeuge" },
-  { to: "/fahrer", icon: Users, label: "Fahrer" },
-  { to: "/kosten", icon: Receipt, label: "Kosten" },
-  { to: "/abrechnungen", icon: FileText, label: "Abrechnungen" },
-  { to: "/statistik", icon: BarChart3, label: "Statistik" },
+  { to: "/", icon: LayoutDashboard, labelKey: "nav.dashboard" },
+  { to: "/fahrten", icon: Route, labelKey: "nav.fahrten" },
+  { to: "/umsaetze", icon: TrendingUp, labelKey: "nav.umsaetze" },
+  { to: "/fahrzeuge", icon: Car, labelKey: "nav.fahrzeuge" },
+  { to: "/fahrer", icon: Users, labelKey: "nav.fahrer" },
+  { to: "/kosten", icon: Receipt, labelKey: "nav.kosten" },
+  { to: "/abrechnungen", icon: FileText, labelKey: "nav.abrechnungen" },
+  { to: "/statistik", icon: BarChart3, labelKey: "nav.statistik" },
 ];
 
 interface AppSidebarProps {
@@ -22,6 +23,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ collapsed, open, isMobile, onClose }: AppSidebarProps) {
   const location = useLocation();
+  const { t } = useTranslation();
 
   if (isMobile && !open) return null;
 
@@ -52,7 +54,7 @@ export function AppSidebar({ collapsed, open, isMobile, onClose }: AppSidebarPro
               collapsed && !isMobile && "justify-center px-0"
             )}>
             <item.icon className="h-[18px] w-[18px] shrink-0" />
-            {(!collapsed || isMobile) && <span>{item.label}</span>}
+            {(!collapsed || isMobile) && <span>{t(item.labelKey)}</span>}
           </NavLink>
         ))}
       </nav>
@@ -65,7 +67,7 @@ export function AppSidebar({ collapsed, open, isMobile, onClose }: AppSidebarPro
             collapsed && !isMobile && "justify-center px-0"
           )}>
           <Settings className="h-[18px] w-[18px] shrink-0" />
-          {(!collapsed || isMobile) && <span>Einstellungen</span>}
+          {(!collapsed || isMobile) && <span>{t("nav.einstellungen")}</span>}
         </NavLink>
       </div>
     </aside>
