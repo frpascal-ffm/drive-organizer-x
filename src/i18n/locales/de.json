@@ -88,8 +88,8 @@
     "spaltenAnpassen": "Spalten anpassen",
     "spaltenInfo": "Ziehen zum Sortieren, klicken zum Ein-/Ausblenden",
     "fix": "(fix)",
-    "ausgeblendet": "„{{name}}" ausgeblendet",
-    "eingeblendet": "„{{name}}" eingeblendet"
+    "ausgeblendet": "{{name}} ausgeblendet",
+    "eingeblendet": "{{name}} eingeblendet"
   },
   "fahrtNeu": {
     "title": "Neue Fahrt",
