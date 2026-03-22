@@ -57,9 +57,9 @@ export function OnboardingChecklist() {
       <div className="px-6 pt-6 pb-4">
         <div className="flex items-start justify-between gap-4 mb-1">
           <div>
-            <h2 className="text-base font-semibold">Willkommen bei Drive Organizer X</h2>
+            <h2 className="text-base font-semibold">Willkommen — richten Sie Ihren Betrieb ein</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Richten Sie Ihren Betrieb ein, um das volle Potenzial der App zu nutzen.
+              In wenigen Schritten sehen Sie, was pro Fahrzeug übrig bleibt. Legen Sie los.
             </p>
           </div>
           <span className="text-xs font-medium text-muted-foreground whitespace-nowrap mt-1">
