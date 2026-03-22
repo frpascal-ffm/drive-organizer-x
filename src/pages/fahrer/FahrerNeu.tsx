@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +13,7 @@ import { useTranslation } from "react-i18next";
 export default function FahrerNeu() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { addFahrer } = useAppContext();
   const [vorname, setVorname] = useState("");
   const [nachname, setNachname] = useState("");
   const [adresse, setAdresse] = useState("");
@@ -21,8 +23,9 @@ export default function FahrerNeu() {
 
   const handleSave = () => {
     if (!vorname || !nachname || !telefon) { toast.error(t("fahrerNeu.pflichtfelder")); return; }
+    const id = addFahrer({ vorname, nachname, adresse, telefon, email: email || undefined, status: "aktiv", notiz: notiz || undefined });
     toast.success(t("fahrerNeu.erfolg"));
-    navigate("/fahrer");
+    navigate(`/fahrer/${id}`);
   };
 
   return (

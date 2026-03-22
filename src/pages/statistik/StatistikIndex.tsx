@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { fahrten, fahrzeuge, fahrerList, kosten, plattformUmsaetze, formatCurrency } from "@/data/mockData";
+import { useAppContext } from "@/context/AppContext";
+import { formatCurrency } from "@/data/mockData";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 import { useTranslation } from "react-i18next";
 
@@ -8,6 +9,7 @@ const COLORS = ["hsl(158,40%,36%)", "hsl(200,50%,45%)", "hsl(38,85%,52%)", "hsl(
 
 export default function StatistikIndex() {
   const { t } = useTranslation();
+  const { fahrten, fahrzeuge, fahrer, kosten, plattformUmsaetze } = useAppContext();
   const [zeitraum, setZeitraum] = useState("monat");
   const erledigte = fahrten.filter(f => f.status === "erledigt" && f.preis);
   const eigenSum = erledigte.reduce((s, f) => s + (f.preis || 0), 0);
@@ -21,7 +23,7 @@ export default function StatistikIndex() {
     return { name: fz.kennzeichen, [t("dashboard.einnahmen")]: e, [t("dashboard.kosten")]: k, Ergebnis: e - k };
   });
 
-  const faVergleich = fahrerList.filter(f => f.status === "aktiv").map(fa => ({
+  const faVergleich = fahrer.filter(f => f.status === "aktiv").map(fa => ({
     name: `${fa.vorname.charAt(0)}. ${fa.nachname}`,
     [t("dashboard.einnahmen")]: erledigte.filter(f => f.fahrerId === fa.id).reduce((s, f) => s + (f.preis || 0), 0),
   }));
@@ -37,20 +39,17 @@ export default function StatistikIndex() {
   ];
 
   const tooltipStyle = { borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" };
-
   const zeitraumKeys = ["woche", "monat", "quartal"] as const;
 
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader title={t("statistik.title")} description={t("statistik.description")} />
-
       <div className="flex gap-1 bg-muted/50 p-1 rounded-lg w-fit">
         {zeitraumKeys.map(key => (
           <button key={key} onClick={() => setZeitraum(key)}
             className={`px-4 py-2 text-sm font-medium rounded-md capitalize transition-colors ${zeitraum === key ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}>{t(`statistik.${key}`)}</button>
         ))}
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-card rounded-xl border p-5 shadow-sm">
           <h3 className="text-sm font-semibold mb-4">{t("statistik.einnahmenKosten")}</h3>
@@ -65,7 +64,6 @@ export default function StatistikIndex() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-
         <div className="bg-card rounded-xl border p-5 shadow-sm">
           <h3 className="text-sm font-semibold mb-4">{t("statistik.fahrzeugvergleich")}</h3>
           <ResponsiveContainer width="100%" height={220}>
@@ -78,7 +76,6 @@ export default function StatistikIndex() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
         <div className="bg-card rounded-xl border p-5 shadow-sm">
           <h3 className="text-sm font-semibold mb-4">{t("statistik.fahrervergleich")}</h3>
           <ResponsiveContainer width="100%" height={220}>
@@ -90,7 +87,6 @@ export default function StatistikIndex() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
         <div className="bg-card rounded-xl border p-5 shadow-sm">
           <h3 className="text-sm font-semibold mb-4">{t("statistik.umsatzNachTyp")}</h3>
           <ResponsiveContainer width="100%" height={180}>
@@ -102,11 +98,7 @@ export default function StatistikIndex() {
             </PieChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-3 justify-center">
-            {typBreakdown.map((d, i) => (
-              <div key={d.name} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i] }} />{d.name}
-              </div>
-            ))}
+            {typBreakdown.map((d, i) => <div key={d.name} className="flex items-center gap-1.5 text-[11px] text-muted-foreground"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i] }} />{d.name}</div>)}
           </div>
         </div>
       </div>

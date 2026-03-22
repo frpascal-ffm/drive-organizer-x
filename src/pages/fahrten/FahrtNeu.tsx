@@ -6,14 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fahrzeuge, fahrerList } from "@/data/mockData";
+import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import type { FahrtTyp, FahrtStatus } from "@/data/mockData";
 
 export default function FahrtNeu() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { addFahrt, fahrer, fahrzeuge } = useAppContext();
   const [typ, setTyp] = useState("");
   const [datum, setDatum] = useState("");
   const [uhrzeit, setUhrzeit] = useState("");
@@ -32,8 +34,18 @@ export default function FahrtNeu() {
       toast.error(t("fahrtNeu.pflichtfelder"));
       return;
     }
+    const id = addFahrt({
+      typ: typ as FahrtTyp,
+      datum, uhrzeit, von, nach,
+      fahrerId, fahrzeugId,
+      status: status as FahrtStatus,
+      preis: preis ? parseFloat(preis) : undefined,
+      mwst: mwst ? parseInt(mwst) : undefined,
+      kunde: kunde || undefined,
+      notiz: notiz || undefined,
+    });
     toast.success(t("fahrtNeu.erfolg"));
-    navigate("/fahrten");
+    navigate(`/fahrten/${id}`);
   };
 
   return (
@@ -69,7 +81,6 @@ export default function FahrtNeu() {
             <div className="space-y-2"><Label>{t("fahrtNeu.uhrzeit")}</Label><Input type="time" value={uhrzeit} onChange={e => setUhrzeit(e.target.value)} /></div>
           </div>
         </section>
-
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t("fahrtNeu.route")}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -77,7 +88,6 @@ export default function FahrtNeu() {
             <div className="space-y-2"><Label>{t("fahrtNeu.nach")}</Label><Input placeholder={t("fahrtNeu.zieladresse")} value={nach} onChange={e => setNach(e.target.value)} /></div>
           </div>
         </section>
-
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t("fahrtNeu.zuordnung")}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -86,7 +96,7 @@ export default function FahrtNeu() {
               <Select value={fahrerId} onValueChange={setFahrerId}>
                 <SelectTrigger><SelectValue placeholder={t("fahrtNeu.fahrerWaehlen")} /></SelectTrigger>
                 <SelectContent>
-                  {fahrerList.filter(f => f.status === "aktiv").map(f => (
+                  {fahrer.filter(f => f.status === "aktiv").map(f => (
                     <SelectItem key={f.id} value={f.id}>{f.vorname} {f.nachname}</SelectItem>
                   ))}
                 </SelectContent>
@@ -105,7 +115,6 @@ export default function FahrtNeu() {
             </div>
           </div>
         </section>
-
         <section className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t("fahrtNeu.preisUndKunde")}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -121,7 +130,6 @@ export default function FahrtNeu() {
           </div>
           <div className="space-y-2"><Label>{t("fahrtNeu.notiz")}</Label><Textarea placeholder={t("fahrtNeu.notizPlaceholder")} value={notiz} onChange={e => setNotiz(e.target.value)} rows={3} /></div>
         </section>
-
         <div className="flex gap-3">
           <Button onClick={handleSave}><Save className="h-4 w-4 mr-1.5" />{t("fahrtNeu.speichern")}</Button>
           <Button variant="outline" onClick={() => navigate("/fahrten")}>{t("common.cancel")}</Button>

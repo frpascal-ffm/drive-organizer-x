@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { fahrerList, fahrten, formatCurrency } from "@/data/mockData";
+import { useAppContext } from "@/context/AppContext";
+import { formatCurrency } from "@/data/mockData";
 import { Plus, Search, MoreVertical, Pencil, Trash2, UserX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,11 +16,12 @@ import { useTranslation } from "react-i18next";
 export default function FahrerListe() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { fahrer, fahrten, updateFahrer, deleteFahrer } = useAppContext();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("aktiv");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
-  const data = fahrerList
+  const data = fahrer
     .filter(f => {
       if (statusFilter !== "alle" && f.status !== statusFilter) return false;
       if (search) {
@@ -36,11 +38,11 @@ export default function FahrerListe() {
       return { ...f, fahrtenCount: fFahrten.length, einnahmen, fahrzeugeCount: fzIds.length };
     });
 
-  const deleteTargetFahrer = deleteTarget ? fahrerList.find(f => f.id === deleteTarget) : null;
+  const deleteTargetFahrer = deleteTarget ? fahrer.find(f => f.id === deleteTarget) : null;
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title={t("fahrerSeite.title")} description={t("fahrerSeite.description", { filtered: data.length, total: fahrerList.length })}
+      <PageHeader title={t("fahrerSeite.title")} description={t("fahrerSeite.description", { filtered: data.length, total: fahrer.length })}
         action={<Button asChild><Link to="/fahrer/neu"><Plus className="h-4 w-4 mr-1.5" />{t("fahrerSeite.neu")}</Link></Button>} />
 
       <div className="flex flex-wrap gap-3 items-center">
@@ -84,10 +86,11 @@ export default function FahrerListe() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-44">
-                      <DropdownMenuItem onClick={() => navigate(`/fahrer/${d.id}`)}>
+                      <DropdownMenuItem onClick={() => navigate(`/fahrer/${d.id}/bearbeiten`)}>
                         <Pencil className="h-3.5 w-3.5 mr-2" />{t("fahrerSeite.bearbeiten")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
+                        updateFahrer(d.id, { status: d.status === "aktiv" ? "inaktiv" : "aktiv" });
                         toast.success(d.status === "aktiv" ? t("fahrerSeite.wurdeDeaktiviert", { name: `${d.vorname} ${d.nachname}` }) : t("fahrerSeite.wurdeAktiviert", { name: `${d.vorname} ${d.nachname}` }));
                       }}>
                         <UserX className="h-3.5 w-3.5 mr-2" />{d.status === "aktiv" ? t("fahrerSeite.deaktivieren") : t("fahrerSeite.aktivieren")}
@@ -116,7 +119,10 @@ export default function FahrerListe() {
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-              toast.success(t("fahrerSeite.wurdeGeloescht", { name: `${deleteTargetFahrer?.vorname} ${deleteTargetFahrer?.nachname}` }));
+              if (deleteTarget) {
+                deleteFahrer(deleteTarget);
+                toast.success(t("fahrerSeite.wurdeGeloescht", { name: `${deleteTargetFahrer?.vorname} ${deleteTargetFahrer?.nachname}` }));
+              }
               setDeleteTarget(null);
             }}>
               {t("common.delete")}

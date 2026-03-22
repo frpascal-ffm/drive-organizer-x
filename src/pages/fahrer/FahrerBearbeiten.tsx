@@ -21,7 +21,7 @@ export default function FahrerBearbeiten() {
   const [adresse, setAdresse] = useState(fa?.adresse || "");
   const [telefon, setTelefon] = useState(fa?.telefon || "");
   const [email, setEmail] = useState(fa?.email || "");
-  const [status, setStatus] = useState(fa?.status || "aktiv");
+  const [status, setStatus] = useState<string>(fa?.status || "aktiv");
   const [notiz, setNotiz] = useState(fa?.notiz || "");
 
   if (!fa) return <div className="p-12 text-center text-muted-foreground">Fahrer nicht gefunden.</div>;

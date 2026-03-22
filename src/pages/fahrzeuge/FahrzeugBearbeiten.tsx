@@ -20,7 +20,7 @@ export default function FahrzeugBearbeiten() {
   const [modell, setModell] = useState(fz?.modell || "");
   const [baujahr, setBaujahr] = useState(fz?.baujahr?.toString() || "");
   const [farbe, setFarbe] = useState(fz?.farbe || "");
-  const [status, setStatus] = useState(fz?.status || "aktiv");
+  const [status, setStatus] = useState<string>(fz?.status || "aktiv");
 
   if (!fz) return <div className="p-12 text-center text-muted-foreground">Fahrzeug nicht gefunden.</div>;
 

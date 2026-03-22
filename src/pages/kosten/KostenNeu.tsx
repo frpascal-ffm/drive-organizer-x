@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fahrzeuge } from "@/data/mockData";
+import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
 
@@ -18,6 +18,7 @@ const MWST_SATZ = 19;
 
 export default function KostenNeu() {
   const navigate = useNavigate();
+  const { addKosten, fahrzeuge } = useAppContext();
   const [typ, setTyp] = useState<"fix" | "variabel">("variabel");
   const [kategorie, setKategorie] = useState("");
   const [betrag, setBetrag] = useState("");
@@ -29,16 +30,19 @@ export default function KostenNeu() {
   const [fzSearch, setFzSearch] = useState("");
 
   const betragNum = parseFloat(betrag) || 0;
-  const nettoWert = betragsart === "brutto" ? betragNum / (1 + MWST_SATZ / 100)
-    : betragsart === "netto" ? betragNum : betragNum;
-  const bruttoWert = betragsart === "netto" ? betragNum * (1 + MWST_SATZ / 100)
-    : betragsart === "brutto" ? betragNum : betragNum;
+  const nettoWert = betragsart === "brutto" ? betragNum / (1 + MWST_SATZ / 100) : betragsart === "netto" ? betragNum : betragNum;
+  const bruttoWert = betragsart === "netto" ? betragNum * (1 + MWST_SATZ / 100) : betragsart === "brutto" ? betragNum : betragNum;
   const mwstWert = betragsart === "steuerneutral" ? 0 : bruttoWert - nettoWert;
 
   const filteredFz = fahrzeuge.filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase()));
 
   const handleSave = () => {
     if (!kategorie || !betrag || !fahrzeugId || !datum) { toast.error("Bitte Pflichtfelder ausfüllen."); return; }
+    addKosten({
+      typ, kategorie, betrag: parseFloat(betrag), fahrzeugId, datum,
+      intervall: typ === "fix" && intervall ? intervall as any : undefined,
+      notiz: notiz || undefined,
+    });
     toast.success("Kosten wurden erfasst.");
     navigate("/kosten");
   };
@@ -65,12 +69,8 @@ export default function KostenNeu() {
             <Input type="number" placeholder="0,00" value={betrag} onChange={e => setBetrag(e.target.value)} />
             <div className="flex rounded-lg border overflow-hidden w-fit">
               {(["brutto", "netto", "steuerneutral"] as Betragsart[]).map(art => (
-                <button
-                  key={art}
-                  type="button"
-                  onClick={() => setBetragsart(art)}
-                  className={`px-3 py-2 text-xs font-medium transition-colors ${betragsart === art ? "bg-primary text-primary-foreground" : "hover:bg-muted"} ${art !== "steuerneutral" ? "border-r" : ""}`}
-                >
+                <button key={art} type="button" onClick={() => setBetragsart(art)}
+                  className={`px-3 py-2 text-xs font-medium transition-colors ${betragsart === art ? "bg-primary text-primary-foreground" : "hover:bg-muted"} ${art !== "steuerneutral" ? "border-r" : ""}`}>
                   {art === "brutto" ? "Brutto" : art === "netto" ? "Netto" : "Steuerneutral"}
                 </button>
               ))}

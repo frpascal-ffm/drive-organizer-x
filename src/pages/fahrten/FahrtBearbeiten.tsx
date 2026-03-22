@@ -25,7 +25,7 @@ export default function FahrtBearbeiten() {
   const [nach, setNach] = useState(fahrt?.nach || "");
   const [fahrerId, setFahrerId] = useState(fahrt?.fahrerId || "");
   const [fahrzeugId, setFahrzeugId] = useState(fahrt?.fahrzeugId || "");
-  const [status, setStatus] = useState(fahrt?.status || "geplant");
+  const [status, setStatus] = useState<string>(fahrt?.status || "geplant");
   const [preis, setPreis] = useState(fahrt?.preis?.toString() || "");
   const [mwst, setMwst] = useState(fahrt?.mwst?.toString() || "19");
   const [kunde, setKunde] = useState(fahrt?.kunde || "");

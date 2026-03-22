@@ -1,13 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
-import { getFahrer, fahrten, getFahrzeug, formatCurrency, formatDate, getAbrechnungenByFahrer } from "@/data/mockData";
+import { Button } from "@/components/ui/button";
+import { useAppContext } from "@/context/AppContext";
+import { formatCurrency, formatDate } from "@/data/mockData";
+import { Pencil } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function FahrerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { getFahrer, getFahrzeug, fahrten, abrechnungen } = useAppContext();
   const f = getFahrer(id || "");
   if (!f) return <div className="p-12 text-center text-muted-foreground">{t("fahrerDetail.nichtGefunden")}</div>;
 
@@ -15,11 +19,20 @@ export default function FahrerDetail() {
   const erledigte = fFahrten.filter(ft => ft.status === "erledigt" && ft.preis);
   const einnahmen = erledigte.reduce((s, ft) => s + (ft.preis || 0), 0);
   const fzIds = [...new Set(fFahrten.map(ft => ft.fahrzeugId))];
-  const fahrerAbrechnungen = getAbrechnungenByFahrer(f.id);
+  const fahrerAbrechnungen = abrechnungen.filter(a => a.fahrerId === f.id);
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title={`${f.vorname} ${f.nachname}`} back action={<StatusBadge status={f.status} />} />
+      <PageHeader title={`${f.vorname} ${f.nachname}`} back
+        action={
+          <div className="flex items-center gap-2">
+            <StatusBadge status={f.status} />
+            <Button size="sm" variant="outline" onClick={() => navigate(`/fahrer/${f.id}/bearbeiten`)}>
+              <Pencil className="h-3.5 w-3.5 mr-1.5" />Bearbeiten
+            </Button>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-card rounded-xl border p-5 shadow-sm">
