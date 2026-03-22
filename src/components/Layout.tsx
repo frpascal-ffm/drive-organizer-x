@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Search, Plus, Menu } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function Layout() {
