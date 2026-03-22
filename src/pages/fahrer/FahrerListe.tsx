@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
+import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useAppContext } from "@/context/AppContext";
 import { formatCurrency } from "@/data/mockData";
-import { Plus, Search, MoreVertical, Pencil, Trash2, UserX } from "lucide-react";
+import { Plus, Search, MoreVertical, Pencil, Trash2, UserX, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -39,6 +40,22 @@ export default function FahrerListe() {
     });
 
   const deleteTargetFahrer = deleteTarget ? fahrer.find(f => f.id === deleteTarget) : null;
+
+  if (fahrer.length === 0) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <PageHeader title={t("fahrerSeite.title")} description={t("fahrerSeite.description", { filtered: 0, total: 0 })}
+          action={<Button asChild><Link to="/fahrer/neu"><Plus className="h-4 w-4 mr-1.5" />{t("fahrerSeite.neu")}</Link></Button>} />
+        <EmptyState
+          icon={Users}
+          title="Noch keine Fahrer angelegt"
+          description="Erfassen Sie Ihre Fahrer, um Fahrten zuordnen und monatliche Abrechnungen erstellen zu können."
+          actionLabel="Ersten Fahrer anlegen"
+          actionTo="/fahrer/neu"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

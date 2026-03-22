@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ZeitraumFilter } from "@/components/ZeitraumFilter";
+import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -10,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAppContext } from "@/context/AppContext";
 import { formatCurrency } from "@/data/mockData";
 import { berechneAlleFahrzeugErgebnisse, type Zeitraum, type FahrzeugErgebnis } from "@/lib/calculations";
-import { Plus, Search, Settings2, GripVertical, ArrowUpDown, Info } from "lucide-react";
+import { Plus, Search, Settings2, GripVertical, ArrowUpDown, Info, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -27,7 +28,15 @@ const ALL_COLUMNS: ColumnDef[] = [
   { key: "fahrten", label: "Fahrten", render: (d) => <span className="text-sm tabular-nums">{d.fahrtenCount}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3" },
   { key: "einnahmen", label: "Einnahmen", sortKey: "einnahmenGesamt", render: (d) => <span className="text-sm tabular-nums">{formatCurrency(d.einnahmenGesamt)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
   { key: "kosten", label: "Kosten", sortKey: "kostenGesamt", render: (d) => <span className="text-sm tabular-nums">{formatCurrency(d.kostenGesamt)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
-  { key: "ergebnis", label: "Ergebnis", sortKey: "ergebnis", render: (d) => <span className={cn("text-sm font-medium tabular-nums", d.ergebnis >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-destructive")}>{formatCurrency(d.ergebnis)}</span>, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
+  { key: "ergebnis", label: "Ergebnis", sortKey: "ergebnis", render: (d) => {
+    const label = d.ergebnis > 0 ? "Profitabel" : d.ergebnis < 0 ? "Nicht rentabel" : "";
+    return (
+      <div className="text-right">
+        <span className={cn("text-sm font-medium tabular-nums", d.ergebnis >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-destructive")}>{formatCurrency(d.ergebnis)}</span>
+        {label && <p className={cn("text-[10px]", d.ergebnis >= 0 ? "text-emerald-600/70 dark:text-emerald-400/70" : "text-destructive/70")}>{label}</p>}
+      </div>
+    );
+  }, className: "px-4 py-3 text-right", headerClassName: "text-right px-4 py-3 cursor-pointer" },
   { key: "baujahr", label: "Baujahr", render: (d) => <span className="text-sm tabular-nums">{d.fahrzeug.baujahr}</span>, className: "px-4 py-3", headerClassName: "text-left px-4 py-3" },
 ];
 
@@ -108,6 +117,22 @@ export default function FahrzeugeListe() {
     else { setSortKey(key); setSortDir("desc"); }
   };
 
+  if (fahrzeuge.length === 0) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <PageHeader title="Fahrzeuge" description="0 Fahrzeuge"
+          action={<Button asChild><Link to="/fahrzeuge/neu"><Plus className="h-4 w-4 mr-1.5" />Neues Fahrzeug</Link></Button>} />
+        <EmptyState
+          icon={Car}
+          title="Noch keine Fahrzeuge angelegt"
+          description="Legen Sie Ihr erstes Fahrzeug an, um Einnahmen und Kosten zuordnen zu können. Fahrzeuge sind das wirtschaftliche Zentrum Ihres Betriebs."
+          actionLabel="Erstes Fahrzeug anlegen"
+          actionTo="/fahrzeuge/neu"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader title="Fahrzeuge" description={`${filtered.length} von ${fahrzeuge.length} Fahrzeuge`}
@@ -145,7 +170,6 @@ export default function FahrzeugeListe() {
         </Popover>
       </div>
 
-      {/* Ergebnis-Erklärung */}
       <div className="flex items-start gap-2 bg-muted/30 rounded-lg px-4 py-2.5 border">
         <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
         <p className="text-[11px] text-muted-foreground">Ergebnis = Einnahmen minus erfasste Fahrzeugkosten</p>
