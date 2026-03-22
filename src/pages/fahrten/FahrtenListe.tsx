@@ -235,7 +235,7 @@ export default function FahrtenListe() {
           <SelectTrigger className="w-[170px] h-9 text-sm"><SelectValue placeholder={t("fahrten.typ")} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="alle">{t("fahrten.alleTypen")}</SelectItem>
-            {(Object.keys(import("@/data/mockData").then ? {} : {}) as string[]).length === 0 && ["krankenfahrt", "flughafentransfer", "privatfahrt", "firmenfahrt"].map(k => (
+            {["krankenfahrt", "flughafentransfer", "privatfahrt", "firmenfahrt"].map(k => (
               <SelectItem key={k} value={k}>{t(`fahrtTyp.${k}`)}</SelectItem>
             ))}
           </SelectContent>
