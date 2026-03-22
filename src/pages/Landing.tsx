@@ -428,22 +428,40 @@ export default function Landing() {
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Einfache Preise, nach Fahrzeuganzahl gestaffelt
+              Starten Sie kostenlos — wachsen Sie, wenn Sie bereit sind
             </h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground text-center mt-4 max-w-lg mx-auto">
-              Starten Sie kostenlos und wachsen Sie mit Ihrem Betrieb. Kein Vertrag, monatlich kündbar.
+              1 Fahrzeug ist dauerhaft kostenlos. Kein Vertrag, monatlich kündbar.
             </p>
           </Reveal>
 
-          <div className="mt-14 grid sm:grid-cols-3 gap-5">
+          {/* Free tier banner */}
+          <Reveal delay={160}>
+            <div className="mt-12 mb-10 max-w-md mx-auto text-center border border-primary/30 bg-primary/5 rounded-2xl p-6">
+              <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-1">Immer kostenlos</p>
+              <p className="text-4xl font-extrabold tabular-nums">€0</p>
+              <p className="text-muted-foreground text-sm mt-1 mb-4">1 Fahrzeug · Unbegrenzte Fahrten · Alle Kernfunktionen</p>
+              <Link to="/dashboard">
+                <Button variant="outline" className="active:scale-[0.97] transition-transform">
+                  Kostenlos starten <ChevronRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <p className="text-center text-sm font-medium text-muted-foreground mb-6">Mehr Fahrzeuge? Wählen Sie Ihren Plan:</p>
+          </Reveal>
+
+          <div className="grid sm:grid-cols-3 gap-5">
             {[
-              { name: "Starter", sub: "Ideal zum Kennenlernen", price: "0", vehicles: "1–3 Fahrzeuge", cta: "Kostenlos starten", highlight: false, features: ["Bis zu 3 Fahrzeuge", "Unbegrenzte Fahrten", "Basis-Dashboard", "Kostenerfassung", "E-Mail-Support"] },
-              { name: "Professional", sub: "Für wachsende Betriebe", price: "29", vehicles: "4–15 Fahrzeuge", cta: "Demo anfragen", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Plattform-Import", "Erweitertes Dashboard", "Fahrerabrechnung", "Prioritäts-Support"] },
+              { name: "Starter", sub: "Für kleine Betriebe", price: "9", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Basis-Dashboard", "Kostenerfassung", "E-Mail-Support"] },
+              { name: "Professional", sub: "Für wachsende Betriebe", price: "29", vehicles: "6–15 Fahrzeuge", cta: "Demo anfragen", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Plattform-Import", "Erweitertes Dashboard", "Fahrerabrechnung", "Prioritäts-Support"] },
               { name: "Business", sub: "Für etablierte Unternehmen", price: "59", vehicles: "16–30 Fahrzeuge", cta: "Demo anfragen", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alle Professional-Features", "Statistik & Vergleiche", "Multi-User (bald)", "Telefon-Support"] },
             ].map((plan, i) => (
-              <Reveal key={plan.name} delay={i * 80}>
+              <Reveal key={plan.name} delay={220 + i * 80}>
                 <div className={`relative flex flex-col bg-card border rounded-2xl p-6 h-full transition-shadow duration-300 hover:shadow-lg ${
                   plan.highlight ? "border-primary shadow-xl shadow-primary/10 ring-1 ring-primary/20" : "border-border hover:shadow-primary/5"
                 }`}>
@@ -456,10 +474,8 @@ export default function Landing() {
                   <p className="text-xs text-muted-foreground mt-0.5">{plan.sub}</p>
 
                   <div className="mt-5 mb-1">
-                    <span className="text-3xl font-extrabold tabular-nums">
-                      {plan.price === "0" ? "Kostenlos" : `€${plan.price}`}
-                    </span>
-                    {plan.price !== "0" && <span className="text-sm text-muted-foreground ml-1">/ Monat</span>}
+                    <span className="text-3xl font-extrabold tabular-nums">€{plan.price}</span>
+                    <span className="text-sm text-muted-foreground ml-1">/ Monat</span>
                   </div>
                   <p className="text-xs text-muted-foreground mb-5">{plan.vehicles}</p>
 
@@ -473,26 +489,18 @@ export default function Landing() {
                   </ul>
 
                   <div className="mt-6">
-                    {plan.price === "0" ? (
-                      <Link to="/dashboard">
-                        <Button className="w-full active:scale-[0.97] transition-transform" variant="outline">
-                          {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
-                        </Button>
-                      </Link>
-                    ) : (
-                      <a href="#kontakt">
-                        <Button className={`w-full active:scale-[0.97] transition-transform ${plan.highlight ? "shadow-md shadow-primary/20" : ""}`}
-                          variant={plan.highlight ? "default" : "outline"}>
-                          {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
-                        </Button>
-                      </a>
-                    )}
+                    <a href="#kontakt">
+                      <Button className={`w-full active:scale-[0.97] transition-transform ${plan.highlight ? "shadow-md shadow-primary/20" : ""}`}
+                        variant={plan.highlight ? "default" : "outline"}>
+                        {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </a>
                   </div>
                 </div>
               </Reveal>
             ))}
           </div>
-          <Reveal delay={300}>
+          <Reveal delay={500}>
             <p className="text-center text-xs text-muted-foreground mt-6">
               Alle Preise zzgl. MwSt. · Monatlich kündbar · Keine versteckten Kosten
             </p>
