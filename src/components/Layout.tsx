@@ -36,11 +36,27 @@ export function Layout() {
         onClose={() => setMobileOpen(false)}
       />
 
+      {/* Sidebar edge toggle (desktop only) */}
+      {!isMobile && (
+        <div className="relative shrink-0 w-0">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleToggle}
+            className="absolute top-4 -left-3.5 z-30 h-7 w-7 rounded-full border bg-card shadow-md"
+          >
+            {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+          </Button>
+        </div>
+      )}
+
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-14 border-b bg-card/80 backdrop-blur-sm flex items-center px-4 gap-4 sticky top-0 z-20">
-          <Button variant="ghost" size="icon" onClick={handleToggle} className="shrink-0">
-            {isMobile ? <Menu className="h-4 w-4" /> : collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </Button>
+          {isMobile && (
+            <Button variant="ghost" size="icon" onClick={handleToggle} className="shrink-0">
+              <Menu className="h-4 w-4" />
+            </Button>
+          )}
           <span className="font-semibold text-sm hidden sm:block">MietFleet GmbH</span>
           <div className="flex-1" />
           <div className="relative w-56 hidden md:block">
