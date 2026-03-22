@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, labelKey: "nav.dashboard" },
+  { to: "/dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard" },
   { to: "/fahrten", icon: Route, labelKey: "nav.fahrten" },
   { to: "/umsaetze", icon: TrendingUp, labelKey: "nav.umsaetze" },
   { to: "/fahrzeuge", icon: Car, labelKey: "nav.fahrzeuge" },

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { Layout } from "@/components/Layout";
+import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import FahrtenListe from "./pages/fahrten/FahrtenListe";
 import FahrtNeu from "./pages/fahrten/FahrtNeu";
@@ -34,8 +35,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Landing />} />
             <Route element={<Layout />}>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/fahrten" element={<FahrtenListe />} />
               <Route path="/fahrten/neu" element={<FahrtNeu />} />
               <Route path="/fahrten/:id" element={<FahrtDetail />} />
