@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import { languages } from "@/i18n/config";
 import {
   Car,
   BarChart3,
@@ -16,6 +18,7 @@ import {
   TrendingUp,
   Clock,
   Star,
+  Globe,
 } from "lucide-react";
 
 /* ───────── scroll-reveal hook ───────── */
@@ -123,6 +126,17 @@ export default function Landing() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const { i18n } = useTranslation();
+  const [langOpen, setLangOpen] = useState(false);
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("app-language", lng);
+    setLangOpen(false);
+  };
+
+  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
+
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 24);
     window.addEventListener("scroll", h, { passive: true });
@@ -152,6 +166,35 @@ export default function Landing() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <div className="relative">
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-2 py-1.5 rounded-md hover:bg-muted"
+              >
+                <Globe className="h-4 w-4" />
+                <span>{currentLang.flag}</span>
+              </button>
+              {langOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />
+                  <div className="absolute right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg py-1.5 min-w-[160px]">
+                    {languages.map(lang => (
+                      <button
+                        key={lang.code}
+                        onClick={() => changeLanguage(lang.code)}
+                        className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-sm hover:bg-muted transition-colors ${
+                          lang.code === i18n.language ? "font-semibold text-primary" : "text-foreground"
+                        }`}
+                      >
+                        <span>{lang.flag}</span>
+                        <span>{lang.label}</span>
+                        {lang.code === i18n.language && <Check className="h-3.5 w-3.5 ml-auto text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
             <Link to="/dashboard">
               <Button variant="ghost" size="sm">Einloggen</Button>
             </Link>
@@ -173,6 +216,19 @@ export default function Landing() {
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Preise</a>
             <a href="#testimonials" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Erfahrungen</a>
             <Link to="/dashboard" className="block py-2 text-sm font-medium">Einloggen</Link>
+            <div className="flex gap-2 pt-1">
+              {languages.map(lang => (
+                <button
+                  key={lang.code}
+                  onClick={() => { changeLanguage(lang.code); setMobileMenu(false); }}
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md text-sm border transition-colors ${
+                    lang.code === i18n.language ? "border-primary bg-primary/10 font-semibold" : "border-border hover:bg-muted"
+                  }`}
+                >
+                  {lang.flag}
+                </button>
+              ))}
+            </div>
             <a href="#pricing"><Button className="w-full mt-2" size="sm">Kostenlos testen</Button></a>
           </div>
         )}
