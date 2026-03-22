@@ -216,6 +216,19 @@ export default function Landing() {
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Preise</a>
             <a href="#testimonials" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Erfahrungen</a>
             <Link to="/dashboard" className="block py-2 text-sm font-medium">Einloggen</Link>
+            <div className="flex gap-2 pt-1">
+              {languages.map(lang => (
+                <button
+                  key={lang.code}
+                  onClick={() => { changeLanguage(lang.code); setMobileMenu(false); }}
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md text-sm border transition-colors ${
+                    lang.code === i18n.language ? "border-primary bg-primary/10 font-semibold" : "border-border hover:bg-muted"
+                  }`}
+                >
+                  {lang.flag}
+                </button>
+              ))}
+            </div>
             <a href="#pricing"><Button className="w-full mt-2" size="sm">Kostenlos testen</Button></a>
           </div>
         )}
