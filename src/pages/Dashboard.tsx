@@ -53,7 +53,11 @@ export default function Dashboard() {
               <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <Tooltip formatter={(v: number) => formatCurrency(v)} contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} />
-              <Bar dataKey="Ergebnis" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Ergebnis" radius={[4, 4, 0, 0]}>
+                {chartData.map((entry, index) => (
+                  <Cell key={index} fill={entry.Ergebnis < 0 ? "hsl(var(--destructive))" : "hsl(var(--primary))"} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
