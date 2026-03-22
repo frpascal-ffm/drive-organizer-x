@@ -93,10 +93,7 @@ export default function EinstellungenIndex() {
           <SelectContent>
             {languages.map(lang => (
               <SelectItem key={lang.code} value={lang.code}>
-                <span className="flex items-center gap-2">
-                  <span>{lang.flag}</span>
-                  <span>{lang.label}</span>
-                </span>
+                {lang.flag} {lang.label}
               </SelectItem>
             ))}
           </SelectContent>
