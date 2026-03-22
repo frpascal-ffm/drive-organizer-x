@@ -40,9 +40,9 @@ export function AppSidebar({ collapsed, open, isMobile, onClose }: AppSidebarPro
     )}>
       <div className={cn("h-14 flex items-center border-b px-4 gap-2", collapsed && !isMobile && "justify-center px-2")}>
         <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
-          <span className="text-primary-foreground font-bold text-xs">M</span>
+          <Car className="h-3.5 w-3.5 text-primary-foreground" />
         </div>
-        {(!collapsed || isMobile) && <span className="font-bold text-base tracking-tight">MietFleet</span>}
+        {(!collapsed || isMobile) && <span className="font-bold text-base tracking-tight">Drive Organizer X</span>}
       </div>
       <nav className="flex-1 py-2 flex flex-col gap-0.5 px-2 overflow-y-auto">
         {navItems.map(item => (

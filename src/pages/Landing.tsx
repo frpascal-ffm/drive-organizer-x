@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
 import { languages } from "@/i18n/config";
 import {
-  Car, BarChart3, Users, FileText, Shield, Zap, ChevronRight, Check, Menu, X,
+  Car, BarChart3, Users, FileText, Shield, ChevronRight, Check, Menu, X,
   ArrowRight, TrendingUp, Clock, Star, Globe, AlertTriangle, Target, PieChart,
+  Route, Receipt, Layers, ChevronDown, Phone, Mail, Building2,
+  ArrowUpRight, Minus, CircleDot, Gauge, BadgeCheck,
 } from "lucide-react";
 
 /* ───────── scroll-reveal hook ───────── */
@@ -41,13 +45,12 @@ function Reveal({ children, className = "", delay = 0 }: { children: React.React
   );
 }
 
-const featureIcons = [Car, Users, BarChart3, FileText, Shield, Zap];
-
 export default function Landing() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
+  const [contactSent, setContactSent] = useState(false);
 
   const changeLanguage = (lng: string) => { i18n.changeLanguage(lng); localStorage.setItem("app-language", lng); setLangOpen(false); };
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -58,20 +61,10 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", h);
   }, []);
 
-  const features = [
-    { icon: Car, title: "Fahrzeugverwaltung", desc: "Alle Fahrzeuge mit Kennzeichen, Status und wirtschaftlichem Ergebnis auf einen Blick." },
-    { icon: Users, title: "Fahrerverwaltung", desc: "Fahrer anlegen, Fahrten zuordnen und monatliche Abrechnungen erstellen." },
-    { icon: BarChart3, title: "Ergebnis pro Fahrzeug", desc: "Einnahmen minus Kosten — sofort sehen, welches Fahrzeug wirklich Geld verdient." },
-    { icon: FileText, title: "Fahrten & Kosten", desc: "Eigene Fahrten, Plattformumsätze und alle Kostenarten sauber erfassen und filtern." },
-    { icon: PieChart, title: "Dashboard & Statistik", desc: "Handlungsorientierte Kennzahlen und klare Hinweise, wo Sie aktiv werden sollten." },
-    { icon: Shield, title: "Plattform-Import", desc: "Umsätze von Uber, Bolt & Co. importieren und automatisch zuordnen." },
-  ];
-
-  const plans = [
-    { name: "Starter", sub: "Ideal zum Kennenlernen", price: "0", vehicles: "1–3 Fahrzeuge", cta: "Kostenlos starten", highlight: false, features: ["Bis zu 3 Fahrzeuge", "Unbegrenzte Fahrten", "Basis-Dashboard", "E-Mail-Support", "Kostenerfassung"] },
-    { name: "Professional", sub: "Für wachsende Betriebe", price: "29,99", vehicles: "4–15 Fahrzeuge", cta: "Jetzt starten", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Plattform-Import", "Erweitertes Dashboard", "Fahrerabrechnung", "Prioritäts-Support"] },
-    { name: "Business", sub: "Für etablierte Unternehmen", price: "59,99", vehicles: "16–30 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alle Professional-Features", "Statistik & Vergleiche", "Multi-User (bald)", "Telefon-Support"] },
-  ];
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactSent(true);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -87,9 +80,9 @@ export default function Landing() {
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#problem" className="hover:text-foreground transition-colors">Warum</a>
-            <a href="#features" className="hover:text-foreground transition-colors">Funktionen</a>
+            <a href="#funktionen" className="hover:text-foreground transition-colors">Funktionen</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Preise</a>
-            <a href="#testimonials" className="hover:text-foreground transition-colors">Stimmen</a>
+            <a href="#kontakt" className="hover:text-foreground transition-colors">Kontakt</a>
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -113,7 +106,7 @@ export default function Landing() {
               )}
             </div>
             <Link to="/dashboard"><Button variant="ghost" size="sm">Anmelden</Button></Link>
-            <Link to="/dashboard"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Kostenlos testen</Button></Link>
+            <a href="#kontakt"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Demo anfragen</Button></a>
           </div>
 
           <button className="md:hidden p-2" onClick={() => setMobileMenu(!mobileMenu)}>
@@ -124,9 +117,9 @@ export default function Landing() {
         {mobileMenu && (
           <div className="md:hidden bg-background border-b border-border px-5 pb-5 space-y-3">
             <a href="#problem" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Warum</a>
-            <a href="#features" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Funktionen</a>
+            <a href="#funktionen" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Funktionen</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Preise</a>
-            <a href="#testimonials" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Stimmen</a>
+            <a href="#kontakt" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Kontakt</a>
             <Link to="/dashboard" className="block py-2 text-sm font-medium">Anmelden</Link>
             <div className="flex gap-2 pt-1">
               {languages.map(lang => (
@@ -136,7 +129,7 @@ export default function Landing() {
                 </button>
               ))}
             </div>
-            <Link to="/dashboard"><Button className="w-full mt-2" size="sm">Kostenlos testen</Button></Link>
+            <a href="#kontakt"><Button className="w-full mt-2" size="sm">Demo anfragen</Button></a>
           </div>
         )}
       </nav>
@@ -147,75 +140,79 @@ export default function Landing() {
           <div>
             <Reveal>
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-5">
-                <Target className="h-3.5 w-3.5" /> Für Mietwagenbetriebe
+                <Target className="h-3.5 w-3.5" /> Für Mietwagenbetriebe in der Personenbeförderung
               </span>
             </Reveal>
             <Reveal delay={80}>
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.08] tracking-tight text-balance">
-                Wissen Sie, welches Fahrzeug{" "}
-                <span className="text-primary">wirklich Geld verdient</span>?
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.08] tracking-tight text-balance" style={{ lineHeight: "1.08" }}>
+                Welches Ihrer Fahrzeuge verdient wirklich Geld?
               </h1>
             </Reveal>
             <Reveal delay={160}>
               <p className="mt-6 text-lg text-muted-foreground max-w-lg leading-relaxed text-pretty">
-                Drive Organizer X zeigt Ihnen, was pro Fahrzeug übrig bleibt. Fahrten, Einnahmen, Kosten und Ergebnis — alles an einem Ort. Für Mietwagenbetriebe mit Uber, Bolt, Flughafentransfer, Krankenfahrten und Mischbetrieb.
+                Die meisten Mietwagenbetriebe kennen ihren Umsatz — aber nicht ihr Ergebnis pro Fahrzeug. Drive Organizer X macht sichtbar, was nach Abzug aller Kosten wirklich übrig bleibt.
               </p>
             </Reveal>
-            <Reveal delay={240}>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/dashboard">
-                  <Button size="lg" className="shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform text-base px-7 h-12">
-                    Kostenlos starten <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <a href="#features">
-                  <Button variant="outline" size="lg" className="text-base px-7 h-12 active:scale-[0.97] transition-transform">
-                    Funktionen ansehen
-                  </Button>
-                </a>
+            <Reveal delay={220}>
+              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                {["Uber & Bolt", "Flughafentransfer", "Krankenfahrten", "Firmenfahrten"].map(t => (
+                  <span key={t} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{t}</span>
+                ))}
               </div>
             </Reveal>
-            <Reveal delay={320}>
+            <Reveal delay={280}>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a href="#kontakt">
+                  <Button size="lg" className="shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform text-base px-7 h-12">
+                    Demo anfragen <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
+                <Link to="/dashboard">
+                  <Button variant="outline" size="lg" className="text-base px-7 h-12 active:scale-[0.97] transition-transform">
+                    Kostenlos testen
+                  </Button>
+                </Link>
+              </div>
+            </Reveal>
+            <Reveal delay={340}>
               <p className="mt-5 text-xs text-muted-foreground flex items-center gap-1.5">
                 <Check className="h-3.5 w-3.5 text-primary" /> Kostenlos für bis zu 3 Fahrzeuge · Keine Kreditkarte nötig
               </p>
             </Reveal>
           </div>
 
-          {/* Hero visual */}
+          {/* Hero visual — mini dashboard */}
           <Reveal delay={200}>
             <div className="relative">
               <div className="bg-card border border-border rounded-2xl shadow-2xl shadow-primary/5 p-6 space-y-5">
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { label: "Fahrzeuge", val: "8", icon: Car, trend: "3 aktiv" },
-                    { label: "Einnahmen", val: "€ 14.820", icon: TrendingUp, trend: "+8,3 %" },
-                    { label: "Ergebnis", val: "€ 6.340", icon: BarChart3, trend: "Diesen Monat" },
+                    { label: "Fahrzeuge", val: "8", trend: "5 aktiv" },
+                    { label: "Einnahmen", val: "€ 14.820", trend: "März 2026" },
+                    { label: "Ergebnis", val: "€ 6.340", trend: "+12 % ggü. Vormonat" },
                   ].map((k) => (
                     <div key={k.label} className="bg-muted/50 rounded-xl p-3.5 space-y-1">
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <k.icon className="h-3.5 w-3.5" />
-                        <span className="text-[11px] font-medium">{k.label}</span>
-                      </div>
+                      <span className="text-[11px] font-medium text-muted-foreground">{k.label}</span>
                       <p className="text-lg font-bold tabular-nums">{k.val}</p>
                       <span className="text-[10px] text-primary font-medium">{k.trend}</span>
                     </div>
                   ))}
                 </div>
-                <div className="h-28 rounded-xl bg-gradient-to-t from-primary/5 to-transparent border border-border/50 flex items-end px-4 pb-3 gap-1.5">
-                  {[40, 55, 35, 70, 60, 80, 65, 90, 75, 95, 85, 78].map((h, i) => (
-                    <div key={i} className="flex-1 rounded-t bg-primary/70 transition-all" style={{ height: `${h}%`, opacity: 0.5 + (h / 200) }} />
-                  ))}
-                </div>
                 <div className="space-y-2">
                   {[
-                    { car: "B-MR 1234", result: "+€ 1.240", positive: true },
-                    { car: "B-MR 5678", result: "+€ 890", positive: true },
-                    { car: "B-MR 9012", result: "-€ 120", positive: false },
-                  ].map((row, i) => (
-                    <div key={i} className="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-muted/30">
-                      <span className="font-medium font-mono">{row.car}</span>
-                      <span className={`text-[11px] font-semibold ${row.positive ? "text-primary" : "text-destructive"}`}>{row.result}</span>
+                    { car: "B-MR 1234", result: "+€ 1.240", tag: "Profitabel", positive: true },
+                    { car: "B-MR 5678", result: "+€ 890", tag: "Profitabel", positive: true },
+                    { car: "B-MR 9012", result: "-€ 120", tag: "Nicht rentabel", positive: false },
+                  ].map((row) => (
+                    <div key={row.car} className="flex items-center justify-between text-xs px-3 py-2.5 rounded-lg bg-muted/30 border border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Car className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="font-medium font-mono">{row.car}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${row.positive ? "bg-primary/10 text-primary" : "bg-destructive/10 text-destructive"}`}>{row.tag}</span>
+                        <span className={`font-semibold tabular-nums ${row.positive ? "text-primary" : "text-destructive"}`}>{row.result}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -226,8 +223,20 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ─── SOCIAL PROOF BAR ─── */}
+      <Reveal>
+        <div className="border-y border-border bg-muted/20 py-6 px-5">
+          <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-primary" /> Speziell für Personenbeförderung</span>
+            <span className="flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> DSGVO-konform</span>
+            <span className="flex items-center gap-1.5"><Gauge className="h-4 w-4 text-primary" /> In 5 Minuten startklar</span>
+            <span className="flex items-center gap-1.5"><Building2 className="h-4 w-4 text-primary" /> Für 3–30 Fahrzeuge</span>
+          </div>
+        </div>
+      </Reveal>
+
       {/* ─── PROBLEM ─── */}
-      <section id="problem" className="py-20 md:py-28 px-5 border-y border-border bg-muted/20">
+      <section id="problem" className="py-20 md:py-28 px-5">
         <div className="max-w-4xl mx-auto">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Das Problem</p>
@@ -242,15 +251,15 @@ export default function Landing() {
               Die meisten Mietwagenbetriebe wissen, wie viel Umsatz sie machen. Aber nur wenige wissen, welches Fahrzeug profitabel ist und welches Geld kostet. Excel-Listen, Bauchgefühl und verteilte Plattform-Abrechnungen machen es unmöglich, schnell die richtigen Entscheidungen zu treffen.
             </p>
           </Reveal>
-          <div className="mt-12 grid sm:grid-cols-3 gap-6">
+          <div className="mt-14 grid sm:grid-cols-3 gap-8">
             {[
-              { icon: AlertTriangle, title: "Kein Überblick", desc: "Einnahmen aus Uber, Bolt und eigenen Fahrten an verschiedenen Orten. Keine einheitliche Sicht." },
-              { icon: TrendingUp, title: "Versteckte Verluste", desc: "Manche Fahrzeuge kosten mehr als sie einbringen — aber Sie merken es erst am Jahresende." },
-              { icon: Clock, title: "Zeitverschwendung", desc: "Stundenlange Excel-Pflege statt Fahrzeuge steuern. Die wichtige Frage bleibt unbeantwortet." },
+              { icon: AlertTriangle, title: "Kein klares Ergebnis pro Fahrzeug", desc: "Einnahmen aus Uber, Bolt, Flughafentransfers und eigenen Fahrten liegen verstreut. Welches Fahrzeug Gewinn macht und welches nicht, bleibt unklar." },
+              { icon: TrendingUp, title: "Versteckte Verluste bleiben unsichtbar", desc: "Manche Fahrzeuge kosten über die Summe aus Leasing, Versicherung und Sprit mehr als sie einbringen — aber das fällt erst am Jahresende auf." },
+              { icon: Clock, title: "Excel statt Entscheidungen", desc: "Stunden gehen für das manuelle Zusammentragen von Zahlen drauf. Zeit, die besser in die Steuerung des Betriebs fließen sollte." },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 80}>
-                <div className="text-center p-6">
-                  <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+                <div className="text-center">
+                  <div className="h-11 w-11 rounded-xl bg-destructive/10 flex items-center justify-center mx-auto mb-4">
                     <item.icon className="h-5 w-5 text-destructive" />
                   </div>
                   <h3 className="font-bold text-sm mb-2">{item.title}</h3>
@@ -263,26 +272,43 @@ export default function Landing() {
       </section>
 
       {/* ─── SOLUTION BRIDGE ─── */}
-      <section className="py-16 px-5">
+      <section className="py-16 px-5 bg-muted/20 border-y border-border">
         <div className="max-w-3xl mx-auto text-center">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Die Lösung</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-balance">
-              Weniger Bauchgefühl. Mehr Klarheit.
+              Weniger Excel. Weniger Bauchgefühl. Mehr Klarheit.
             </h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-pretty leading-relaxed">
-              Drive Organizer X beantwortet die wichtigste Frage für Ihren Betrieb: <span className="font-medium text-foreground">Was bleibt pro Fahrzeug übrig — und wo muss ich handeln?</span>
+              Drive Organizer X beantwortet die wichtigste Frage für Ihren Betrieb: <span className="font-semibold text-foreground">Was bleibt pro Fahrzeug übrig — und wo müssen Sie handeln?</span>
             </p>
+          </Reveal>
+          <Reveal delay={180}>
+            <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[
+                { step: "1", label: "Fahrten erfassen" },
+                { step: "2", label: "Plattformumsätze importieren" },
+                { step: "3", label: "Kosten zuordnen" },
+                { step: "4", label: "Ergebnis pro Fahrzeug sehen" },
+              ].map((s, i) => (
+                <Reveal key={s.step} delay={180 + i * 60}>
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="h-9 w-9 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center">{s.step}</span>
+                    <span className="text-xs font-medium text-center leading-snug">{s.label}</span>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </Reveal>
         </div>
       </section>
 
       {/* ─── FEATURES ─── */}
-      <section id="features" className="py-20 md:py-28 px-5">
+      <section id="funktionen" className="py-20 md:py-28 px-5">
         <div className="max-w-6xl mx-auto">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Funktionen</p>
@@ -294,12 +320,19 @@ export default function Landing() {
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground text-center mt-4 max-w-xl mx-auto text-pretty">
-              Von der Fahrterfassung bis zur Fahrzeugbilanz. Einfach, übersichtlich, auf den Punkt.
+              Von der Fahrterfassung bis zur Fahrzeugbilanz — einfach, übersichtlich, auf den Punkt.
             </p>
           </Reveal>
 
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map((f, i) => (
+            {[
+              { icon: Gauge, title: "Dashboard", desc: "Sehen Sie sofort, welche Fahrzeuge rentabel sind, wo Handlungsbedarf besteht und wie Ihr Betrieb insgesamt dasteht." },
+              { icon: Route, title: "Fahrten", desc: "Erfassen und dokumentieren Sie eigene Fahrten zentral — Krankenfahrten, Flughafentransfers, Privat- und Firmenfahrten." },
+              { icon: TrendingUp, title: "Umsätze", desc: "Kombinieren Sie eigene Fahrten und Plattformumsätze von Uber, Bolt & Co. in einer Übersicht." },
+              { icon: Car, title: "Fahrzeuge", desc: "Verstehen Sie, was pro Fahrzeug übrig bleibt. Einnahmen, Kosten und Ergebnis — klar aufgeschlüsselt." },
+              { icon: Receipt, title: "Kosten", desc: "Ordnen Sie Fixkosten und variable Kosten sauber Ihren Fahrzeugen zu. Leasing, Versicherung, Sprit, Werkstatt." },
+              { icon: Layers, title: "Plattform-Import", desc: "Importieren Sie Umsätze von Uber, Bolt & Co. und ordnen Sie sie automatisch Fahrzeugen und Fahrern zu." },
+            ].map((f, i) => (
               <Reveal key={f.title} delay={i * 70}>
                 <div className="group bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:shadow-primary/5 transition-shadow duration-300 h-full">
                   <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
@@ -314,8 +347,81 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ─── DIFFERENZIERUNG ─── */}
+      <section className="py-20 md:py-28 px-5 bg-muted/20 border-y border-border">
+        <div className="max-w-4xl mx-auto">
+          <Reveal>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Warum Drive Organizer X</p>
+          </Reveal>
+          <Reveal delay={60}>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
+              Kein allgemeines Flottentool. Kein Buchhaltungsprogramm.
+            </h2>
+          </Reveal>
+          <Reveal delay={120}>
+            <p className="text-muted-foreground text-center mt-4 max-w-2xl mx-auto text-pretty leading-relaxed">
+              Drive Organizer X wurde speziell für Mietwagenbetriebe in der Personenbeförderung entwickelt. Es verbindet Fahrten, Plattformeinnahmen und Fahrzeugkosten zu einer einzigen Kennzahl: dem Ergebnis pro Fahrzeug.
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid sm:grid-cols-2 gap-5">
+            {[
+              { label: "Spezialisiert auf Personenbeförderung", desc: "Nicht für Speditionen, nicht für LKW-Flotten — sondern für Mietwagenbetriebe mit Uber, Bolt, Krankenfahrten und Mischbetrieb." },
+              { label: "Fokus auf Ergebnis pro Fahrzeug", desc: "Die wichtigste Kennzahl für Ihren Betrieb. Keine überladenen Dashboards, sondern klare Antworten." },
+              { label: "Für Unternehmer gemacht", desc: "Einfach verständlich, keine Buchhaltungskenntnisse nötig. Einnahmen, Kosten, Ergebnis — fertig." },
+              { label: "Eigene Fahrten + Plattformen", desc: "Kombiniert eigene Fahrten und Plattformumsätze in einer Sicht. Kein manuelles Zusammenrechnen mehr." },
+            ].map((item, i) => (
+              <Reveal key={item.label} delay={i * 70}>
+                <div className="flex gap-4 p-5 bg-card border border-border rounded-xl">
+                  <div className="mt-0.5 shrink-0">
+                    <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Check className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm mb-1">{item.label}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FÜR WEN GEEIGNET ─── */}
+      <section className="py-20 md:py-28 px-5">
+        <div className="max-w-4xl mx-auto">
+          <Reveal>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Zielgruppe</p>
+          </Reveal>
+          <Reveal delay={60}>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
+              Für wen ist Drive Organizer X?
+            </h2>
+          </Reveal>
+          <div className="mt-12 grid sm:grid-cols-3 gap-6">
+            {[
+              { title: "Mischbetriebe", desc: "Sie kombinieren Uber, Bolt, Flughafentransfers und eigene Kundenfahrten? Dann brauchen Sie eine Übersicht, die alles zusammenbringt.", icon: Layers },
+              { title: "Krankenfahrtbetriebe", desc: "Krankenfahrten mit Kassenabrechnung, dazu private Fahrten? Drive Organizer X zeigt Ihnen das Ergebnis pro Fahrzeug — unabhängig vom Fahrttyp.", icon: Route },
+              { title: "Wachsende Flotten", desc: "3 bis 30 Fahrzeuge, mehrere Fahrer, verschiedene Einnahmequellen? Ab dieser Größe wird Bauchgefühl zum Risiko.", icon: BarChart3 },
+            ].map((item, i) => (
+              <Reveal key={item.title} delay={i * 80}>
+                <div className="text-center p-6 bg-card border border-border rounded-2xl h-full">
+                  <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <item.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="font-bold text-sm mb-2">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── PRICING ─── */}
-      <section id="pricing" className="py-20 md:py-28 px-5 bg-muted/20">
+      <section id="pricing" className="py-20 md:py-28 px-5 bg-muted/20 border-y border-border">
         <div className="max-w-5xl mx-auto">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Preise</p>
@@ -332,7 +438,11 @@ export default function Landing() {
           </Reveal>
 
           <div className="mt-14 grid sm:grid-cols-3 gap-5">
-            {plans.map((plan, i) => (
+            {[
+              { name: "Starter", sub: "Ideal zum Kennenlernen", price: "0", vehicles: "1–3 Fahrzeuge", cta: "Kostenlos starten", highlight: false, features: ["Bis zu 3 Fahrzeuge", "Unbegrenzte Fahrten", "Basis-Dashboard", "Kostenerfassung", "E-Mail-Support"] },
+              { name: "Professional", sub: "Für wachsende Betriebe", price: "29", vehicles: "4–15 Fahrzeuge", cta: "Demo anfragen", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Plattform-Import", "Erweitertes Dashboard", "Fahrerabrechnung", "Prioritäts-Support"] },
+              { name: "Business", sub: "Für etablierte Unternehmen", price: "59", vehicles: "16–30 Fahrzeuge", cta: "Demo anfragen", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alle Professional-Features", "Statistik & Vergleiche", "Multi-User (bald)", "Telefon-Support"] },
+            ].map((plan, i) => (
               <Reveal key={plan.name} delay={i * 80}>
                 <div className={`relative flex flex-col bg-card border rounded-2xl p-6 h-full transition-shadow duration-300 hover:shadow-lg ${
                   plan.highlight ? "border-primary shadow-xl shadow-primary/10 ring-1 ring-primary/20" : "border-border hover:shadow-primary/5"
@@ -363,25 +473,38 @@ export default function Landing() {
                   </ul>
 
                   <div className="mt-6">
-                    <Link to="/dashboard">
-                      <Button className={`w-full active:scale-[0.97] transition-transform ${plan.highlight ? "shadow-md shadow-primary/20" : ""}`}
-                        variant={plan.highlight ? "default" : "outline"}>
-                        {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </Link>
+                    {plan.price === "0" ? (
+                      <Link to="/dashboard">
+                        <Button className="w-full active:scale-[0.97] transition-transform" variant="outline">
+                          {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
+                        </Button>
+                      </Link>
+                    ) : (
+                      <a href="#kontakt">
+                        <Button className={`w-full active:scale-[0.97] transition-transform ${plan.highlight ? "shadow-md shadow-primary/20" : ""}`}
+                          variant={plan.highlight ? "default" : "outline"}>
+                          {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
+                        </Button>
+                      </a>
+                    )}
                   </div>
                 </div>
               </Reveal>
             ))}
           </div>
+          <Reveal delay={300}>
+            <p className="text-center text-xs text-muted-foreground mt-6">
+              Alle Preise zzgl. MwSt. · Monatlich kündbar · Keine versteckten Kosten
+            </p>
+          </Reveal>
         </div>
       </section>
 
       {/* ─── TESTIMONIALS ─── */}
-      <section id="testimonials" className="py-20 md:py-28 px-5">
+      <section className="py-20 md:py-28 px-5">
         <div className="max-w-4xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Kundenstimmen</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Stimmen aus der Branche</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
@@ -401,7 +524,7 @@ export default function Landing() {
                       <Star key={j} className="h-4 w-4 fill-warning text-warning" />
                     ))}
                   </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground italic">"{tm.text}"</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground italic">„{tm.text}"</p>
                   <div>
                     <p className="text-sm font-bold">{tm.name}</p>
                     <p className="text-xs text-muted-foreground">{tm.role}</p>
@@ -413,44 +536,180 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ─── KONTAKT / DEMO CTA ─── */}
+      <section id="kontakt" className="py-20 md:py-28 px-5 bg-muted/20 border-y border-border">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-start">
+            <div>
+              <Reveal>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Kontakt</p>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-balance">
+                  Unverbindlich anfragen oder Demo vereinbaren
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="text-muted-foreground mt-4 leading-relaxed text-pretty">
+                  Sie möchten wissen, ob Drive Organizer X zu Ihrem Betrieb passt? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.
+                </p>
+              </Reveal>
+              <Reveal delay={180}>
+                <div className="mt-8 space-y-4">
+                  <div className="flex items-center gap-3 text-sm">
+                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Mail className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">E-Mail</p>
+                      <p className="text-muted-foreground text-xs">info@driveorganizerx.de</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Phone className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Telefon</p>
+                      <p className="text-muted-foreground text-xs">+49 30 123 456 78</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Clock className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Antwortzeit</p>
+                      <p className="text-muted-foreground text-xs">Innerhalb von 24 Stunden</p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+
+            <Reveal delay={100}>
+              <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+                {contactSent ? (
+                  <div className="text-center py-8">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <Check className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="font-bold text-base mb-2">Anfrage gesendet</h3>
+                    <p className="text-sm text-muted-foreground">Vielen Dank! Wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleContactSubmit} className="space-y-4">
+                    <h3 className="font-bold text-base mb-1">Demo anfragen</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Unverbindlich und kostenlos. Wir zeigen Ihnen, wie Drive Organizer X zu Ihrem Betrieb passt.</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium mb-1.5 block">Vorname</label>
+                        <Input placeholder="Max" className="h-9 text-sm" required />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium mb-1.5 block">Nachname</label>
+                        <Input placeholder="Mustermann" className="h-9 text-sm" required />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium mb-1.5 block">E-Mail</label>
+                      <Input type="email" placeholder="info@ihr-betrieb.de" className="h-9 text-sm" required />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium mb-1.5 block">Firmenname</label>
+                      <Input placeholder="Ihr Betriebsname" className="h-9 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium mb-1.5 block">Anzahl Fahrzeuge</label>
+                      <Input type="number" placeholder="z. B. 8" min="1" max="100" className="h-9 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium mb-1.5 block">Nachricht (optional)</label>
+                      <Textarea placeholder="Erzählen Sie uns kurz von Ihrem Betrieb…" className="text-sm min-h-[70px]" />
+                    </div>
+                    <Button type="submit" className="w-full active:scale-[0.97] transition-transform shadow-md shadow-primary/20">
+                      Anfrage senden <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                    <p className="text-[10px] text-muted-foreground text-center">Ihre Daten werden vertraulich behandelt. Keine Weitergabe an Dritte.</p>
+                  </form>
+                )}
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* ─── FINAL CTA ─── */}
       <section className="py-20 md:py-28 px-5">
         <Reveal>
           <div className="max-w-3xl mx-auto text-center bg-primary rounded-3xl px-8 py-14 md:py-18 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary-foreground)/0.06),transparent_60%)]" />
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-foreground tracking-tight relative text-balance">
-              Starten Sie jetzt — kostenlos für bis zu 3 Fahrzeuge
+              Wissen Sie, was pro Fahrzeug übrig bleibt?
             </h2>
             <p className="text-primary-foreground/80 mt-4 text-sm md:text-base max-w-md mx-auto relative">
-              In 5 Minuten eingerichtet. Keine Kreditkarte, kein Vertrag. Einfach loslegen und sehen, was pro Fahrzeug übrig bleibt.
+              Starten Sie kostenlos mit bis zu 3 Fahrzeugen. Keine Kreditkarte, kein Vertrag. In 5 Minuten eingerichtet.
             </p>
-            <div className="mt-8 relative">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 relative">
               <Link to="/dashboard">
                 <Button size="lg" variant="secondary" className="text-base px-8 h-12 shadow-lg active:scale-[0.97] transition-transform font-semibold">
                   Kostenlos testen <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
+              <a href="#kontakt">
+                <Button size="lg" variant="ghost" className="text-base px-6 h-12 text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10">
+                  Demo anfragen
+                </Button>
+              </a>
             </div>
           </div>
         </Reveal>
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="border-t border-border bg-muted/20 py-10 px-5">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
-              <Car className="h-3.5 w-3.5 text-primary-foreground" />
+      <footer className="border-t border-border bg-muted/20 py-12 px-5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
+                  <Car className="h-3.5 w-3.5 text-primary-foreground" />
+                </div>
+                <span className="font-bold text-sm">Drive Organizer X</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Das Steuerungstool für Mietwagenbetriebe in der Personenbeförderung.
+              </p>
             </div>
-            <span className="font-bold text-sm">Drive Organizer X</span>
+            <div>
+              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Produkt</p>
+              <div className="space-y-2">
+                <a href="#funktionen" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Funktionen</a>
+                <a href="#pricing" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Preise</a>
+                <Link to="/dashboard" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">App öffnen</Link>
+              </div>
+            </div>
+            <div>
+              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Unternehmen</p>
+              <div className="space-y-2">
+                <a href="#kontakt" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
+                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Impressum</a>
+                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</a>
+              </div>
+            </div>
+            <div>
+              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Rechtliches</p>
+              <div className="space-y-2">
+                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">AGB</a>
+                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</a>
+                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Cookie-Richtlinie</a>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-6 text-xs text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Impressum</a>
-            <a href="#" className="hover:text-foreground transition-colors">Datenschutz</a>
-            <a href="#" className="hover:text-foreground transition-colors">AGB</a>
-            <a href="#" className="hover:text-foreground transition-colors">Kontakt</a>
+          <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-muted-foreground">© 2026 Drive Organizer X · Alle Rechte vorbehalten</p>
+            <p className="text-xs text-muted-foreground">Entwickelt in Deutschland 🇩🇪</p>
           </div>
-          <p className="text-xs text-muted-foreground">© 2026 Drive Organizer X</p>
         </div>
       </footer>
     </div>
