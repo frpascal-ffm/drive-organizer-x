@@ -24,15 +24,17 @@ export default function FahrzeugBearbeiten() {
 
   if (!fz) return <div className="p-12 text-center text-muted-foreground">Fahrzeug nicht gefunden.</div>;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!kennzeichen || !marke || !modell) { toast.error("Bitte Pflichtfelder ausfüllen."); return; }
-    updateFahrzeug(fz.id, {
-      kennzeichen, marke, modell,
-      baujahr: baujahr ? parseInt(baujahr) : fz.baujahr,
-      farbe, status: status as any,
-    });
-    toast.success("Fahrzeug wurde aktualisiert.");
-    navigate(`/fahrzeuge/${fz.id}`);
+    try {
+      await updateFahrzeug(fz.id, {
+        kennzeichen, marke, modell,
+        baujahr: baujahr ? parseInt(baujahr) : fz.baujahr,
+        farbe, status: status as any,
+      });
+      toast.success("Fahrzeug wurde aktualisiert.");
+      navigate(`/fahrzeuge/${fz.id}`);
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
   return (

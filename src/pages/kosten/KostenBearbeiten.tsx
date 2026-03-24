@@ -31,7 +31,7 @@ export default function KostenBearbeiten() {
 
   const kats = typ === "fix" ? fixKategorien : varKategorien;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!kategorie || !betrag || !fahrzeugId) {
       toast.error("Bitte Pflichtfelder ausfüllen.");
       return;
@@ -44,14 +44,16 @@ export default function KostenBearbeiten() {
       toast.error("Bei variablen Kosten ist ein Datum erforderlich.");
       return;
     }
-    updateKosten(k.id, {
-      typ, kategorie, betrag: parseFloat(betrag), fahrzeugId,
-      datum: datum || new Date().toISOString().slice(0, 10),
-      intervall: typ === "fix" ? intervall as any : undefined,
-      notiz: notiz || undefined,
-    });
-    toast.success("Kosten wurden aktualisiert.");
-    navigate("/kosten");
+    try {
+      await updateKosten(k.id, {
+        typ, kategorie, betrag: parseFloat(betrag), fahrzeugId,
+        datum: datum || new Date().toISOString().slice(0, 10),
+        intervall: typ === "fix" ? intervall as any : undefined,
+        notiz: notiz || undefined,
+      });
+      toast.success("Kosten wurden aktualisiert.");
+      navigate("/kosten");
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
   return (

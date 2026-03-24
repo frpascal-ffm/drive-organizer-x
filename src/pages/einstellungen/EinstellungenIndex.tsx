@@ -74,7 +74,7 @@ export default function EinstellungenIndex() {
               <Label className={typ.enabled ? "" : "text-muted-foreground"}>
                 {fahrtTypLabels[typ.key] || typ.key}
               </Label>
-              <Switch checked={typ.enabled} onCheckedChange={() => toggleFahrttyp(typ.key)} />
+              <Switch checked={typ.enabled} onCheckedChange={() => toggleFahrttyp(typ.key as any)} />
             </div>
           ))}
         </div>

@@ -23,32 +23,40 @@ export default function FahrtDetail() {
   const fahrer = getFahrer(fahrt.fahrerId);
   const fz = getFahrzeug(fahrt.fahrzeugId);
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!comment.trim()) return;
-    addKommentar(fahrt.id, comment, "Sie");
-    setComment("");
-    toast.success(t("fahrtDetail.kommentarHinzugefuegt"));
+    try {
+      await addKommentar(fahrt.id, comment, "Sie");
+      setComment("");
+      toast.success(t("fahrtDetail.kommentarHinzugefuegt"));
+    } catch (e: any) { toast.error(e.message || "Fehler."); }
   };
 
-  const handleMarkErledigt = () => {
-    updateFahrt(fahrt.id, { status: "erledigt" });
-    toast.success("Fahrt als erledigt markiert.");
+  const handleMarkErledigt = async () => {
+    try {
+      await updateFahrt(fahrt.id, { status: "erledigt" });
+      toast.success("Fahrt als erledigt markiert.");
+    } catch (e: any) { toast.error(e.message || "Fehler."); }
   };
 
-  const handleStornieren = () => {
-    updateFahrt(fahrt.id, { status: "storniert" });
-    toast.success("Fahrt wurde storniert.");
+  const handleStornieren = async () => {
+    try {
+      await updateFahrt(fahrt.id, { status: "storniert" });
+      toast.success("Fahrt wurde storniert.");
+    } catch (e: any) { toast.error(e.message || "Fehler."); }
   };
 
-  const handleDuplizieren = () => {
-    const newId = addFahrt({
-      typ: fahrt.typ, datum: fahrt.datum, uhrzeit: fahrt.uhrzeit,
-      von: fahrt.von, nach: fahrt.nach, fahrerId: fahrt.fahrerId,
-      fahrzeugId: fahrt.fahrzeugId, status: "geplant",
-      preis: fahrt.preis, mwst: fahrt.mwst, kunde: fahrt.kunde, notiz: fahrt.notiz,
-    });
-    toast.success("Fahrt wurde dupliziert.");
-    navigate(`/fahrten/${newId}`);
+  const handleDuplizieren = async () => {
+    try {
+      const newId = await addFahrt({
+        typ: fahrt.typ, datum: fahrt.datum, uhrzeit: fahrt.uhrzeit,
+        von: fahrt.von, nach: fahrt.nach, fahrerId: fahrt.fahrerId,
+        fahrzeugId: fahrt.fahrzeugId, status: "geplant",
+        preis: fahrt.preis, mwst: fahrt.mwst, kunde: fahrt.kunde, notiz: fahrt.notiz,
+      });
+      toast.success("Fahrt wurde dupliziert.");
+      navigate(`/fahrten/${newId}`);
+    } catch (e: any) { toast.error(e.message || "Fehler."); }
   };
 
   const info = [

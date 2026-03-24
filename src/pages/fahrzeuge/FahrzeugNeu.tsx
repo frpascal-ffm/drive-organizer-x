@@ -44,19 +44,21 @@ export default function FahrzeugNeu() {
   const [vertragsnummer, setVertragsnummer] = useState("");
   const [notiz, setNotiz] = useState("");
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!kennzeichen || !marke || !modell) {
       toast.error("Bitte Pflichtfelder ausfüllen.");
       return;
     }
-    const id = addFahrzeug({
-      kennzeichen, marke, modell,
-      baujahr: baujahr ? parseInt(baujahr) : new Date().getFullYear(),
-      farbe: farbe || "–",
-      status: status as FahrzeugStatus,
-    });
-    toast.success("Fahrzeug wurde angelegt.");
-    navigate(`/fahrzeuge/${id}`);
+    try {
+      const id = await addFahrzeug({
+        kennzeichen, marke, modell,
+        baujahr: baujahr ? parseInt(baujahr) : new Date().getFullYear(),
+        farbe: farbe || "–",
+        status: status as FahrzeugStatus,
+      });
+      toast.success("Fahrzeug wurde angelegt.");
+      navigate(`/fahrzeuge/${id}`);
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
   return (

@@ -26,11 +26,13 @@ export default function FahrerBearbeiten() {
 
   if (!fa) return <div className="p-12 text-center text-muted-foreground">Fahrer nicht gefunden.</div>;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!vorname || !nachname || !telefon) { toast.error("Bitte Pflichtfelder ausfüllen."); return; }
-    updateFahrer(fa.id, { vorname, nachname, adresse, telefon, email: email || undefined, status: status as any, notiz: notiz || undefined });
-    toast.success("Fahrer wurde aktualisiert.");
-    navigate(`/fahrer/${fa.id}`);
+    try {
+      await updateFahrer(fa.id, { vorname, nachname, adresse, telefon, email: email || undefined, status: status as any, notiz: notiz || undefined });
+      toast.success("Fahrer wurde aktualisiert.");
+      navigate(`/fahrer/${fa.id}`);
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
   return (
