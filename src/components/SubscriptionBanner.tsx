@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, CreditCard } from "lucide-react";
 
 export function SubscriptionBanner() {
-  const { isActive, loading, startCheckout } = useSubscription();
+  const { isActive, loading, setShowUpgradeModal } = useSubscription();
 
   if (loading || isActive) return null;
 
@@ -13,7 +13,7 @@ export function SubscriptionBanner() {
         <AlertTriangle className="h-4 w-4 shrink-0" />
         <span>Kein aktives Abo. Funktionen sind eingeschränkt.</span>
       </div>
-      <Button size="sm" variant="destructive" onClick={() => startCheckout()}>
+      <Button size="sm" variant="destructive" onClick={() => setShowUpgradeModal(true)}>
         <CreditCard className="h-3.5 w-3.5 mr-1.5" />
         Abo abschließen
       </Button>
