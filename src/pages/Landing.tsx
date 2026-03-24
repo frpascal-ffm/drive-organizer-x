@@ -120,7 +120,7 @@ export default function Landing() {
             <a href="#funktionen" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Funktionen</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Preise</a>
             <a href="#kontakt" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Kontakt</a>
-            <Link to="/dashboard" className="block py-2 text-sm font-medium">Anmelden</Link>
+            <Link to="/login" className="block py-2 text-sm font-medium">Anmelden</Link>
             <div className="flex gap-2 pt-1">
               {languages.map(lang => (
                 <button key={lang.code} onClick={() => { changeLanguage(lang.code); setMobileMenu(false); }}
