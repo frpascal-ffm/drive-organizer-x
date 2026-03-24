@@ -36,7 +36,7 @@ export default function KostenNeu() {
 
   const filteredFz = fahrzeuge.filter(f => !fzSearch || f.kennzeichen.toLowerCase().includes(fzSearch.toLowerCase()) || `${f.marke} ${f.modell}`.toLowerCase().includes(fzSearch.toLowerCase()));
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!kategorie || !betrag || !fahrzeugId) {
       toast.error("Bitte Pflichtfelder ausfüllen.");
       return;
@@ -49,14 +49,16 @@ export default function KostenNeu() {
       toast.error("Bei variablen Kosten ist ein Datum erforderlich.");
       return;
     }
-    addKosten({
-      typ, kategorie, betrag: parseFloat(betrag), fahrzeugId,
-      datum: datum || new Date().toISOString().slice(0, 10),
-      intervall: typ === "fix" ? intervall as any : undefined,
-      notiz: notiz || undefined,
-    });
-    toast.success("Kosten wurden erfasst.");
-    navigate("/kosten");
+    try {
+      await addKosten({
+        typ, kategorie, betrag: parseFloat(betrag), fahrzeugId,
+        datum: datum || new Date().toISOString().slice(0, 10),
+        intervall: typ === "fix" ? intervall as any : undefined,
+        notiz: notiz || undefined,
+      });
+      toast.success("Kosten wurden erfasst.");
+      navigate("/kosten");
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
   const kats = typ === "fix" ? fixKategorien : varKategorien;

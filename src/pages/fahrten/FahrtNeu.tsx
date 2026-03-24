@@ -58,27 +58,33 @@ export default function FahrtNeu() {
     notiz: notiz || undefined,
   });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validate()) return;
-    const id = addFahrt(buildFahrt());
-    toast.success("Fahrt wurde erstellt.");
-    navigate(`/fahrten/${id}`);
+    try {
+      const id = await addFahrt(buildFahrt());
+      toast.success("Fahrt wurde erstellt.");
+      navigate(`/fahrten/${id}`);
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
-  const handleSaveAndNew = () => {
+  const handleSaveAndNew = async () => {
     if (!validate()) return;
-    addFahrt(buildFahrt());
-    toast.success("Fahrt erstellt – neues Formular bereit.");
-    setTyp(""); setDatum(""); setUhrzeit(""); setVon(""); setNach("");
-    setFahrerId(""); setFahrzeugId(""); setStatus("geplant");
-    setPreis(""); setMwst("19"); setKunde(""); setNotiz("");
-    setErrors({});
+    try {
+      await addFahrt(buildFahrt());
+      toast.success("Fahrt erstellt – neues Formular bereit.");
+      setTyp(""); setDatum(""); setUhrzeit(""); setVon(""); setNach("");
+      setFahrerId(""); setFahrzeugId(""); setStatus("geplant");
+      setPreis(""); setMwst("19"); setKunde(""); setNotiz("");
+      setErrors({});
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
-  const handleSaveAndDuplicate = () => {
+  const handleSaveAndDuplicate = async () => {
     if (!validate()) return;
-    addFahrt(buildFahrt());
-    toast.success("Fahrt erstellt – Formular dupliziert.");
+    try {
+      await addFahrt(buildFahrt());
+      toast.success("Fahrt erstellt – Formular dupliziert.");
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
     // Keep all fields as-is for duplication
   };
 

@@ -21,11 +21,13 @@ export default function FahrerNeu() {
   const [email, setEmail] = useState("");
   const [notiz, setNotiz] = useState("");
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!vorname || !nachname || !telefon) { toast.error(t("fahrerNeu.pflichtfelder")); return; }
-    const id = addFahrer({ vorname, nachname, adresse, telefon, email: email || undefined, status: "aktiv", notiz: notiz || undefined });
-    toast.success(t("fahrerNeu.erfolg"));
-    navigate(`/fahrer/${id}`);
+    try {
+      const id = await addFahrer({ vorname, nachname, adresse, telefon, email: email || undefined, status: "aktiv", notiz: notiz || undefined });
+      toast.success(t("fahrerNeu.erfolg"));
+      navigate(`/fahrer/${id}`);
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
   return (
