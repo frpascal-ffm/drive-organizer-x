@@ -4,9 +4,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { AuthProvider } from "@/context/AuthContext";
 import { AppProvider } from "@/context/AppContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Layout } from "@/components/Layout";
 import Landing from "./pages/Landing";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import FahrtenListe from "./pages/fahrten/FahrtenListe";
 import FahrtNeu from "./pages/fahrten/FahrtNeu";
@@ -38,41 +44,50 @@ const App = () => (
   <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AppProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route element={<Layout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/fahrten" element={<FahrtenListe />} />
-                <Route path="/fahrten/neu" element={<FahrtNeu />} />
-                <Route path="/fahrten/:id" element={<FahrtDetail />} />
-                <Route path="/fahrten/:id/bearbeiten" element={<FahrtBearbeiten />} />
-                <Route path="/umsaetze" element={<UmsaetzeIndex />} />
-                <Route path="/umsaetze/import" element={<PlattformImport />} />
-                <Route path="/umsaetze/fahrt/:id" element={<UmsatzFahrtDetail />} />
-                <Route path="/umsaetze/plattform/:id" element={<PlattformUmsatzDetail />} />
-                <Route path="/fahrzeuge" element={<FahrzeugeListe />} />
-                <Route path="/fahrzeuge/neu" element={<FahrzeugNeu />} />
-                <Route path="/fahrzeuge/:id" element={<FahrzeugDetail />} />
-                <Route path="/fahrzeuge/:id/bearbeiten" element={<FahrzeugBearbeiten />} />
-                <Route path="/fahrer" element={<FahrerListe />} />
-                <Route path="/fahrer/neu" element={<FahrerNeu />} />
-                <Route path="/fahrer/:id" element={<FahrerDetail />} />
-                <Route path="/fahrer/:id/bearbeiten" element={<FahrerBearbeiten />} />
-                <Route path="/kosten" element={<KostenListe />} />
-                <Route path="/kosten/neu" element={<KostenNeu />} />
-                <Route path="/kosten/:id/bearbeiten" element={<KostenBearbeiten />} />
-                <Route path="/abrechnungen" element={<AbrechnungenIndex />} />
-                <Route path="/statistik" element={<StatistikIndex />} />
-                <Route path="/einstellungen" element={<EinstellungenIndex />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/registrieren" element={<Register />} />
+                <Route path="/passwort-vergessen" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+
+                {/* Protected routes */}
+                <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/fahrten" element={<FahrtenListe />} />
+                  <Route path="/fahrten/neu" element={<FahrtNeu />} />
+                  <Route path="/fahrten/:id" element={<FahrtDetail />} />
+                  <Route path="/fahrten/:id/bearbeiten" element={<FahrtBearbeiten />} />
+                  <Route path="/umsaetze" element={<UmsaetzeIndex />} />
+                  <Route path="/umsaetze/import" element={<PlattformImport />} />
+                  <Route path="/umsaetze/fahrt/:id" element={<UmsatzFahrtDetail />} />
+                  <Route path="/umsaetze/plattform/:id" element={<PlattformUmsatzDetail />} />
+                  <Route path="/fahrzeuge" element={<FahrzeugeListe />} />
+                  <Route path="/fahrzeuge/neu" element={<FahrzeugNeu />} />
+                  <Route path="/fahrzeuge/:id" element={<FahrzeugDetail />} />
+                  <Route path="/fahrzeuge/:id/bearbeiten" element={<FahrzeugBearbeiten />} />
+                  <Route path="/fahrer" element={<FahrerListe />} />
+                  <Route path="/fahrer/neu" element={<FahrerNeu />} />
+                  <Route path="/fahrer/:id" element={<FahrerDetail />} />
+                  <Route path="/fahrer/:id/bearbeiten" element={<FahrerBearbeiten />} />
+                  <Route path="/kosten" element={<KostenListe />} />
+                  <Route path="/kosten/neu" element={<KostenNeu />} />
+                  <Route path="/kosten/:id/bearbeiten" element={<KostenBearbeiten />} />
+                  <Route path="/abrechnungen" element={<AbrechnungenIndex />} />
+                  <Route path="/statistik" element={<StatistikIndex />} />
+                  <Route path="/einstellungen" element={<EinstellungenIndex />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AppProvider>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>
