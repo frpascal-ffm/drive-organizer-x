@@ -71,6 +71,9 @@ export function Layout() {
           <Button asChild size="sm">
             <Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />{t("common.newRide")}</Link>
           </Button>
+          <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate("/login"); }} title="Abmelden">
+            <LogOut className="h-4 w-4" />
+          </Button>
         </header>
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Outlet />
