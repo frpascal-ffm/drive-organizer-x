@@ -79,9 +79,11 @@ export function Layout() {
             <LogOut className="h-4 w-4" />
           </Button>
         </header>
+        <SubscriptionBanner />
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Outlet />
         </main>
+        <SubscriptionModal />
       </div>
     </div>
   );
