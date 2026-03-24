@@ -72,8 +72,8 @@ export function Layout() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input placeholder={t("common.search")} className="pl-9 h-9 text-sm" />
           </div>
-          <Button asChild size="sm">
-            <Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />{t("common.newRide")}</Link>
+          <Button size="sm" onClick={() => guardAction(() => navigate("/fahrten/neu"))}>
+            <Plus className="h-4 w-4 mr-1.5" />{t("common.newRide")}
           </Button>
           <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate("/login"); }} title="Abmelden">
             <LogOut className="h-4 w-4" />
