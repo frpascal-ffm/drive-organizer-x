@@ -137,10 +137,12 @@ export default function FahrerListe() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
               if (deleteTarget) {
-                deleteFahrer(deleteTarget);
-                toast.success(t("fahrerSeite.wurdeGeloescht", { name: `${deleteTargetFahrer?.vorname} ${deleteTargetFahrer?.nachname}` }));
+                try {
+                  await deleteFahrer(deleteTarget);
+                  toast.success(t("fahrerSeite.wurdeGeloescht", { name: `${deleteTargetFahrer?.vorname} ${deleteTargetFahrer?.nachname}` }));
+                } catch (e: any) { toast.error(e.message || "Fehler."); }
               }
               setDeleteTarget(null);
             }}>

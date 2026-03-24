@@ -83,10 +83,10 @@ export default function PlattformImport() {
   const selectedFahrer = fahrer.find(f => f.id === fahrerId);
   const selectedFahrzeug = fahrzeuge.find(f => f.id === fahrzeugId);
 
-  const handleImport = () => {
+  const handleImport = async () => {
     setImporting(true);
-    setTimeout(() => {
-      addPlattformUmsatz({
+    try {
+      await addPlattformUmsatz({
         plattform,
         zeitraumVon: vonDatum ? format(vonDatum, "yyyy-MM-dd") : "",
         zeitraumBis: bisDatum ? format(bisDatum, "yyyy-MM-dd") : "",
@@ -99,7 +99,10 @@ export default function PlattformImport() {
       setImporting(false);
       setStep(4);
       toast.success("Plattformumsatz erfolgreich importiert");
-    }, 1500);
+    } catch (e: any) {
+      setImporting(false);
+      toast.error(e.message || "Fehler beim Import.");
+    }
   };
 
   return (
