@@ -105,7 +105,7 @@ export default function Landing() {
                 </>
               )}
             </div>
-            <Link to="/dashboard"><Button variant="ghost" size="sm">Anmelden</Button></Link>
+            <Link to="/login"><Button variant="ghost" size="sm">Anmelden</Button></Link>
             <a href="#kontakt"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Demo anfragen</Button></a>
           </div>
 
