@@ -7,6 +7,9 @@ import { Search, Plus, ChevronLeft, ChevronRight, Menu, LogOut } from "lucide-re
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
+import { useSubscription } from "@/context/SubscriptionContext";
+import { SubscriptionBanner } from "./SubscriptionBanner";
+import { SubscriptionModal } from "./SubscriptionModal";
 
 export function Layout() {
   const isMobile = useIsMobile();
