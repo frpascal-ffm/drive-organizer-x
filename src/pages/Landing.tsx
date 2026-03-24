@@ -458,9 +458,9 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-3 gap-5">
             {[
-              { name: "Starter", sub: "Für kleine Betriebe", price: "19", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Dashboard & Ergebnis pro Fahrzeug", "Kostenerfassung (fix & variabel)", "E-Mail-Support"] },
-              { name: "Professional", sub: "Für wachsende Betriebe", price: "39", vehicles: "6–15 Fahrzeuge", cta: "Demo anfragen", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Alles aus Starter", "Plattform-Import (Uber, Bolt …)", "Fahrerabrechnung", "Statistik & Vergleiche"] },
-              { name: "Business", sub: "Für etablierte Unternehmen", price: "69", vehicles: "16–30 Fahrzeuge", cta: "Demo anfragen", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alles aus Professional", "Detaillierte Auswertungen", "Prioritäts-Support", "Telefon-Support"] },
+              { name: "Starter", sub: "Für kleine Betriebe", price: "29", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Dashboard & Ergebnis pro Fahrzeug", "Kostenerfassung (fix & variabel)", "E-Mail-Support"] },
+              { name: "Professional", sub: "Für wachsende Betriebe", price: "49", vehicles: "6–15 Fahrzeuge", cta: "Jetzt starten", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Alles aus Starter", "Plattform-Import (Uber, Bolt …)", "Fahrerabrechnung", "Statistik & Vergleiche"] },
+              { name: "Business", sub: "Für etablierte Unternehmen", price: "69", vehicles: "16–30 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alles aus Professional", "Detaillierte Auswertungen", "Prioritäts-Support", "Telefon-Support"] },
             ].map((plan, i) => (
               <Reveal key={plan.name} delay={220 + i * 80}>
                 <div className={`relative flex flex-col bg-card border rounded-2xl p-6 h-full transition-shadow duration-300 hover:shadow-lg ${
