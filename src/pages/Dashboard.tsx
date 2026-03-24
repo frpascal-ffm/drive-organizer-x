@@ -26,16 +26,6 @@ export default function Dashboard() {
   const { fahrten, fahrzeuge, fahrer, kosten, plattformUmsaetze, loading } = useAppContext();
   const [zeitraum, setZeitraum] = useState<Zeitraum | undefined>(undefined);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-      </div>
-    );
-  }
-
-  const hasData = fahrzeuge.length > 0 || fahrten.length > 0;
-
   const ergebnisse = useMemo(() =>
     berechneAlleFahrzeugErgebnisse(fahrzeuge, fahrten, plattformUmsaetze, kosten, zeitraum),
     [fahrzeuge, fahrten, plattformUmsaetze, kosten, zeitraum]
@@ -52,6 +42,16 @@ export default function Dashboard() {
   const ohneKosten = getFahrzeugeOhneKosten(fahrzeuge, kosten, zeitraum);
   const ohneFahrten = getFahrzeugeOhneFahrten(fahrzeuge, fahrten, zeitraum);
   const ohnePreis = getErledigteFahrtenOhnePreis(fahrten, zeitraum);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  const hasData = fahrzeuge.length > 0 || fahrten.length > 0;
 
   // Fahrer ohne aktuelle Fahrten
   const fahrerOhneFahrten = fahrer.filter(fa => fa.status === "aktiv" && !fahrten.some(f => f.fahrerId === fa.id && (!zeitraum || (f.datum >= zeitraum.von && f.datum <= zeitraum.bis))));
