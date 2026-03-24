@@ -23,8 +23,16 @@ const COLORS = ["hsl(158,40%,36%)", "hsl(200,50%,45%)", "hsl(38,85%,52%)", "hsl(
 export default function Dashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { fahrten, fahrzeuge, fahrer, kosten, plattformUmsaetze } = useAppContext();
+  const { fahrten, fahrzeuge, fahrer, kosten, plattformUmsaetze, loading } = useAppContext();
   const [zeitraum, setZeitraum] = useState<Zeitraum | undefined>(undefined);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   const hasData = fahrzeuge.length > 0 || fahrten.length > 0;
 
