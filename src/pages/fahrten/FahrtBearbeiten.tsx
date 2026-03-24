@@ -36,22 +36,24 @@ export default function FahrtBearbeiten() {
   // Include current type even if disabled
   const typOptions = [...new Set([...aktiveFahrttypen, fahrt.typ])];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!typ || !datum || !uhrzeit || !von || !nach || !fahrerId || !fahrzeugId) {
       toast.error("Bitte alle Pflichtfelder ausfüllen.");
       return;
     }
-    updateFahrt(fahrt.id, {
-      typ: typ as any,
-      datum, uhrzeit, von, nach, fahrerId, fahrzeugId,
-      status: status as any,
-      preis: preis ? parseFloat(preis) : undefined,
-      mwst: mwst ? parseInt(mwst) : undefined,
-      kunde: kunde || undefined,
-      notiz: notiz || undefined,
-    });
-    toast.success("Fahrt wurde aktualisiert.");
-    navigate(`/fahrten/${fahrt.id}`);
+    try {
+      await updateFahrt(fahrt.id, {
+        typ: typ as any,
+        datum, uhrzeit, von, nach, fahrerId, fahrzeugId,
+        status: status as any,
+        preis: preis ? parseFloat(preis) : undefined,
+        mwst: mwst ? parseInt(mwst) : undefined,
+        kunde: kunde || undefined,
+        notiz: notiz || undefined,
+      });
+      toast.success("Fahrt wurde aktualisiert.");
+      navigate(`/fahrten/${fahrt.id}`);
+    } catch (e: any) { toast.error(e.message || "Fehler beim Speichern."); }
   };
 
   return (
