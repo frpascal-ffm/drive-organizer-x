@@ -1,17 +1,20 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Search, Plus, ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, Menu, LogOut } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/AuthContext";
 
 export function Layout() {
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     if (isMobile) {
@@ -59,7 +62,7 @@ export function Layout() {
               <Menu className="h-4 w-4" />
             </Button>
           )}
-          <span className="font-semibold text-sm hidden sm:block ml-4">Drive Organizer X</span>
+          <span className="font-semibold text-sm hidden sm:block ml-4">MietFleet</span>
           <div className="flex-1" />
           <div className="relative w-56 hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -67,6 +70,9 @@ export function Layout() {
           </div>
           <Button asChild size="sm">
             <Link to="/fahrten/neu"><Plus className="h-4 w-4 mr-1.5" />{t("common.newRide")}</Link>
+          </Button>
+          <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate("/login"); }} title="Abmelden">
+            <LogOut className="h-4 w-4" />
           </Button>
         </header>
         <main className="flex-1 p-4 md:p-6 overflow-auto">
