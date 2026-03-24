@@ -13,6 +13,8 @@ export function Layout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     if (isMobile) {
