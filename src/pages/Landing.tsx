@@ -75,7 +75,7 @@ export default function Landing() {
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <Car className="h-4.5 w-4.5 text-primary-foreground" />
             </div>
-            <span className="font-bold text-lg tracking-tight">Drive Organizer X</span>
+            <span className="font-bold text-lg tracking-tight">MietFleet</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
@@ -150,7 +150,7 @@ export default function Landing() {
             </Reveal>
             <Reveal delay={160}>
               <p className="mt-6 text-lg text-muted-foreground max-w-lg leading-relaxed text-pretty">
-                Die meisten Mietwagenbetriebe kennen ihren Umsatz — aber nicht ihr Ergebnis pro Fahrzeug. Drive Organizer X macht sichtbar, was nach Abzug aller Kosten wirklich übrig bleibt.
+                Die meisten Mietwagenbetriebe kennen ihren Umsatz — aber nicht ihr Ergebnis pro Fahrzeug. MietFleet macht sichtbar, was nach Abzug aller Kosten wirklich übrig bleibt.
               </p>
             </Reveal>
             <Reveal delay={220}>
@@ -284,7 +284,7 @@ export default function Landing() {
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-pretty leading-relaxed">
-              Drive Organizer X beantwortet die wichtigste Frage für Ihren Betrieb: <span className="font-semibold text-foreground">Was bleibt pro Fahrzeug übrig — und wo müssen Sie handeln?</span>
+              MietFleet beantwortet die wichtigste Frage für Ihren Betrieb: <span className="font-semibold text-foreground">Was bleibt pro Fahrzeug übrig — und wo müssen Sie handeln?</span>
             </p>
           </Reveal>
           <Reveal delay={180}>
@@ -351,7 +351,7 @@ export default function Landing() {
       <section className="py-20 md:py-28 px-5 bg-muted/20 border-y border-border">
         <div className="max-w-4xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Warum Drive Organizer X</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Warum MietFleet</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
@@ -360,7 +360,7 @@ export default function Landing() {
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground text-center mt-4 max-w-2xl mx-auto text-pretty leading-relaxed">
-              Drive Organizer X wurde speziell für Mietwagenbetriebe in der Personenbeförderung entwickelt. Es verbindet Fahrten, Plattformeinnahmen und Fahrzeugkosten zu einer einzigen Kennzahl: dem Ergebnis pro Fahrzeug.
+              MietFleet wurde speziell für Mietwagenbetriebe in der Personenbeförderung entwickelt. Es verbindet Fahrten, Plattformeinnahmen und Fahrzeugkosten zu einer einzigen Kennzahl: dem Ergebnis pro Fahrzeug.
             </p>
           </Reveal>
 
@@ -397,13 +397,13 @@ export default function Landing() {
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Für wen ist Drive Organizer X?
+              Für wen ist MietFleet?
             </h2>
           </Reveal>
           <div className="mt-12 grid sm:grid-cols-3 gap-6">
             {[
               { title: "Mischbetriebe", desc: "Sie kombinieren Uber, Bolt, Flughafentransfers und eigene Kundenfahrten? Dann brauchen Sie eine Übersicht, die alles zusammenbringt.", icon: Layers },
-              { title: "Krankenfahrtbetriebe", desc: "Krankenfahrten mit Kassenabrechnung, dazu private Fahrten? Drive Organizer X zeigt Ihnen das Ergebnis pro Fahrzeug — unabhängig vom Fahrttyp.", icon: Route },
+              { title: "Krankenfahrtbetriebe", desc: "Krankenfahrten mit Kassenabrechnung, dazu private Fahrten? MietFleet zeigt Ihnen das Ergebnis pro Fahrzeug — unabhängig vom Fahrttyp.", icon: Route },
               { title: "Wachsende Flotten", desc: "3 bis 30 Fahrzeuge, mehrere Fahrer, verschiedene Einnahmequellen? Ab dieser Größe wird Bauchgefühl zum Risiko.", icon: BarChart3 },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 80}>
@@ -560,7 +560,7 @@ export default function Landing() {
               </Reveal>
               <Reveal delay={120}>
                 <p className="text-muted-foreground mt-4 leading-relaxed text-pretty">
-                  Sie möchten wissen, ob Drive Organizer X zu Ihrem Betrieb passt? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.
+                  Sie möchten wissen, ob MietFleet zu Ihrem Betrieb passt? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.
                 </p>
               </Reveal>
               <Reveal delay={180}>
@@ -609,7 +609,7 @@ export default function Landing() {
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
                     <h3 className="font-bold text-base mb-1">Demo anfragen</h3>
-                    <p className="text-xs text-muted-foreground mb-4">Unverbindlich und kostenlos. Wir zeigen Ihnen, wie Drive Organizer X zu Ihrem Betrieb passt.</p>
+                    <p className="text-xs text-muted-foreground mb-4">Unverbindlich und kostenlos. Wir zeigen Ihnen, wie MietFleet zu Ihrem Betrieb passt.</p>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-medium mb-1.5 block">Vorname</label>
@@ -684,7 +684,7 @@ export default function Landing() {
                 <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
                   <Car className="h-3.5 w-3.5 text-primary-foreground" />
                 </div>
-                <span className="font-bold text-sm">Drive Organizer X</span>
+                <span className="font-bold text-sm">MietFleet</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Das Steuerungstool für Mietwagenbetriebe in der Personenbeförderung.
@@ -716,7 +716,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground">© 2026 Drive Organizer X · Alle Rechte vorbehalten</p>
+            <p className="text-xs text-muted-foreground">© 2026 MietFleet · Alle Rechte vorbehalten</p>
             <p className="text-xs text-muted-foreground">Entwickelt in Deutschland 🇩🇪</p>
           </div>
         </div>

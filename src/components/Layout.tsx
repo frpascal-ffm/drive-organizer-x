@@ -1,11 +1,12 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Search, Plus, ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, Menu, LogOut } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/AuthContext";
 
 export function Layout() {
   const isMobile = useIsMobile();
