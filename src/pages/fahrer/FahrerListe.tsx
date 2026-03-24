@@ -106,9 +106,11 @@ export default function FahrerListe() {
                       <DropdownMenuItem onClick={() => navigate(`/fahrer/${d.id}/bearbeiten`)}>
                         <Pencil className="h-3.5 w-3.5 mr-2" />{t("fahrerSeite.bearbeiten")}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => {
-                        updateFahrer(d.id, { status: d.status === "aktiv" ? "inaktiv" : "aktiv" });
-                        toast.success(d.status === "aktiv" ? t("fahrerSeite.wurdeDeaktiviert", { name: `${d.vorname} ${d.nachname}` }) : t("fahrerSeite.wurdeAktiviert", { name: `${d.vorname} ${d.nachname}` }));
+                      <DropdownMenuItem onClick={async () => {
+                        try {
+                          await updateFahrer(d.id, { status: d.status === "aktiv" ? "inaktiv" : "aktiv" });
+                          toast.success(d.status === "aktiv" ? t("fahrerSeite.wurdeDeaktiviert", { name: `${d.vorname} ${d.nachname}` }) : t("fahrerSeite.wurdeAktiviert", { name: `${d.vorname} ${d.nachname}` }));
+                        } catch (e: any) { toast.error(e.message || "Fehler."); }
                       }}>
                         <UserX className="h-3.5 w-3.5 mr-2" />{d.status === "aktiv" ? t("fahrerSeite.deaktivieren") : t("fahrerSeite.aktivieren")}
                       </DropdownMenuItem>
