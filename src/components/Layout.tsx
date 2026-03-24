@@ -17,6 +17,7 @@ export function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
   const { signOut } = useAuth();
+  const { guardAction } = useSubscription();
   const navigate = useNavigate();
 
   const handleToggle = () => {
