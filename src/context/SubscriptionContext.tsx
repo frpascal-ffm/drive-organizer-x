@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { SubscriptionStatus, isSubscriptionActive, STRIPE_PRODUCTS } from "@/lib/stripe-config";
+import { SubscriptionStatus, SubscriptionTier, isSubscriptionActive, getTierByProductId, STRIPE_PRODUCTS } from "@/lib/stripe-config";
 
 interface SubscriptionContextType {
   status: SubscriptionStatus;
   isActive: boolean;
+  tier: SubscriptionTier;
   productId: string | null;
   subscriptionEnd: string | null;
   loading: boolean;
@@ -21,6 +22,7 @@ interface SubscriptionContextType {
 const SubscriptionContext = createContext<SubscriptionContextType>({
   status: null,
   isActive: false,
+  tier: "free",
   productId: null,
   subscriptionEnd: null,
   loading: true,
@@ -43,6 +45,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const isActive = isSubscriptionActive(status);
+  const tier = getTierByProductId(productId);
 
   const checkSubscription = useCallback(async () => {
     if (!session?.access_token) {
@@ -66,7 +69,6 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     }
   }, [session?.access_token]);
 
-  // Check on login and periodically
   useEffect(() => {
     if (user && session) {
       checkSubscription();
@@ -79,16 +81,15 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   }, [user, session, checkSubscription]);
 
   const startCheckout = useCallback(async (priceId?: string) => {
-    const pid = priceId || STRIPE_PRODUCTS.professional.price_id;
+    const pid = priceId || STRIPE_PRODUCTS.starter.price_id;
+    if (!pid) return;
     try {
       const { data, error: fnError } = await supabase.functions.invoke("create-checkout", {
         body: { priceId: pid },
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
       if (fnError) throw fnError;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
+      if (data?.url) window.open(data.url, "_blank");
     } catch (e: any) {
       console.error("Checkout failed:", e);
     }
@@ -100,9 +101,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
       if (fnError) throw fnError;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
+      if (data?.url) window.open(data.url, "_blank");
     } catch (e: any) {
       console.error("Portal failed:", e);
     }
@@ -119,7 +118,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   return (
     <SubscriptionContext.Provider value={{
-      status, isActive, productId, subscriptionEnd, loading, error,
+      status, isActive, tier, productId, subscriptionEnd, loading, error,
       checkSubscription, startCheckout, openBillingPortal, guardAction,
       showUpgradeModal, setShowUpgradeModal,
     }}>
