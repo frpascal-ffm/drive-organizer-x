@@ -630,34 +630,39 @@ export default function Landing() {
                   <form onSubmit={handleContactSubmit} className="space-y-4">
                     <h3 className="font-bold text-base mb-1">Kontakt aufnehmen</h3>
                     <p className="text-xs text-muted-foreground mb-4">Haben Sie Fragen? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.</p>
+                    {contactError && (
+                      <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
+                        {contactError}
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-medium mb-1.5 block">Vorname</label>
-                        <Input placeholder="Max" className="h-9 text-sm" required />
+                        <Input name="vorname" placeholder="Max" className="h-9 text-sm" required />
                       </div>
                       <div>
                         <label className="text-xs font-medium mb-1.5 block">Nachname</label>
-                        <Input placeholder="Mustermann" className="h-9 text-sm" required />
+                        <Input name="nachname" placeholder="Mustermann" className="h-9 text-sm" required />
                       </div>
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">E-Mail</label>
-                      <Input type="email" placeholder="info@ihr-betrieb.de" className="h-9 text-sm" required />
+                      <Input name="email" type="email" placeholder="info@ihr-betrieb.de" className="h-9 text-sm" required />
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">Firmenname</label>
-                      <Input placeholder="Ihr Betriebsname" className="h-9 text-sm" />
+                      <Input name="firma" placeholder="Ihr Betriebsname" className="h-9 text-sm" />
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">Anzahl Fahrzeuge</label>
-                      <Input type="number" placeholder="z. B. 8" min="1" max="100" className="h-9 text-sm" />
+                      <Input name="fahrzeuge" type="number" placeholder="z. B. 8" min="1" max="100" className="h-9 text-sm" />
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">Nachricht (optional)</label>
-                      <Textarea placeholder="Erzählen Sie uns kurz von Ihrem Betrieb…" className="text-sm min-h-[70px]" />
+                      <Textarea name="nachricht" placeholder="Erzählen Sie uns kurz von Ihrem Betrieb…" className="text-sm min-h-[70px]" />
                     </div>
-                    <Button type="submit" className="w-full active:scale-[0.97] transition-transform shadow-md shadow-primary/20">
-                      Anfrage senden <ArrowRight className="ml-2 h-4 w-4" />
+                    <Button type="submit" disabled={contactSending} className="w-full active:scale-[0.97] transition-transform shadow-md shadow-primary/20">
+                      {contactSending ? "Wird gesendet…" : "Anfrage senden"} {!contactSending && <ArrowRight className="ml-2 h-4 w-4" />}
                     </Button>
                     <p className="text-[10px] text-muted-foreground text-center">Ihre Daten werden vertraulich behandelt. Keine Weitergabe an Dritte.</p>
                   </form>
