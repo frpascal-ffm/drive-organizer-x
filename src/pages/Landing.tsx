@@ -473,7 +473,7 @@ export default function Landing() {
               <p className="text-4xl font-extrabold tabular-nums">€0</p>
               <p className="text-muted-foreground text-sm mt-1 mb-1">1 Fahrzeug</p>
               <p className="text-muted-foreground text-xs mb-4">Fahrten erfassen · Kosten zuordnen · Ergebnis sehen</p>
-              <Link to="/dashboard">
+              <Link to="/register?plan=free">
                 <Button variant="outline" className="active:scale-[0.97] transition-transform">
                   Kostenlos starten <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
@@ -487,9 +487,9 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-3 gap-5">
             {[
-              { name: "Starter", sub: "Für kleine Betriebe", price: "29", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Dashboard & Ergebnis pro Fahrzeug", "Kostenerfassung (fix & variabel)", "E-Mail-Support"] },
-              { name: "Professional", sub: "Für wachsende Betriebe", price: "49", vehicles: "6–15 Fahrzeuge", cta: "Jetzt starten", highlight: true, features: ["Bis zu 15 Fahrzeuge", "Alles aus Starter", "Plattform-Import (Uber, Bolt …)", "Fahrerabrechnung", "Statistik & Vergleiche"] },
-              { name: "Business", sub: "Für etablierte Unternehmen", price: "69", vehicles: "16–30 Fahrzeuge", cta: "Jetzt starten", highlight: false, features: ["Bis zu 30 Fahrzeuge", "Alles aus Professional", "Detaillierte Auswertungen", "Prioritäts-Support", "Telefon-Support"] },
+              { name: "Starter", sub: "Für kleine Betriebe", price: "29", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, planKey: "starter", features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Dashboard & Ergebnis pro Fahrzeug", "Kostenerfassung (fix & variabel)", "E-Mail-Support"] },
+              { name: "Professional", sub: "Für wachsende Betriebe", price: "49", vehicles: "6–15 Fahrzeuge", cta: "Jetzt starten", highlight: true, planKey: "professional", features: ["Bis zu 15 Fahrzeuge", "Alles aus Starter", "Plattform-Import (Uber, Bolt …)", "Fahrerabrechnung", "Statistik & Vergleiche"] },
+              { name: "Business", sub: "Für etablierte Unternehmen", price: "69", vehicles: "16–30 Fahrzeuge", cta: "Jetzt starten", highlight: false, planKey: "business", features: ["Bis zu 30 Fahrzeuge", "Alles aus Professional", "Detaillierte Auswertungen", "Prioritäts-Support", "Telefon-Support"] },
             ].map((plan, i) => (
               <Reveal key={plan.name} delay={220 + i * 80}>
                 <div className={`relative flex flex-col bg-card border rounded-2xl p-6 h-full transition-shadow duration-300 hover:shadow-lg ${
@@ -519,12 +519,12 @@ export default function Landing() {
                   </ul>
 
                   <div className="mt-6">
-                    <a href="#kontakt">
+                    <Link to={`/register?plan=${plan.planKey}`}>
                       <Button className={`w-full active:scale-[0.97] transition-transform ${plan.highlight ? "shadow-md shadow-primary/20" : ""}`}
                         variant={plan.highlight ? "default" : "outline"}>
                         {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
                       </Button>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </Reveal>
