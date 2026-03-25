@@ -656,11 +656,11 @@ export default function Landing() {
                   Kostenlos testen <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <a href="#kontakt">
+              <Link to="/register">
                 <Button size="lg" variant="ghost" className="text-base px-6 h-12 text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10">
-                  Demo anfragen
+                  Jetzt registrieren
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
         </Reveal>
