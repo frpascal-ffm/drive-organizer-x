@@ -599,8 +599,8 @@ export default function Landing() {
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <h3 className="font-bold text-base mb-1">Demo anfragen</h3>
-                    <p className="text-xs text-muted-foreground mb-4">Unverbindlich und kostenlos. Wir zeigen Ihnen, wie MietFleet zu Ihrem Betrieb passt.</p>
+                    <h3 className="font-bold text-base mb-1">Kontakt aufnehmen</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Haben Sie Fragen? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.</p>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-medium mb-1.5 block">Vorname</label>
