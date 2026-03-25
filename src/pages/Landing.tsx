@@ -648,7 +648,7 @@ export default function Landing() {
               Wissen Sie, was pro Fahrzeug übrig bleibt?
             </h2>
             <p className="text-primary-foreground/80 mt-4 text-sm md:text-base max-w-md mx-auto relative">
-              Starten Sie kostenlos mit bis zu 3 Fahrzeugen. Keine Kreditkarte, kein Vertrag. In 5 Minuten eingerichtet.
+              Starten Sie kostenlos mit einem Fahrzeug. Keine Kreditkarte, kein Vertrag. In 5 Minuten eingerichtet.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 relative">
               <Link to="/dashboard">
