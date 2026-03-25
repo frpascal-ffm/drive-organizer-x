@@ -129,7 +129,7 @@ export default function Landing() {
                 </button>
               ))}
             </div>
-            <a href="#kontakt"><Button className="w-full mt-2" size="sm">Demo anfragen</Button></a>
+            <Link to="/register"><Button className="w-full mt-2" size="sm">Kostenlos testen</Button></Link>
           </div>
         )}
       </nav>
