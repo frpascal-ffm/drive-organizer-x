@@ -701,17 +701,17 @@ export default function Landing() {
             <div>
               <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Unternehmen</p>
               <div className="space-y-2">
-                <a href="#kontakt" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Impressum</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</a>
+                <Link to="/kontakt" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Kontakt</Link>
+                <Link to="/impressum" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Impressum</Link>
+                <Link to="/datenschutz" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</Link>
               </div>
             </div>
             <div>
               <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Rechtliches</p>
               <div className="space-y-2">
-                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">AGB</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Cookie-Richtlinie</a>
+                <Link to="/impressum" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">AGB</Link>
+                <Link to="/datenschutz" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</Link>
+                <Link to="/cookie-richtlinie" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Cookie-Richtlinie</Link>
               </div>
             </div>
           </div>

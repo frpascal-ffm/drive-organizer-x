@@ -38,6 +38,10 @@ import AbrechnungenIndex from "./pages/abrechnungen/AbrechnungenIndex";
 import StatistikIndex from "./pages/statistik/StatistikIndex";
 import EinstellungenIndex from "./pages/einstellungen/EinstellungenIndex";
 import NotFound from "./pages/NotFound";
+import Impressum from "./pages/legal/Impressum";
+import Datenschutz from "./pages/legal/Datenschutz";
+import CookieRichtlinie from "./pages/legal/CookieRichtlinie";
+import Kontakt from "./pages/legal/Kontakt";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +62,10 @@ const App = () => (
                 <Route path="/registrieren" element={<Register />} />
                 <Route path="/passwort-vergessen" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/impressum" element={<Impressum />} />
+                <Route path="/datenschutz" element={<Datenschutz />} />
+                <Route path="/cookie-richtlinie" element={<CookieRichtlinie />} />
+                <Route path="/kontakt" element={<Kontakt />} />
 
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
