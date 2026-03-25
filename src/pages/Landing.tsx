@@ -51,6 +51,8 @@ export default function Landing() {
   const { i18n } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
   const [contactSent, setContactSent] = useState(false);
+  const [contactSending, setContactSending] = useState(false);
+  const [contactError, setContactError] = useState("");
 
   const changeLanguage = (lng: string) => { i18n.changeLanguage(lng); localStorage.setItem("app-language", lng); setLangOpen(false); };
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -61,9 +63,36 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", h);
   }, []);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setContactSent(true);
+    setContactSending(true);
+    setContactError("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      name: `${formData.get("vorname")} ${formData.get("nachname")}`.trim(),
+      email: formData.get("email") as string,
+      company: formData.get("firma") as string || undefined,
+      message: formData.get("nachricht") as string || `Fahrzeuganzahl: ${formData.get("fahrzeuge") || "k.A."}`,
+    };
+
+    try {
+      const res = await fetch(
+        `https://bndvrjbvfghjwwjebjvz.supabase.co/functions/v1/send-contact-email`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) throw new Error("Fehler beim Senden");
+      setContactSent(true);
+    } catch {
+      setContactError("Die Nachricht konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an info@mietfleet.de.");
+    } finally {
+      setContactSending(false);
+    }
   };
 
   return (
