@@ -555,12 +555,12 @@ export default function Landing() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-balance">
-                  Unverbindlich anfragen oder Demo vereinbaren
+                  Jetzt kostenlos testen
                 </h2>
               </Reveal>
               <Reveal delay={120}>
                 <p className="text-muted-foreground mt-4 leading-relaxed text-pretty">
-                  Sie möchten wissen, ob MietFleet zu Ihrem Betrieb passt? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.
+                  Starten Sie kostenlos mit einem Fahrzeug — ohne Kreditkarte, ohne Vertrag. Bei Fragen schreiben Sie uns gerne.
                 </p>
               </Reveal>
               <Reveal delay={180}>
@@ -571,16 +571,7 @@ export default function Landing() {
                     </div>
                     <div>
                       <p className="font-medium">E-Mail</p>
-                      <p className="text-muted-foreground text-xs">info@driveorganizerx.de</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Phone className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Telefon</p>
-                      <p className="text-muted-foreground text-xs">+49 30 123 456 78</p>
+                      <p className="text-muted-foreground text-xs">info@mietfleet.de</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
