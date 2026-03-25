@@ -162,16 +162,16 @@ export default function Landing() {
             </Reveal>
             <Reveal delay={280}>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#kontakt">
+                <Link to="/register">
                   <Button size="lg" className="shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform text-base px-7 h-12">
-                    Demo anfragen <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </a>
-                <Link to="/dashboard">
-                  <Button variant="outline" size="lg" className="text-base px-7 h-12 active:scale-[0.97] transition-transform">
-                    Kostenlos testen
+                    Kostenlos testen <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
+                <a href="#funktionen">
+                  <Button variant="outline" size="lg" className="text-base px-7 h-12 active:scale-[0.97] transition-transform">
+                    Funktionen ansehen
+                  </Button>
+                </a>
               </div>
             </Reveal>
             <Reveal delay={340}>
