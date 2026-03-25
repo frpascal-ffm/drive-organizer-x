@@ -106,7 +106,7 @@ export default function Landing() {
               )}
             </div>
             <Link to="/login"><Button variant="ghost" size="sm">Anmelden</Button></Link>
-            <a href="#kontakt"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Demo anfragen</Button></a>
+            <Link to="/register"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Kostenlos testen</Button></Link>
           </div>
 
           <button className="md:hidden p-2" onClick={() => setMobileMenu(!mobileMenu)}>
@@ -129,7 +129,7 @@ export default function Landing() {
                 </button>
               ))}
             </div>
-            <a href="#kontakt"><Button className="w-full mt-2" size="sm">Demo anfragen</Button></a>
+            <Link to="/register"><Button className="w-full mt-2" size="sm">Kostenlos testen</Button></Link>
           </div>
         )}
       </nav>
@@ -162,21 +162,21 @@ export default function Landing() {
             </Reveal>
             <Reveal delay={280}>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#kontakt">
+                <Link to="/register">
                   <Button size="lg" className="shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform text-base px-7 h-12">
-                    Demo anfragen <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </a>
-                <Link to="/dashboard">
-                  <Button variant="outline" size="lg" className="text-base px-7 h-12 active:scale-[0.97] transition-transform">
-                    Kostenlos testen
+                    Kostenlos testen <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
+                <a href="#funktionen">
+                  <Button variant="outline" size="lg" className="text-base px-7 h-12 active:scale-[0.97] transition-transform">
+                    Funktionen ansehen
+                  </Button>
+                </a>
               </div>
             </Reveal>
             <Reveal delay={340}>
               <p className="mt-5 text-xs text-muted-foreground flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-primary" /> Kostenlos für bis zu 3 Fahrzeuge · Keine Kreditkarte nötig
+                <Check className="h-3.5 w-3.5 text-primary" /> Kostenlos für ein Fahrzeug · Keine Kreditkarte nötig
               </p>
             </Reveal>
           </div>
@@ -230,7 +230,7 @@ export default function Landing() {
             <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-primary" /> Speziell für Personenbeförderung</span>
             <span className="flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> DSGVO-konform</span>
             <span className="flex items-center gap-1.5"><Gauge className="h-4 w-4 text-primary" /> In 5 Minuten startklar</span>
-            <span className="flex items-center gap-1.5"><Building2 className="h-4 w-4 text-primary" /> Für 3–30 Fahrzeuge</span>
+            <span className="flex items-center gap-1.5"><Building2 className="h-4 w-4 text-primary" /> Für 1–30+ Fahrzeuge</span>
           </div>
         </div>
       </Reveal>
@@ -555,12 +555,12 @@ export default function Landing() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-balance">
-                  Unverbindlich anfragen oder Demo vereinbaren
+                  Jetzt kostenlos testen
                 </h2>
               </Reveal>
               <Reveal delay={120}>
                 <p className="text-muted-foreground mt-4 leading-relaxed text-pretty">
-                  Sie möchten wissen, ob MietFleet zu Ihrem Betrieb passt? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.
+                  Starten Sie kostenlos mit einem Fahrzeug — ohne Kreditkarte, ohne Vertrag. Bei Fragen schreiben Sie uns gerne.
                 </p>
               </Reveal>
               <Reveal delay={180}>
@@ -571,16 +571,7 @@ export default function Landing() {
                     </div>
                     <div>
                       <p className="font-medium">E-Mail</p>
-                      <p className="text-muted-foreground text-xs">info@driveorganizerx.de</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Phone className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Telefon</p>
-                      <p className="text-muted-foreground text-xs">+49 30 123 456 78</p>
+                      <p className="text-muted-foreground text-xs">info@mietfleet.de</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
@@ -608,8 +599,8 @@ export default function Landing() {
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <h3 className="font-bold text-base mb-1">Demo anfragen</h3>
-                    <p className="text-xs text-muted-foreground mb-4">Unverbindlich und kostenlos. Wir zeigen Ihnen, wie MietFleet zu Ihrem Betrieb passt.</p>
+                    <h3 className="font-bold text-base mb-1">Kontakt aufnehmen</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Haben Sie Fragen? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.</p>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-medium mb-1.5 block">Vorname</label>
@@ -657,7 +648,7 @@ export default function Landing() {
               Wissen Sie, was pro Fahrzeug übrig bleibt?
             </h2>
             <p className="text-primary-foreground/80 mt-4 text-sm md:text-base max-w-md mx-auto relative">
-              Starten Sie kostenlos mit bis zu 3 Fahrzeugen. Keine Kreditkarte, kein Vertrag. In 5 Minuten eingerichtet.
+              Starten Sie kostenlos mit einem Fahrzeug. Keine Kreditkarte, kein Vertrag. In 5 Minuten eingerichtet.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 relative">
               <Link to="/dashboard">
@@ -665,11 +656,11 @@ export default function Landing() {
                   Kostenlos testen <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <a href="#kontakt">
+              <Link to="/register">
                 <Button size="lg" variant="ghost" className="text-base px-6 h-12 text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10">
-                  Demo anfragen
+                  Jetzt registrieren
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
         </Reveal>
