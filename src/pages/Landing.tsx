@@ -176,7 +176,7 @@ export default function Landing() {
             </Reveal>
             <Reveal delay={340}>
               <p className="mt-5 text-xs text-muted-foreground flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-primary" /> Kostenlos für bis zu 3 Fahrzeuge · Keine Kreditkarte nötig
+                <Check className="h-3.5 w-3.5 text-primary" /> Kostenlos für ein Fahrzeug · Keine Kreditkarte nötig
               </p>
             </Reveal>
           </div>
