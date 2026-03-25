@@ -230,7 +230,7 @@ export default function Landing() {
             <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-primary" /> Speziell für Personenbeförderung</span>
             <span className="flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> DSGVO-konform</span>
             <span className="flex items-center gap-1.5"><Gauge className="h-4 w-4 text-primary" /> In 5 Minuten startklar</span>
-            <span className="flex items-center gap-1.5"><Building2 className="h-4 w-4 text-primary" /> Für 3–30 Fahrzeuge</span>
+            <span className="flex items-center gap-1.5"><Building2 className="h-4 w-4 text-primary" /> Für 1–30+ Fahrzeuge</span>
           </div>
         </div>
       </Reveal>
