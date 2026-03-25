@@ -38,6 +38,10 @@ import AbrechnungenIndex from "./pages/abrechnungen/AbrechnungenIndex";
 import StatistikIndex from "./pages/statistik/StatistikIndex";
 import EinstellungenIndex from "./pages/einstellungen/EinstellungenIndex";
 import NotFound from "./pages/NotFound";
+import Impressum from "./pages/legal/Impressum";
+import Datenschutz from "./pages/legal/Datenschutz";
+import CookieRichtlinie from "./pages/legal/CookieRichtlinie";
+import Kontakt from "./pages/legal/Kontakt";
 
 const queryClient = new QueryClient();
 
