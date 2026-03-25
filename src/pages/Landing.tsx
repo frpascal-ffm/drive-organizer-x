@@ -51,6 +51,8 @@ export default function Landing() {
   const { i18n } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
   const [contactSent, setContactSent] = useState(false);
+  const [contactSending, setContactSending] = useState(false);
+  const [contactError, setContactError] = useState("");
 
   const changeLanguage = (lng: string) => { i18n.changeLanguage(lng); localStorage.setItem("app-language", lng); setLangOpen(false); };
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -61,9 +63,36 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", h);
   }, []);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setContactSent(true);
+    setContactSending(true);
+    setContactError("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      name: `${formData.get("vorname")} ${formData.get("nachname")}`.trim(),
+      email: formData.get("email") as string,
+      company: formData.get("firma") as string || undefined,
+      message: formData.get("nachricht") as string || `Fahrzeuganzahl: ${formData.get("fahrzeuge") || "k.A."}`,
+    };
+
+    try {
+      const res = await fetch(
+        `https://bndvrjbvfghjwwjebjvz.supabase.co/functions/v1/send-contact-email`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) throw new Error("Fehler beim Senden");
+      setContactSent(true);
+    } catch {
+      setContactError("Die Nachricht konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an info@mietfleet.de.");
+    } finally {
+      setContactSending(false);
+    }
   };
 
   return (
@@ -601,34 +630,39 @@ export default function Landing() {
                   <form onSubmit={handleContactSubmit} className="space-y-4">
                     <h3 className="font-bold text-base mb-1">Kontakt aufnehmen</h3>
                     <p className="text-xs text-muted-foreground mb-4">Haben Sie Fragen? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.</p>
+                    {contactError && (
+                      <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
+                        {contactError}
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-medium mb-1.5 block">Vorname</label>
-                        <Input placeholder="Max" className="h-9 text-sm" required />
+                        <Input name="vorname" placeholder="Max" className="h-9 text-sm" required />
                       </div>
                       <div>
                         <label className="text-xs font-medium mb-1.5 block">Nachname</label>
-                        <Input placeholder="Mustermann" className="h-9 text-sm" required />
+                        <Input name="nachname" placeholder="Mustermann" className="h-9 text-sm" required />
                       </div>
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">E-Mail</label>
-                      <Input type="email" placeholder="info@ihr-betrieb.de" className="h-9 text-sm" required />
+                      <Input name="email" type="email" placeholder="info@ihr-betrieb.de" className="h-9 text-sm" required />
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">Firmenname</label>
-                      <Input placeholder="Ihr Betriebsname" className="h-9 text-sm" />
+                      <Input name="firma" placeholder="Ihr Betriebsname" className="h-9 text-sm" />
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">Anzahl Fahrzeuge</label>
-                      <Input type="number" placeholder="z. B. 8" min="1" max="100" className="h-9 text-sm" />
+                      <Input name="fahrzeuge" type="number" placeholder="z. B. 8" min="1" max="100" className="h-9 text-sm" />
                     </div>
                     <div>
                       <label className="text-xs font-medium mb-1.5 block">Nachricht (optional)</label>
-                      <Textarea placeholder="Erzählen Sie uns kurz von Ihrem Betrieb…" className="text-sm min-h-[70px]" />
+                      <Textarea name="nachricht" placeholder="Erzählen Sie uns kurz von Ihrem Betrieb…" className="text-sm min-h-[70px]" />
                     </div>
-                    <Button type="submit" className="w-full active:scale-[0.97] transition-transform shadow-md shadow-primary/20">
-                      Anfrage senden <ArrowRight className="ml-2 h-4 w-4" />
+                    <Button type="submit" disabled={contactSending} className="w-full active:scale-[0.97] transition-transform shadow-md shadow-primary/20">
+                      {contactSending ? "Wird gesendet…" : "Anfrage senden"} {!contactSending && <ArrowRight className="ml-2 h-4 w-4" />}
                     </Button>
                     <p className="text-[10px] text-muted-foreground text-center">Ihre Daten werden vertraulich behandelt. Keine Weitergabe an Dritte.</p>
                   </form>
