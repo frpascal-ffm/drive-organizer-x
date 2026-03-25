@@ -106,7 +106,7 @@ export default function Landing() {
               )}
             </div>
             <Link to="/login"><Button variant="ghost" size="sm">Anmelden</Button></Link>
-            <a href="#kontakt"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Demo anfragen</Button></a>
+            <Link to="/register"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Kostenlos testen</Button></Link>
           </div>
 
           <button className="md:hidden p-2" onClick={() => setMobileMenu(!mobileMenu)}>
