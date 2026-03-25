@@ -519,12 +519,12 @@ export default function Landing() {
                   </ul>
 
                   <div className="mt-6">
-                    <a href="#kontakt">
+                    <Link to={`/register?plan=${plan.planKey}`}>
                       <Button className={`w-full active:scale-[0.97] transition-transform ${plan.highlight ? "shadow-md shadow-primary/20" : ""}`}
                         variant={plan.highlight ? "default" : "outline"}>
                         {plan.cta} <ChevronRight className="ml-1 h-4 w-4" />
                       </Button>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </Reveal>
