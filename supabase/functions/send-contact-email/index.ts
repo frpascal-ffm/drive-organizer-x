@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
+import nodemailer from "npm:nodemailer@6.9.16";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,40 +27,30 @@ serve(async (req) => {
     const user = Deno.env.get("SMTP_USER")!;
     const pass = Deno.env.get("SMTP_PASS")!;
 
-    const client = new SmtpClient();
-
-    const connectConfig = {
-      hostname: host,
+    const transporter = nodemailer.createTransport({
+      host,
       port,
-      username: user,
-      password: pass,
-    };
-
-    if (port === 465) {
-      await client.connectTLS(connectConfig);
-    } else {
-      await client.connect(connectConfig);
-    }
+      secure: port === 465,
+      auth: { user, pass },
+    });
 
     const htmlBody = `
       <h2>Neue Kontaktanfrage über MietFleet</h2>
       <table style="border-collapse:collapse;width:100%;max-width:600px">
-        <tr><td style="padding:8px;font-weight:bold;border-bottom:1px solid #eee">Name</td><td style="padding:8px;border-bottom:1px solid #eee">${escapeHtml(name)}</td></tr>
-        <tr><td style="padding:8px;font-weight:bold;border-bottom:1px solid #eee">E-Mail</td><td style="padding:8px;border-bottom:1px solid #eee"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
-        ${company ? `<tr><td style="padding:8px;font-weight:bold;border-bottom:1px solid #eee">Unternehmen</td><td style="padding:8px;border-bottom:1px solid #eee">${escapeHtml(company)}</td></tr>` : ""}
-        <tr><td style="padding:8px;font-weight:bold;vertical-align:top">Nachricht</td><td style="padding:8px;white-space:pre-wrap">${escapeHtml(message)}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;border-bottom:1px solid #eee">Name</td><td style="padding:8px;border-bottom:1px solid #eee">${esc(name)}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;border-bottom:1px solid #eee">E-Mail</td><td style="padding:8px;border-bottom:1px solid #eee"><a href="mailto:${esc(email)}">${esc(email)}</a></td></tr>
+        ${company ? `<tr><td style="padding:8px;font-weight:bold;border-bottom:1px solid #eee">Unternehmen</td><td style="padding:8px;border-bottom:1px solid #eee">${esc(company)}</td></tr>` : ""}
+        <tr><td style="padding:8px;font-weight:bold;vertical-align:top">Nachricht</td><td style="padding:8px;white-space:pre-wrap">${esc(message)}</td></tr>
       </table>
     `;
 
-    await client.send({
+    await transporter.sendMail({
       from: user,
       to: "info@mietfleet.de",
       subject: `Kontaktanfrage von ${name}`,
-      content: `Neue Kontaktanfrage:\n\nName: ${name}\nE-Mail: ${email}\n${company ? `Unternehmen: ${company}\n` : ""}Nachricht:\n${message}`,
+      text: `Neue Kontaktanfrage:\n\nName: ${name}\nE-Mail: ${email}\n${company ? `Unternehmen: ${company}\n` : ""}Nachricht:\n${message}`,
       html: htmlBody,
     });
-
-    await client.close();
 
     return new Response(
       JSON.stringify({ success: true }),
@@ -75,11 +65,6 @@ serve(async (req) => {
   }
 });
 
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+function esc(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
