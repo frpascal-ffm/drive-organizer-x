@@ -82,7 +82,7 @@ export default function Login() {
 
           <p className="text-center text-sm text-muted-foreground">
             Noch kein Konto?{" "}
-            <Link to="/registrieren" className="text-primary hover:underline font-medium">Jetzt registrieren</Link>
+            <Link to="/register" className="text-primary hover:underline font-medium">Jetzt registrieren</Link>
           </p>
         </CardContent>
       </Card>
