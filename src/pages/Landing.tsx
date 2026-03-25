@@ -473,7 +473,7 @@ export default function Landing() {
               <p className="text-4xl font-extrabold tabular-nums">€0</p>
               <p className="text-muted-foreground text-sm mt-1 mb-1">1 Fahrzeug</p>
               <p className="text-muted-foreground text-xs mb-4">Fahrten erfassen · Kosten zuordnen · Ergebnis sehen</p>
-              <Link to="/dashboard">
+              <Link to="/register?plan=free">
                 <Button variant="outline" className="active:scale-[0.97] transition-transform">
                   Kostenlos starten <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
