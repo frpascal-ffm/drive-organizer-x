@@ -62,6 +62,10 @@ const App = () => (
                 <Route path="/registrieren" element={<Register />} />
                 <Route path="/passwort-vergessen" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/impressum" element={<Impressum />} />
+                <Route path="/datenschutz" element={<Datenschutz />} />
+                <Route path="/cookie-richtlinie" element={<CookieRichtlinie />} />
+                <Route path="/kontakt" element={<Kontakt />} />
 
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
