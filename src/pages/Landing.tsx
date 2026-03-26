@@ -48,7 +48,7 @@ function Reveal({ children, className = "", delay = 0 }: { children: React.React
 export default function Landing() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
   const [contactSent, setContactSent] = useState(false);
   const [contactSending, setContactSending] = useState(false);
@@ -86,10 +86,10 @@ export default function Landing() {
           body: JSON.stringify(payload),
         }
       );
-      if (!res.ok) throw new Error("Fehler beim Senden");
+      if (!res.ok) throw new Error("Error");
       setContactSent(true);
     } catch {
-      setContactError("Die Nachricht konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an info@mietfleet.de.");
+      setContactError(t("landing.contactError"));
     } finally {
       setContactSending(false);
     }
@@ -108,10 +108,10 @@ export default function Landing() {
           </Link>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a href="#problem" className="hover:text-foreground transition-colors">Warum</a>
-            <a href="#funktionen" className="hover:text-foreground transition-colors">Funktionen</a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">Preise</a>
-            <a href="#kontakt" className="hover:text-foreground transition-colors">Kontakt</a>
+            <a href="#problem" className="hover:text-foreground transition-colors">{t("landing.navWhy")}</a>
+            <a href="#funktionen" className="hover:text-foreground transition-colors">{t("landing.navFeatures")}</a>
+            <a href="#pricing" className="hover:text-foreground transition-colors">{t("landing.navPricing")}</a>
+            <a href="#kontakt" className="hover:text-foreground transition-colors">{t("landing.navContact")}</a>
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -134,8 +134,8 @@ export default function Landing() {
                 </>
               )}
             </div>
-            <Link to="/login"><Button variant="ghost" size="sm">Anmelden</Button></Link>
-            <Link to="/register"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">Kostenlos testen</Button></Link>
+            <Link to="/login"><Button variant="ghost" size="sm">{t("landing.login")}</Button></Link>
+            <Link to="/register"><Button size="sm" className="shadow-md shadow-primary/20 active:scale-[0.97] transition-transform">{t("landing.ctaTry")}</Button></Link>
           </div>
 
           <button className="md:hidden p-2" onClick={() => setMobileMenu(!mobileMenu)}>
@@ -145,11 +145,11 @@ export default function Landing() {
 
         {mobileMenu && (
           <div className="md:hidden bg-background border-b border-border px-5 pb-5 space-y-3">
-            <a href="#problem" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Warum</a>
-            <a href="#funktionen" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Funktionen</a>
-            <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Preise</a>
-            <a href="#kontakt" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">Kontakt</a>
-            <Link to="/login" className="block py-2 text-sm font-medium">Anmelden</Link>
+            <a href="#problem" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">{t("landing.navWhy")}</a>
+            <a href="#funktionen" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">{t("landing.navFeatures")}</a>
+            <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">{t("landing.navPricing")}</a>
+            <a href="#kontakt" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium">{t("landing.navContact")}</a>
+            <Link to="/login" className="block py-2 text-sm font-medium">{t("landing.login")}</Link>
             <div className="flex gap-2 pt-1">
               {languages.map(lang => (
                 <button key={lang.code} onClick={() => { changeLanguage(lang.code); setMobileMenu(false); }}
@@ -158,7 +158,7 @@ export default function Landing() {
                 </button>
               ))}
             </div>
-            <Link to="/register"><Button className="w-full mt-2" size="sm">Kostenlos testen</Button></Link>
+            <Link to="/register"><Button className="w-full mt-2" size="sm">{t("landing.ctaTry")}</Button></Link>
           </div>
         )}
       </nav>
@@ -169,23 +169,23 @@ export default function Landing() {
           <div>
             <Reveal>
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-5">
-                <Target className="h-3.5 w-3.5" /> Für Mietwagenbetriebe in der Personenbeförderung
+                <Target className="h-3.5 w-3.5" /> {t("landing.heroTag")}
               </span>
             </Reveal>
             <Reveal delay={80}>
               <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.08] tracking-tight text-balance" style={{ lineHeight: "1.08" }}>
-                Welches Ihrer Fahrzeuge verdient wirklich Geld?
+                {t("landing.heroTitle")}
               </h1>
             </Reveal>
             <Reveal delay={160}>
               <p className="mt-6 text-lg text-muted-foreground max-w-lg leading-relaxed text-pretty">
-                Die meisten Mietwagenbetriebe kennen ihren Umsatz — aber nicht ihr Ergebnis pro Fahrzeug. MietFleet macht sichtbar, was nach Abzug aller Kosten wirklich übrig bleibt.
+                {t("landing.heroDesc")}
               </p>
             </Reveal>
             <Reveal delay={220}>
               <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-                {["Uber & Bolt", "Flughafentransfer", "Krankenfahrten", "Firmenfahrten"].map(t => (
-                  <span key={t} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{t}</span>
+                {[t("landing.heroCheck1"), t("landing.heroCheck2"), t("landing.heroCheck3"), t("landing.heroCheck4")].map(label => (
+                  <span key={label} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{label}</span>
                 ))}
               </div>
             </Reveal>
@@ -193,19 +193,19 @@ export default function Landing() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/register">
                   <Button size="lg" className="shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform text-base px-7 h-12">
-                    Kostenlos testen <ArrowRight className="ml-2 h-4 w-4" />
+                    {t("landing.ctaStart")} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <a href="#funktionen">
                   <Button variant="outline" size="lg" className="text-base px-7 h-12 active:scale-[0.97] transition-transform">
-                    Funktionen ansehen
+                    {t("landing.ctaFeatures")}
                   </Button>
                 </a>
               </div>
             </Reveal>
             <Reveal delay={340}>
               <p className="mt-5 text-xs text-muted-foreground flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-primary" /> Kostenlos für ein Fahrzeug · Keine Kreditkarte nötig
+                <Check className="h-3.5 w-3.5 text-primary" /> {t("landing.ctaNoCard")}
               </p>
             </Reveal>
           </div>
@@ -216,9 +216,9 @@ export default function Landing() {
               <div className="bg-card border border-border rounded-2xl shadow-2xl shadow-primary/5 p-6 space-y-5">
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { label: "Fahrzeuge", val: "8", trend: "5 aktiv" },
-                    { label: "Einnahmen", val: "€ 14.820", trend: "März 2026" },
-                    { label: "Ergebnis", val: "€ 6.340", trend: "+12 % ggü. Vormonat" },
+                    { label: t("landing.heroKpi1Label"), val: t("landing.heroKpi1Val"), trend: t("landing.heroKpi1Trend") },
+                    { label: t("landing.heroKpi2Label"), val: t("landing.heroKpi2Val"), trend: t("landing.heroKpi2Trend") },
+                    { label: t("landing.heroKpi3Label"), val: t("landing.heroKpi3Val"), trend: t("landing.heroKpi3Trend") },
                   ].map((k) => (
                     <div key={k.label} className="bg-muted/50 rounded-xl p-3.5 space-y-1">
                       <span className="text-[11px] font-medium text-muted-foreground">{k.label}</span>
@@ -229,9 +229,9 @@ export default function Landing() {
                 </div>
                 <div className="space-y-2">
                   {[
-                    { car: "B-MR 1234", result: "+€ 1.240", tag: "Profitabel", positive: true },
-                    { car: "B-MR 5678", result: "+€ 890", tag: "Profitabel", positive: true },
-                    { car: "B-MR 9012", result: "-€ 120", tag: "Nicht rentabel", positive: false },
+                    { car: "B-MR 1234", result: "+€ 1.240", tag: t("landing.heroCar1Tag"), positive: true },
+                    { car: "B-MR 5678", result: "+€ 890", tag: t("landing.heroCar1Tag"), positive: true },
+                    { car: "B-MR 9012", result: "-€ 120", tag: t("landing.heroCar3Tag"), positive: false },
                   ].map((row) => (
                     <div key={row.car} className="flex items-center justify-between text-xs px-3 py-2.5 rounded-lg bg-muted/30 border border-border/50">
                       <div className="flex items-center gap-2">
@@ -256,10 +256,10 @@ export default function Landing() {
       <Reveal>
         <div className="border-y border-border bg-muted/20 py-6 px-5">
           <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-primary" /> Speziell für Personenbeförderung</span>
-            <span className="flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> DSGVO-konform</span>
-            <span className="flex items-center gap-1.5"><Gauge className="h-4 w-4 text-primary" /> In 5 Minuten startklar</span>
-            <span className="flex items-center gap-1.5"><Building2 className="h-4 w-4 text-primary" /> Für 1–30+ Fahrzeuge</span>
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-primary" /> {t("landing.socialProof1")}</span>
+            <span className="flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> {t("landing.socialProof2")}</span>
+            <span className="flex items-center gap-1.5"><Gauge className="h-4 w-4 text-primary" /> {t("landing.socialProof3")}</span>
+            <span className="flex items-center gap-1.5"><Building2 className="h-4 w-4 text-primary" /> {t("landing.socialProof4")}</span>
           </div>
         </div>
       </Reveal>
@@ -268,25 +268,25 @@ export default function Landing() {
       <section id="problem" className="py-20 md:py-28 px-5">
         <div className="max-w-4xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Das Problem</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">{t("landing.problemTag")}</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Umsatz kennen Sie. Aber was bleibt wirklich übrig?
+              {t("landing.problemTitle")}
             </h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground text-center mt-4 max-w-2xl mx-auto text-pretty leading-relaxed">
-              Die meisten Mietwagenbetriebe wissen, wie viel Umsatz sie machen. Aber nur wenige wissen, welches Fahrzeug profitabel ist und welches Geld kostet. Excel-Listen, Bauchgefühl und verteilte Plattform-Abrechnungen machen es unmöglich, schnell die richtigen Entscheidungen zu treffen.
+              {t("landing.problemDesc")}
             </p>
           </Reveal>
           <div className="mt-14 grid sm:grid-cols-3 gap-8">
             {[
-              { icon: AlertTriangle, title: "Kein klares Ergebnis pro Fahrzeug", desc: "Einnahmen aus Uber, Bolt, Flughafentransfers und eigenen Fahrten liegen verstreut. Welches Fahrzeug Gewinn macht und welches nicht, bleibt unklar." },
-              { icon: TrendingUp, title: "Versteckte Verluste bleiben unsichtbar", desc: "Manche Fahrzeuge kosten über die Summe aus Leasing, Versicherung und Sprit mehr als sie einbringen — aber das fällt erst am Jahresende auf." },
-              { icon: Clock, title: "Excel statt Entscheidungen", desc: "Stunden gehen für das manuelle Zusammentragen von Zahlen drauf. Zeit, die besser in die Steuerung des Betriebs fließen sollte." },
+              { icon: AlertTriangle, title: t("landing.problem1Title"), desc: t("landing.problem1Desc") },
+              { icon: TrendingUp, title: t("landing.problem2Title"), desc: t("landing.problem2Desc") },
+              { icon: Clock, title: t("landing.problem3Title"), desc: t("landing.problem3Desc") },
             ].map((item, i) => (
-              <Reveal key={item.title} delay={i * 80}>
+              <Reveal key={i} delay={i * 80}>
                 <div className="text-center">
                   <div className="h-11 w-11 rounded-xl bg-destructive/10 flex items-center justify-center mx-auto mb-4">
                     <item.icon className="h-5 w-5 text-destructive" />
@@ -304,30 +304,29 @@ export default function Landing() {
       <section className="py-16 px-5 bg-muted/20 border-y border-border">
         <div className="max-w-3xl mx-auto text-center">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Die Lösung</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">{t("landing.solutionTag")}</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-balance">
-              Weniger Excel. Weniger Bauchgefühl. Mehr Klarheit.
+              {t("landing.solutionTitle")}
             </h2>
           </Reveal>
           <Reveal delay={120}>
-            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-pretty leading-relaxed">
-              MietFleet beantwortet die wichtigste Frage für Ihren Betrieb: <span className="font-semibold text-foreground">Was bleibt pro Fahrzeug übrig — und wo müssen Sie handeln?</span>
-            </p>
+            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-pretty leading-relaxed"
+               dangerouslySetInnerHTML={{ __html: t("landing.solutionDesc") }} />
           </Reveal>
           <Reveal delay={180}>
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { step: "1", label: "Fahrten erfassen" },
-                { step: "2", label: "Plattformumsätze importieren" },
-                { step: "3", label: "Kosten zuordnen" },
-                { step: "4", label: "Ergebnis pro Fahrzeug sehen" },
-              ].map((s, i) => (
-                <Reveal key={s.step} delay={180 + i * 60}>
+                t("landing.solutionStep1"),
+                t("landing.solutionStep2"),
+                t("landing.solutionStep3"),
+                t("landing.solutionStep4"),
+              ].map((label, i) => (
+                <Reveal key={i} delay={180 + i * 60}>
                   <div className="flex flex-col items-center gap-2">
-                    <span className="h-9 w-9 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center">{s.step}</span>
-                    <span className="text-xs font-medium text-center leading-snug">{s.label}</span>
+                    <span className="h-9 w-9 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                    <span className="text-xs font-medium text-center leading-snug">{label}</span>
                   </div>
                 </Reveal>
               ))}
@@ -340,29 +339,29 @@ export default function Landing() {
       <section id="funktionen" className="py-20 md:py-28 px-5">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Funktionen</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">{t("landing.featuresTag")}</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Alles, was Sie für die Steuerung Ihres Betriebs brauchen
+              {t("landing.featuresTitle")}
             </h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground text-center mt-4 max-w-xl mx-auto text-pretty">
-              Von der Fahrterfassung bis zur Fahrzeugbilanz — einfach, übersichtlich, auf den Punkt.
+              {t("landing.featuresDesc")}
             </p>
           </Reveal>
 
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon: Gauge, title: "Dashboard", desc: "Sehen Sie sofort, welche Fahrzeuge rentabel sind, wo Handlungsbedarf besteht und wie Ihr Betrieb insgesamt dasteht." },
-              { icon: Route, title: "Fahrten", desc: "Erfassen und dokumentieren Sie eigene Fahrten zentral — Krankenfahrten, Flughafentransfers, Privat- und Firmenfahrten." },
-              { icon: TrendingUp, title: "Umsätze", desc: "Kombinieren Sie eigene Fahrten und Plattformumsätze von Uber, Bolt & Co. in einer Übersicht." },
-              { icon: Car, title: "Fahrzeuge", desc: "Verstehen Sie, was pro Fahrzeug übrig bleibt. Einnahmen, Kosten und Ergebnis — klar aufgeschlüsselt." },
-              { icon: Receipt, title: "Kosten", desc: "Ordnen Sie Fixkosten und variable Kosten sauber Ihren Fahrzeugen zu. Leasing, Versicherung, Sprit, Werkstatt." },
-              { icon: Layers, title: "Plattform-Import", desc: "Importieren Sie Umsätze von Uber, Bolt & Co. und ordnen Sie sie automatisch Fahrzeugen und Fahrern zu." },
+              { icon: Gauge, title: t("landing.feat1Title"), desc: t("landing.feat1Desc") },
+              { icon: Route, title: t("landing.feat2Title"), desc: t("landing.feat2Desc") },
+              { icon: TrendingUp, title: t("landing.feat3Title"), desc: t("landing.feat3Desc") },
+              { icon: Car, title: t("landing.feat4Title"), desc: t("landing.feat4Desc") },
+              { icon: Receipt, title: t("landing.feat5Title"), desc: t("landing.feat5Desc") },
+              { icon: Layers, title: t("landing.feat6Title"), desc: t("landing.feat6Desc") },
             ].map((f, i) => (
-              <Reveal key={f.title} delay={i * 70}>
+              <Reveal key={i} delay={i * 70}>
                 <div className="group bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:shadow-primary/5 transition-shadow duration-300 h-full">
                   <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
                     <f.icon className="h-5 w-5 text-primary" />
@@ -380,27 +379,27 @@ export default function Landing() {
       <section className="py-20 md:py-28 px-5 bg-muted/20 border-y border-border">
         <div className="max-w-4xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Warum MietFleet</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">{t("landing.diffTag")}</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Kein allgemeines Flottentool. Kein Buchhaltungsprogramm.
+              {t("landing.diffTitle")}
             </h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground text-center mt-4 max-w-2xl mx-auto text-pretty leading-relaxed">
-              MietFleet wurde speziell für Mietwagenbetriebe in der Personenbeförderung entwickelt. Es verbindet Fahrten, Plattformeinnahmen und Fahrzeugkosten zu einer einzigen Kennzahl: dem Ergebnis pro Fahrzeug.
+              {t("landing.diffDesc")}
             </p>
           </Reveal>
 
           <div className="mt-12 grid sm:grid-cols-2 gap-5">
             {[
-              { label: "Spezialisiert auf Personenbeförderung", desc: "Nicht für Speditionen, nicht für LKW-Flotten — sondern für Mietwagenbetriebe mit Uber, Bolt, Krankenfahrten und Mischbetrieb." },
-              { label: "Fokus auf Ergebnis pro Fahrzeug", desc: "Die wichtigste Kennzahl für Ihren Betrieb. Keine überladenen Dashboards, sondern klare Antworten." },
-              { label: "Für Unternehmer gemacht", desc: "Einfach verständlich, keine Buchhaltungskenntnisse nötig. Einnahmen, Kosten, Ergebnis — fertig." },
-              { label: "Eigene Fahrten + Plattformen", desc: "Kombiniert eigene Fahrten und Plattformumsätze in einer Sicht. Kein manuelles Zusammenrechnen mehr." },
+              { label: t("landing.diff1Label"), desc: t("landing.diff1Desc") },
+              { label: t("landing.diff2Label"), desc: t("landing.diff2Desc") },
+              { label: t("landing.diff3Label"), desc: t("landing.diff3Desc") },
+              { label: t("landing.diff4Label"), desc: t("landing.diff4Desc") },
             ].map((item, i) => (
-              <Reveal key={item.label} delay={i * 70}>
+              <Reveal key={i} delay={i * 70}>
                 <div className="flex gap-4 p-5 bg-card border border-border rounded-xl">
                   <div className="mt-0.5 shrink-0">
                     <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
@@ -422,20 +421,20 @@ export default function Landing() {
       <section className="py-20 md:py-28 px-5">
         <div className="max-w-4xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Zielgruppe</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">{t("landing.targetTag")}</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Für wen ist MietFleet?
+              {t("landing.targetTitle")}
             </h2>
           </Reveal>
           <div className="mt-12 grid sm:grid-cols-3 gap-6">
             {[
-              { title: "Mischbetriebe", desc: "Sie kombinieren Uber, Bolt, Flughafentransfers und eigene Kundenfahrten? Dann brauchen Sie eine Übersicht, die alles zusammenbringt.", icon: Layers },
-              { title: "Krankenfahrtbetriebe", desc: "Krankenfahrten mit Kassenabrechnung, dazu private Fahrten? MietFleet zeigt Ihnen das Ergebnis pro Fahrzeug — unabhängig vom Fahrttyp.", icon: Route },
-              { title: "Wachsende Flotten", desc: "3 bis 30 Fahrzeuge, mehrere Fahrer, verschiedene Einnahmequellen? Ab dieser Größe wird Bauchgefühl zum Risiko.", icon: BarChart3 },
+              { title: t("landing.target1Title"), desc: t("landing.target1Desc"), icon: Layers },
+              { title: t("landing.target2Title"), desc: t("landing.target2Desc"), icon: Route },
+              { title: t("landing.target3Title"), desc: t("landing.target3Desc"), icon: BarChart3 },
             ].map((item, i) => (
-              <Reveal key={item.title} delay={i * 80}>
+              <Reveal key={i} delay={i * 80}>
                 <div className="text-center p-6 bg-card border border-border rounded-2xl h-full">
                   <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                     <item.icon className="h-5 w-5 text-primary" />
@@ -453,51 +452,51 @@ export default function Landing() {
       <section id="pricing" className="py-20 md:py-28 px-5 bg-muted/20 border-y border-border">
         <div className="max-w-5xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Preise</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">{t("landing.pricingTag")}</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Starten Sie kostenlos — wachsen Sie, wenn Sie bereit sind
+              {t("landing.pricingTitle")}
             </h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="text-muted-foreground text-center mt-4 max-w-lg mx-auto">
-              1 Fahrzeug ist dauerhaft kostenlos. Kein Vertrag, monatlich kündbar.
+              {t("landing.pricingDesc")}
             </p>
           </Reveal>
 
           {/* Free tier banner */}
           <Reveal delay={160}>
             <div className="mt-12 mb-10 max-w-md mx-auto text-center border border-primary/30 bg-primary/5 rounded-2xl p-6">
-              <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-1">Dauerhaft kostenlos</p>
+              <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-1">{t("landing.pricingFreeLabel")}</p>
               <p className="text-4xl font-extrabold tabular-nums">€0</p>
-              <p className="text-muted-foreground text-sm mt-1 mb-1">1 Fahrzeug</p>
-              <p className="text-muted-foreground text-xs mb-4">Fahrten erfassen · Kosten zuordnen · Ergebnis sehen</p>
+              <p className="text-muted-foreground text-sm mt-1 mb-1">{t("landing.pricingFreeVehicles")}</p>
+              <p className="text-muted-foreground text-xs mb-4">{t("landing.pricingFreeFeatures")}</p>
               <Link to="/register?plan=free">
                 <Button variant="outline" className="active:scale-[0.97] transition-transform">
-                  Kostenlos starten <ChevronRight className="ml-1 h-4 w-4" />
+                  {t("landing.pricingFreeCta")} <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
               </Link>
             </div>
           </Reveal>
 
           <Reveal delay={200}>
-            <p className="text-center text-sm font-medium text-muted-foreground mb-6">Mehr Fahrzeuge? Wählen Sie Ihren Plan:</p>
+            <p className="text-center text-sm font-medium text-muted-foreground mb-6">{t("landing.pricingMoreLabel")}</p>
           </Reveal>
 
           <div className="grid sm:grid-cols-3 gap-5">
             {[
-              { name: "Starter", sub: "Für kleine Betriebe", price: "29", vehicles: "2–5 Fahrzeuge", cta: "Jetzt starten", highlight: false, planKey: "starter", features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Dashboard & Ergebnis pro Fahrzeug", "Kostenerfassung (fix & variabel)", "E-Mail-Support"] },
-              { name: "Professional", sub: "Für wachsende Betriebe", price: "49", vehicles: "6–15 Fahrzeuge", cta: "Jetzt starten", highlight: true, planKey: "professional", features: ["Bis zu 15 Fahrzeuge", "Alles aus Starter", "Plattform-Import (Uber, Bolt …)", "Fahrerabrechnung", "Statistik & Vergleiche"] },
-              { name: "Business", sub: "Für etablierte Unternehmen", price: "69", vehicles: "16–30 Fahrzeuge", cta: "Jetzt starten", highlight: false, planKey: "business", features: ["Bis zu 30 Fahrzeuge", "Alles aus Professional", "Detaillierte Auswertungen", "Prioritäts-Support", "Telefon-Support"] },
+              { name: t("landing.plan1Name"), sub: t("landing.plan1Sub"), price: "29", vehicles: t("landing.plan1Vehicles"), cta: t("landing.plan1Cta"), highlight: false, planKey: "starter", features: [t("landing.plan1F1"), t("landing.plan1F2"), t("landing.plan1F3"), t("landing.plan1F4"), t("landing.plan1F5")] },
+              { name: t("landing.plan2Name"), sub: t("landing.plan2Sub"), price: "49", vehicles: t("landing.plan2Vehicles"), cta: t("landing.plan2Cta"), highlight: true, planKey: "professional", features: [t("landing.plan2F1"), t("landing.plan2F2"), t("landing.plan2F3"), t("landing.plan2F4"), t("landing.plan2F5")] },
+              { name: t("landing.plan3Name"), sub: t("landing.plan3Sub"), price: "69", vehicles: t("landing.plan3Vehicles"), cta: t("landing.plan3Cta"), highlight: false, planKey: "business", features: [t("landing.plan3F1"), t("landing.plan3F2"), t("landing.plan3F3"), t("landing.plan3F4"), t("landing.plan3F5")] },
             ].map((plan, i) => (
-              <Reveal key={plan.name} delay={220 + i * 80}>
+              <Reveal key={i} delay={220 + i * 80}>
                 <div className={`relative flex flex-col bg-card border rounded-2xl p-6 h-full transition-shadow duration-300 hover:shadow-lg ${
                   plan.highlight ? "border-primary shadow-xl shadow-primary/10 ring-1 ring-primary/20" : "border-border hover:shadow-primary/5"
                 }`}>
                   {plan.highlight && (
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-3 py-1 rounded-full">
-                      Empfohlen
+                      {t("landing.pricingRecommended")}
                     </span>
                   )}
                   <p className="text-sm font-bold">{plan.name}</p>
@@ -505,13 +504,13 @@ export default function Landing() {
 
                   <div className="mt-5 mb-1">
                     <span className="text-3xl font-extrabold tabular-nums">€{plan.price}</span>
-                    <span className="text-sm text-muted-foreground ml-1">/ Monat</span>
+                    <span className="text-sm text-muted-foreground ml-1">{t("landing.pricingPerMonth")}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mb-5">{plan.vehicles}</p>
 
                   <ul className="space-y-2.5 flex-1">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-sm">
+                    {plan.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm">
                         <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                         <span>{f}</span>
                       </li>
@@ -532,7 +531,7 @@ export default function Landing() {
           </div>
           <Reveal delay={500}>
             <p className="text-center text-xs text-muted-foreground mt-6">
-              Alle Preise zzgl. MwSt. · Monatlich kündbar · Keine versteckten Kosten
+              {t("landing.pricingFooter")}
             </p>
           </Reveal>
         </div>
@@ -542,20 +541,20 @@ export default function Landing() {
       <section className="py-20 md:py-28 px-5">
         <div className="max-w-4xl mx-auto">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">Stimmen aus der Branche</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 text-center">{t("landing.testimonialsTag")}</p>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight text-balance">
-              Was Unternehmer sagen
+              {t("landing.testimonialsTitle")}
             </h2>
           </Reveal>
 
           <div className="mt-14 grid md:grid-cols-2 gap-6">
             {[
-              { text: "Endlich sehe ich auf einen Blick, welches Fahrzeug sich lohnt. Vorher war das Bauchgefühl — jetzt sind es Zahlen.", name: "Mehmet K.", role: "Mietwagenbetrieb, 12 Fahrzeuge, Berlin" },
-              { text: "Die Plattform-Importe sparen mir jede Woche Stunden. Uber, Bolt — alles kommt zusammen und ich sehe sofort das Ergebnis pro Fahrzeug.", name: "Sandra W.", role: "Personenbeförderung, 7 Fahrzeuge, Hamburg" },
+              { text: t("landing.testimonial1Text"), name: t("landing.testimonial1Name"), role: t("landing.testimonial1Role") },
+              { text: t("landing.testimonial2Text"), name: t("landing.testimonial2Name"), role: t("landing.testimonial2Role") },
             ].map((tm, i) => (
-              <Reveal key={tm.name} delay={i * 100}>
+              <Reveal key={i} delay={i * 100}>
                 <div className="bg-card border border-border rounded-2xl p-6 space-y-4 h-full">
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, j) => (
@@ -580,16 +579,16 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-12 items-start">
             <div>
               <Reveal>
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Kontakt</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">{t("landing.contactTag")}</p>
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-balance">
-                  Jetzt kostenlos testen
+                  {t("landing.contactTitle")}
                 </h2>
               </Reveal>
               <Reveal delay={120}>
                 <p className="text-muted-foreground mt-4 leading-relaxed text-pretty">
-                  Starten Sie kostenlos mit einem Fahrzeug — ohne Kreditkarte, ohne Vertrag. Bei Fragen schreiben Sie uns gerne.
+                  {t("landing.contactDesc")}
                 </p>
               </Reveal>
               <Reveal delay={180}>
@@ -599,7 +598,7 @@ export default function Landing() {
                       <Mail className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium">E-Mail</p>
+                      <p className="font-medium">{t("landing.contactEmail")}</p>
                       <p className="text-muted-foreground text-xs">info@mietfleet.de</p>
                     </div>
                   </div>
@@ -608,8 +607,8 @@ export default function Landing() {
                       <Clock className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium">Antwortzeit</p>
-                      <p className="text-muted-foreground text-xs">Innerhalb von 24 Stunden</p>
+                      <p className="font-medium">{t("landing.contactResponseTime")}</p>
+                      <p className="text-muted-foreground text-xs">{t("landing.contactResponseValue")}</p>
                     </div>
                   </div>
                 </div>
@@ -623,13 +622,13 @@ export default function Landing() {
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                       <Check className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="font-bold text-base mb-2">Anfrage gesendet</h3>
-                    <p className="text-sm text-muted-foreground">Vielen Dank! Wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
+                    <h3 className="font-bold text-base mb-2">{t("landing.contactSentTitle")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("landing.contactSentDesc")}</p>
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <h3 className="font-bold text-base mb-1">Kontakt aufnehmen</h3>
-                    <p className="text-xs text-muted-foreground mb-4">Haben Sie Fragen? Schreiben Sie uns — wir melden uns innerhalb von 24 Stunden.</p>
+                    <h3 className="font-bold text-base mb-1">{t("landing.contactFormTitle")}</h3>
+                    <p className="text-xs text-muted-foreground mb-4">{t("landing.contactFormDesc")}</p>
                     {contactError && (
                       <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
                         {contactError}
@@ -637,34 +636,34 @@ export default function Landing() {
                     )}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-medium mb-1.5 block">Vorname</label>
+                        <label className="text-xs font-medium mb-1.5 block">{t("landing.contactFirstName")}</label>
                         <Input name="vorname" placeholder="Max" className="h-9 text-sm" required />
                       </div>
                       <div>
-                        <label className="text-xs font-medium mb-1.5 block">Nachname</label>
+                        <label className="text-xs font-medium mb-1.5 block">{t("landing.contactLastName")}</label>
                         <Input name="nachname" placeholder="Mustermann" className="h-9 text-sm" required />
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1.5 block">E-Mail</label>
+                      <label className="text-xs font-medium mb-1.5 block">{t("landing.contactEmailLabel")}</label>
                       <Input name="email" type="email" placeholder="info@ihr-betrieb.de" className="h-9 text-sm" required />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1.5 block">Firmenname</label>
+                      <label className="text-xs font-medium mb-1.5 block">{t("landing.contactCompany")}</label>
                       <Input name="firma" placeholder="Ihr Betriebsname" className="h-9 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1.5 block">Anzahl Fahrzeuge</label>
-                      <Input name="fahrzeuge" type="number" placeholder="z. B. 8" min="1" max="100" className="h-9 text-sm" />
+                      <label className="text-xs font-medium mb-1.5 block">{t("landing.contactVehicles")}</label>
+                      <Input name="fahrzeuge" type="number" placeholder={t("landing.contactVehiclesPlaceholder")} min="1" max="100" className="h-9 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1.5 block">Nachricht (optional)</label>
-                      <Textarea name="nachricht" placeholder="Erzählen Sie uns kurz von Ihrem Betrieb…" className="text-sm min-h-[70px]" />
+                      <label className="text-xs font-medium mb-1.5 block">{t("landing.contactMessage")}</label>
+                      <Textarea name="nachricht" placeholder={t("landing.contactMessagePlaceholder")} className="text-sm min-h-[70px]" />
                     </div>
                     <Button type="submit" disabled={contactSending} className="w-full active:scale-[0.97] transition-transform shadow-md shadow-primary/20">
-                      {contactSending ? "Wird gesendet…" : "Anfrage senden"} {!contactSending && <ArrowRight className="ml-2 h-4 w-4" />}
+                      {contactSending ? t("landing.contactSending") : t("landing.contactSubmit")} {!contactSending && <ArrowRight className="ml-2 h-4 w-4" />}
                     </Button>
-                    <p className="text-[10px] text-muted-foreground text-center">Ihre Daten werden vertraulich behandelt. Keine Weitergabe an Dritte.</p>
+                    <p className="text-[10px] text-muted-foreground text-center">{t("landing.contactPrivacy")}</p>
                   </form>
                 )}
               </div>
@@ -679,20 +678,20 @@ export default function Landing() {
           <div className="max-w-3xl mx-auto text-center bg-primary rounded-3xl px-8 py-14 md:py-18 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary-foreground)/0.06),transparent_60%)]" />
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-foreground tracking-tight relative text-balance">
-              Wissen Sie, was pro Fahrzeug übrig bleibt?
+              {t("landing.finalCtaTitle")}
             </h2>
             <p className="text-primary-foreground/80 mt-4 text-sm md:text-base max-w-md mx-auto relative">
-              Starten Sie kostenlos mit einem Fahrzeug. Keine Kreditkarte, kein Vertrag. In 5 Minuten eingerichtet.
+              {t("landing.finalCtaDesc")}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 relative">
               <Link to="/dashboard">
                 <Button size="lg" variant="secondary" className="text-base px-8 h-12 shadow-lg active:scale-[0.97] transition-transform font-semibold">
-                  Kostenlos testen <ArrowRight className="ml-2 h-4 w-4" />
+                  {t("landing.finalCtaButton")} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link to="/register">
                 <Button size="lg" variant="ghost" className="text-base px-6 h-12 text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10">
-                  Jetzt registrieren
+                  {t("landing.finalCtaRegister")}
                 </Button>
               </Link>
             </div>
@@ -712,37 +711,37 @@ export default function Landing() {
                 <span className="font-bold text-sm">MietFleet</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Das Steuerungstool für Mietwagenbetriebe in der Personenbeförderung.
+                {t("landing.footerDesc")}
               </p>
             </div>
             <div>
-              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Produkt</p>
+              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">{t("landing.footerProduct")}</p>
               <div className="space-y-2">
-                <a href="#funktionen" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Funktionen</a>
-                <a href="#pricing" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Preise</a>
-                <Link to="/dashboard" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">App öffnen</Link>
+                <a href="#funktionen" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerFeatures")}</a>
+                <a href="#pricing" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerPricing")}</a>
+                <Link to="/dashboard" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerOpenApp")}</Link>
               </div>
             </div>
             <div>
-              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Unternehmen</p>
+              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">{t("landing.footerCompany")}</p>
               <div className="space-y-2">
-                <Link to="/kontakt" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Kontakt</Link>
-                <Link to="/impressum" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Impressum</Link>
-                <Link to="/datenschutz" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</Link>
+                <Link to="/kontakt" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerContact")}</Link>
+                <Link to="/impressum" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerImprint")}</Link>
+                <Link to="/datenschutz" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerPrivacy")}</Link>
               </div>
             </div>
             <div>
-              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">Rechtliches</p>
+              <p className="font-semibold text-xs mb-3 uppercase tracking-wider text-muted-foreground">{t("landing.footerLegal")}</p>
               <div className="space-y-2">
-                <Link to="/impressum" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">AGB</Link>
-                <Link to="/datenschutz" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</Link>
-                <Link to="/cookie-richtlinie" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Cookie-Richtlinie</Link>
+                <Link to="/impressum" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerTerms")}</Link>
+                <Link to="/datenschutz" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerPrivacy")}</Link>
+                <Link to="/cookie-richtlinie" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{t("landing.footerCookies")}</Link>
               </div>
             </div>
           </div>
           <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground">© 2026 MietFleet · Alle Rechte vorbehalten</p>
-            <p className="text-xs text-muted-foreground">Entwickelt in Deutschland 🇩🇪</p>
+            <p className="text-xs text-muted-foreground">{t("landing.footerCopyright")}</p>
+            <p className="text-xs text-muted-foreground">{t("landing.footerMadeIn")}</p>
           </div>
         </div>
       </footer>
