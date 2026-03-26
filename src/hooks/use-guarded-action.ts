@@ -1,13 +1,16 @@
 import { useSubscription } from "@/context/SubscriptionContext";
+import { useAppContext } from "@/context/AppContext";
 import { useCallback } from "react";
 
 /**
- * Returns a wrapper function that checks subscription before executing.
- * Usage: const guarded = useGuardedAction(); guarded(() => doSomething());
+ * Returns a function that checks if the user can add another vehicle.
+ * Only blocks when the vehicle limit for the current plan is reached.
  */
-export function useGuardedAction() {
-  const { guardAction } = useSubscription();
+export function useVehicleGuard() {
+  const { guardVehicleLimit } = useSubscription();
+  const { fahrzeuge } = useAppContext();
+
   return useCallback((callback?: () => void) => {
-    return guardAction(callback);
-  }, [guardAction]);
+    return guardVehicleLimit(fahrzeuge.length, callback);
+  }, [guardVehicleLimit, fahrzeuge.length]);
 }
