@@ -69,6 +69,7 @@ export default function FahrzeugeListe() {
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [sortKey, setSortKey] = useState<string | null>("ergebnis");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const guardVehicle = useVehicleGuard();
 
   const allData = useMemo(() =>
     berechneAlleFahrzeugErgebnisse(fahrzeuge, fahrten, plattformUmsaetze, kosten, zeitraum),
