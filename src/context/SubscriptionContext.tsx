@@ -14,9 +14,13 @@ interface SubscriptionContextType {
   checkSubscription: () => Promise<void>;
   startCheckout: (priceId?: string) => Promise<void>;
   openBillingPortal: () => Promise<void>;
-  guardAction: (callback?: () => void) => boolean;
+  /** Check if user can add another vehicle given current count */
+  canAddVehicle: (currentCount: number) => boolean;
+  /** Show upgrade modal if vehicle limit reached */
+  guardVehicleLimit: (currentCount: number, callback?: () => void) => boolean;
   showUpgradeModal: boolean;
   setShowUpgradeModal: (v: boolean) => void;
+  maxVehicles: number;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType>({
@@ -30,9 +34,11 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   checkSubscription: async () => {},
   startCheckout: async () => {},
   openBillingPortal: async () => {},
-  guardAction: () => true,
+  canAddVehicle: () => true,
+  guardVehicleLimit: () => true,
   showUpgradeModal: false,
   setShowUpgradeModal: () => {},
+  maxVehicles: 1,
 });
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
@@ -46,6 +52,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const isActive = isSubscriptionActive(status);
   const tier = getTierByProductId(productId);
+  const maxVehicles = STRIPE_PRODUCTS[tier].maxVehicles;
 
   const checkSubscription = useCallback(async () => {
     if (!session?.access_token) {
@@ -107,19 +114,24 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     }
   }, [session?.access_token]);
 
-  const guardAction = useCallback((callback?: () => void): boolean => {
-    if (isActive) {
+  const canAddVehicle = useCallback((currentCount: number): boolean => {
+    return currentCount < maxVehicles;
+  }, [maxVehicles]);
+
+  const guardVehicleLimit = useCallback((currentCount: number, callback?: () => void): boolean => {
+    if (currentCount < maxVehicles) {
       callback?.();
       return true;
     }
     setShowUpgradeModal(true);
     return false;
-  }, [isActive]);
+  }, [maxVehicles]);
 
   return (
     <SubscriptionContext.Provider value={{
       status, isActive, tier, productId, subscriptionEnd, loading, error,
-      checkSubscription, startCheckout, openBillingPortal, guardAction,
+      checkSubscription, startCheckout, openBillingPortal,
+      canAddVehicle, guardVehicleLimit, maxVehicles,
       showUpgradeModal, setShowUpgradeModal,
     }}>
       {children}

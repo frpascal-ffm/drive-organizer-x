@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { useAuth } from "@/context/AuthContext";
 import { STRIPE_PRODUCTS } from "@/lib/stripe-config";
-import { Shield, CreditCard, LogOut, Check } from "lucide-react";
+import { Shield, Check } from "lucide-react";
 
 const plans = [
   {
@@ -17,7 +17,7 @@ const plans = [
     label: "Starter",
     desc: "2–5 Fahrzeuge",
     price: "29",
-    features: ["Bis zu 5 Fahrzeuge", "Unbegrenzte Fahrten", "Dashboard & Ergebnis", "Kostenerfassung", "E-Mail-Support"],
+    features: ["Bis zu 5 Fahrzeuge", "Alle Funktionen", "Unbegrenzte Fahrten", "E-Mail-Support"],
   },
   {
     key: "professional" as const,
@@ -25,22 +25,25 @@ const plans = [
     desc: "6–15 Fahrzeuge",
     price: "49",
     popular: true,
-    features: ["Bis zu 15 Fahrzeuge", "Alles aus Starter", "Plattform-Import (Uber, Bolt …)", "Fahrerabrechnung", "Statistik & Vergleiche"],
+    features: ["Bis zu 15 Fahrzeuge", "Alle Funktionen", "Unbegrenzte Fahrten", "Prioritäts-Support"],
   },
   {
     key: "business" as const,
     label: "Business",
     desc: "16–30 Fahrzeuge",
     price: "69",
-    features: ["Bis zu 30 Fahrzeuge", "Alles aus Professional", "Detaillierte Auswertungen", "Prioritäts-Support", "Telefon-Support"],
+    features: ["Bis zu 30 Fahrzeuge", "Alle Funktionen", "Unbegrenzte Fahrten", "Telefon-Support"],
   },
 ];
 
 export function SubscriptionModal() {
-  const { showUpgradeModal, setShowUpgradeModal, startCheckout, openBillingPortal, status } = useSubscription();
+  const { showUpgradeModal, setShowUpgradeModal, startCheckout, openBillingPortal, status, tier, maxVehicles } = useSubscription();
   const { signOut } = useAuth();
 
   const hasHadSubscription = status === "canceled" || status === "past_due" || status === "unpaid";
+
+  // Filter out plans that are same or lower than current
+  const availablePlans = plans.filter(p => STRIPE_PRODUCTS[p.key].maxVehicles > maxVehicles);
 
   return (
     <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
@@ -50,15 +53,15 @@ export function SubscriptionModal() {
             <Shield className="h-6 w-6 text-primary" />
           </div>
           <DialogTitle className="text-center text-lg">
-            Abo erforderlich
+            Fahrzeuglimit erreicht
           </DialogTitle>
           <DialogDescription className="text-center text-sm text-muted-foreground pt-1">
-            Wählen Sie ein Abo, um MietFleet vollständig nutzen zu können.
+            Ihr aktueller Plan erlaubt maximal {maxVehicles} Fahrzeug{maxVehicles > 1 ? "e" : ""}. Wählen Sie einen höheren Plan, um weitere Fahrzeuge hinzuzufügen.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
-          {plans.map((plan) => {
+        <div className={`grid grid-cols-1 ${availablePlans.length >= 3 ? "sm:grid-cols-3" : availablePlans.length === 2 ? "sm:grid-cols-2" : ""} gap-3 pt-4`}>
+          {availablePlans.map((plan) => {
             const priceId = STRIPE_PRODUCTS[plan.key].price_id;
             return (
               <div
@@ -91,24 +94,20 @@ export function SubscriptionModal() {
                     if (priceId) startCheckout(priceId);
                   }}
                 >
-                  Auswählen
+                  Upgraden
                 </Button>
               </div>
             );
           })}
         </div>
 
-        <div className="flex flex-col gap-2 pt-3 border-t mt-2">
-          {hasHadSubscription && (
+        {hasHadSubscription && (
+          <div className="pt-3 border-t mt-2">
             <Button variant="outline" size="sm" onClick={() => { setShowUpgradeModal(false); openBillingPortal(); }} className="w-full">
               Billing verwalten
             </Button>
-          )}
-          <Button variant="ghost" size="sm" onClick={async () => { setShowUpgradeModal(false); await signOut(); }} className="w-full text-muted-foreground">
-            <LogOut className="h-4 w-4 mr-2" />
-            Ausloggen
-          </Button>
-        </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

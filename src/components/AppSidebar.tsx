@@ -1,7 +1,9 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Route, TrendingUp, Car, Users, Receipt, FileText, BarChart3, Settings } from "lucide-react";
+import { LayoutDashboard, Route, TrendingUp, Car, Users, Receipt, FileText, BarChart3, Settings, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { useSubscription } from "@/context/SubscriptionContext";
+import { STRIPE_PRODUCTS } from "@/lib/stripe-config";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard" },
@@ -24,12 +26,15 @@ interface AppSidebarProps {
 export function AppSidebar({ collapsed, open, isMobile, onClose }: AppSidebarProps) {
   const location = useLocation();
   const { t } = useTranslation();
+  const { tier, setShowUpgradeModal, loading } = useSubscription();
 
   if (isMobile && !open) return null;
 
   const handleNavClick = () => {
     if (isMobile) onClose();
   };
+
+  const isMaxTier = tier === "business";
 
   return (
     <aside className={cn(
@@ -58,7 +63,21 @@ export function AppSidebar({ collapsed, open, isMobile, onClose }: AppSidebarPro
           </NavLink>
         ))}
       </nav>
-      <div className="py-2 px-2 border-t">
+      <div className="py-2 px-2 border-t space-y-0.5">
+        {/* Upgrade button - only show if not on max tier */}
+        {!loading && !isMaxTier && (
+          <button
+            onClick={() => { handleNavClick(); setShowUpgradeModal(true); }}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors w-full",
+              "text-primary bg-primary/5 hover:bg-primary/10",
+              collapsed && !isMobile && "justify-center px-0"
+            )}
+          >
+            <Sparkles className="h-[18px] w-[18px] shrink-0" />
+            {(!collapsed || isMobile) && <span>Upgrade</span>}
+          </button>
+        )}
         <NavLink to="/einstellungen"
           onClick={handleNavClick}
           className={({ isActive }) => cn(

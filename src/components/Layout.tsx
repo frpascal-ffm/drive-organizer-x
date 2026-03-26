@@ -7,7 +7,6 @@ import { Search, Plus, ChevronLeft, ChevronRight, Menu, LogOut } from "lucide-re
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
-import { useSubscription } from "@/context/SubscriptionContext";
 import { SubscriptionBanner } from "./SubscriptionBanner";
 import { SubscriptionModal } from "./SubscriptionModal";
 
@@ -17,7 +16,6 @@ export function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
   const { signOut } = useAuth();
-  const { guardAction } = useSubscription();
   const navigate = useNavigate();
 
   const handleToggle = () => {
@@ -30,7 +28,6 @@ export function Layout() {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Mobile backdrop */}
       {isMobile && mobileOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/50 transition-opacity"
@@ -45,7 +42,6 @@ export function Layout() {
         onClose={() => setMobileOpen(false)}
       />
 
-      {/* Sidebar edge toggle (desktop only) */}
       {!isMobile && (
         <div className="relative shrink-0 w-0">
           <Button
@@ -72,7 +68,7 @@ export function Layout() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input placeholder={t("common.search")} className="pl-9 h-9 text-sm" />
           </div>
-          <Button size="sm" onClick={() => guardAction(() => navigate("/fahrten/neu"))}>
+          <Button size="sm" onClick={() => navigate("/fahrten/neu")}>
             <Plus className="h-4 w-4 mr-1.5" />{t("common.newRide")}
           </Button>
           <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate("/login"); }} title="Abmelden">
