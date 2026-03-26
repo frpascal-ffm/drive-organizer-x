@@ -14,6 +14,7 @@ import { berechneAlleFahrzeugErgebnisse, type Zeitraum, type FahrzeugErgebnis } 
 import { Plus, Search, Settings2, GripVertical, ArrowUpDown, Info, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useVehicleGuard } from "@/hooks/use-guarded-action";
 
 interface ColumnDef {
   key: string; label: string; fixed?: boolean;
