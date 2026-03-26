@@ -138,7 +138,7 @@ export default function FahrzeugeListe() {
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader title="Fahrzeuge" description={`${filtered.length} von ${fahrzeuge.length} Fahrzeuge`}
-        action={<Button asChild><Link to="/fahrzeuge/neu"><Plus className="h-4 w-4 mr-1.5" />Neues Fahrzeug</Link></Button>} />
+        action={<Button onClick={() => guardVehicle(() => navigate("/fahrzeuge/neu"))}><Plus className="h-4 w-4 mr-1.5" />Neues Fahrzeug</Button>} />
 
       <ZeitraumFilter value={zeitraum} onChange={setZeitraum} />
 
